@@ -2,105 +2,12 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-  <meta name="theme-color" content="#1a1a2e">
-  <title>DavoGram — ficha técnica</title>
-  <meta name="description" content="Bot de Telegram freemium y userbot que sube multimedia a Google Drive con rclone, sin comprimir.">
-  <link rel="canonical" href="https://davito.es/proyectos/davogram">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="icon" href="/media/favicon.ico">
-  <link rel="stylesheet" href="/assets/css/styles.css?v=3.6">
-  <link rel="stylesheet" href="/assets/css/mobile-optimizations.css?v=3.1">
-  <link rel="stylesheet" href="/assets/fontawesome/css/all.min.css?v=6.5.1">
-  <link rel="stylesheet" href="/assets/css/proyectos.css?v=6">
-  <meta property="og:title" content="DavoGram — ficha técnica">
-  <meta property="og:image" content="https://davito.es/media/dabot.png">
+  <meta http-equiv="refresh" content="0; url=/proyectos/telegram-drive">
+  <link rel="canonical" href="https://davito.es/proyectos/telegram-drive">
+  <title>Movido a telegram-drive</title>
+  <script>location.replace("/proyectos/telegram-drive");</script>
 </head>
-<body class="projects-page">
-  <div class="container projects-wrap pd-wrap" id="main-content">
-    <a href="/proyectos" class="back-home"><i class="fas fa-arrow-left"></i> <span data-i18n="pj_back">Volver a proyectos</span></a>
-    <header class="pd-hero">
-      <div class="pd-logo"><img src="/media/projects/davogram.jpg" alt="DavoGram"></div>
-      <div>
-        <p class="projects-kicker">Telegram · bot + userbot</p>
-        <h1>DavoGram</h1>
-        <p class="bio-subtitle">Dos procesos: un bot freemium (Stars, recordatorios, IA) y un userbot Pyrogram que tira películas a Google Drive sin comprimir.</p>
-        <div class="pd-meta">
-          <span class="pj-badge live">Pyrogram</span>
-          <span class="pj-badge live">python-telegram-bot</span>
-          <span class="pj-badge vpn">rclone</span>
-          <span class="pj-badge fork">Telegram Stars</span>
-        </div>
-        <div class="projects-hero-ctas" style="justify-content:flex-start;margin:0">
-          <a class="pj-cta primary" href="https://github.com/davito-03/davogram"><i class="fab fa-github"></i> GitHub</a>
-        </div>
-      </div>
-    </header>
-    <nav class="pd-toc">
-      <a href="#idea">Idea</a>
-      <a href="#bot">Bot</a>
-      <a href="#userbot">Userbot Drive</a>
-      <a href="#ops">Secretos</a>
-    </nav>
-    <section class="pd-section" id="idea">
-      <h2>Qué es</h2>
-      <div data-lang-block="es">
-        <p>DavoGram es el bot de Telegram (menús, premium, juegos, alertas de precio con yfinance). El userbot es otra pieza: escucha <strong>solo Mensajes Guardados</strong>, descarga el archivo y lo sube a la librería de Jellyfin en Drive. No pasa por el límite de 20 MB del Bot API.</p>
-      </div>
-      <div data-lang-block="en" hidden>
-        <p>DavoGram is the Telegram bot (menus, premium, games, price alerts). The userbot is separate: it watches Saved Messages only, downloads the file and uploads it to the Jellyfin Drive library — bypassing the Bot API 20 MB cap.</p>
-      </div>
-    </section>
-    <section class="pd-section" id="bot">
-      <h2>El bot (<span class="file-chip">main.py</span> + <span class="file-chip">features/</span>)</h2>
-      <div class="mod-grid">
-        <article class="mod-card"><h3>Núcleo</h3><p>Usuarios Free/Premium/Admin, bans, <code>/menu</code>, <code>/miperfil</code>, pagos Stars (<code>SUCCESSFUL_PAYMENT</code>).</p></article>
-        <article class="mod-card"><h3>Recordatorios / eventos</h3><p>ConversationHandler con límites Free vs Premium. Jobs APScheduler.</p></article>
-        <article class="mod-card"><h3>features/free.py</h3><p>Noticias, divisas, clima, trivia, Wordle, acortar URLs…</p></article>
-        <article class="mod-card"><h3>features/premium.py</h3><p>IA en cascada, cartera, notas, hábitos, export CSV, resumen diario.</p></article>
-        <article class="mod-card"><h3>features/ai.py</h3><p>Transcribir, visión, TTS, memes, resumen web.</p></article>
-        <article class="mod-card"><h3>features/games.py</h3><p>Tres en raya, buscaminas, PPTLS, ruleta.</p></article>
-        <article class="mod-card"><h3>features/drive.py</h3><p>Si el SuperAdmin manda un vídeo al bot, también sube a Drive (service account).</p></article>
-        <article class="mod-card"><h3>features/social.py</h3><p>XP en grupos, ranking, giveaways.</p></article>
-      </div>
-    </section>
-    <section class="pd-section" id="userbot">
-      <h2>Userbot Drive</h2>
-      <div class="arch-flow">
-        <div class="arch-node">Saved Messages<small>Pyrogram</small></div>
-        <span class="arch-sep">→</span>
-        <div class="arch-node">cola JSON<small>lock + semáforo</small></div>
-        <span class="arch-sep">→</span>
-        <div class="arch-node">downloads/</div>
-        <span class="arch-sep">→</span>
-        <div class="arch-node">rclone<small>primario</small></div>
-        <span class="arch-sep">→</span>
-        <div class="arch-node">Drive API<small>fallback</small></div>
-      </div>
-      <div data-lang-block="es">
-        <p>Funciones clave: <span class="file-chip">handle_saved_messages_media</span>, <span class="file-chip">process_queue_item</span>, <span class="file-chip">_upload_to_drive</span> (rclone y, si falla, API resumable). Panel de progreso en el propio chat (<code>/panel</code>). La cola sobrevive un reinicio.</p>
-        <p>El userbot pide un nombre de archivo antes de subir. No reencoda: el punto era conservar la calidad original para cine.</p>
-      </div>
-      <div data-lang-block="en" hidden>
-        <p>Key functions: media handler, queue worker, rclone-first upload with Drive API fallback. Progress lives in-chat. The queue survives a restart. Files are not transcoded — original quality for movies.</p>
-      </div>
-    </section>
-    <section class="pd-section" id="ops">
-      <h2>Lo que no se publica</h2>
-      <div data-lang-block="es">
-        <p>Sesión Pyrogram (<code>*.session</code>), <code>credentials.json</code>, <code>gdrive_credentials.json</code>, <code>token.json</code>, cookies, SQLite. En GitHub, <span class="file-chip">config.py</span> y el userbot leen <code>os.environ</code>. En el VPS las claves siguen en disco; el repo público no las lleva.</p>
-      </div>
-      <div data-lang-block="en" hidden>
-        <p>Pyrogram session, Google credential files, cookies and SQLite stay off git. The public tree reads environment variables only.</p>
-      </div>
-    </section>
-    <div class="pd-next">
-      <a class="pj-cta ghost" href="/proyectos/homepage"><i class="fas fa-table-columns"></i> Homepage</a>
-      <a class="pj-cta ghost" href="/proyectos/nexo"><i class="fas fa-paw"></i> Nexo</a>
-      <a class="pj-cta primary" href="/proyectos"><i class="fas fa-layer-group"></i> Portfolio</a>
-    </div>
-  </div>
-  <script src="/assets/js/project-page.js"></script>
-  <script src="/assets/js/site-shell.js?v=3.3" defer></script>
+<body>
+  <p><a href="/proyectos/telegram-drive">El userbot está en telegram-drive</a>.</p>
 </body>
 </html>

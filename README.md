@@ -26,7 +26,7 @@
 ## Qué incluye
 
 - Hub con temas (oscuro, cyberpunk, matrix, claro) e i18n ES/EN
-- [Portfolio](https://davito.es/proyectos) y una ficha por proyecto (`/proyectos/dabot`, `/nexo`, `/davogram`…)
+- [Portfolio](https://davito.es/proyectos) y una ficha por proyecto (`/proyectos/dabot`, `/nexo`, `/telegram-drive`…)
 - Laboratorio: 14 juegos en canvas (Snake, Tetris, 2048, RPG de texto…)
 - Blog, chat, libro de visitas, convertidor de imágenes, gasolineras
 - Dabot embebido en la home, enlazando a [dabot.davito.es](https://dabot.davito.es)

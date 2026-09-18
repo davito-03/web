@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <meta name="theme-color" content="#1a1a2e">
+  <title>telegram-drive — ficha técnica</title>
+  <meta name="description" content="Userbot de Telegram: Mensajes Guardados → Google Drive con rclone, sin comprimir. Para películas hacia Jellyfin.">
+  <link rel="canonical" href="https://davito.es/proyectos/telegram-drive">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="icon" href="/media/favicon.ico">
+  <link rel="stylesheet" href="/assets/css/styles.css?v=3.6">
+  <link rel="stylesheet" href="/assets/css/mobile-optimizations.css?v=3.1">
+  <link rel="stylesheet" href="/assets/fontawesome/css/all.min.css?v=6.5.1">
+  <link rel="stylesheet" href="/assets/css/proyectos.css?v=6">
+  <meta property="og:title" content="telegram-drive — ficha técnica">
+  <meta property="og:image" content="https://davito.es/media/projects/davogram.jpg">
+  <meta property="og:url" content="https://davito.es/proyectos/telegram-drive">
+</head>
+<body class="projects-page">
+  <div class="container projects-wrap pd-wrap" id="main-content">
+    <a href="/proyectos" class="back-home"><i class="fas fa-arrow-left"></i> <span data-i18n="pj_back">Volver a proyectos</span></a>
+    <header class="pd-hero">
+      <div class="pd-logo"><img src="/media/projects/davogram.jpg" alt="telegram-drive"></div>
+      <div>
+        <p class="projects-kicker">Telegram · userbot · Drive</p>
+        <h1>telegram-drive</h1>
+        <p class="bio-subtitle">Un userbot Pyrogram. Mandas una peli a Mensajes Guardados, eliges el nombre, y sale en Google Drive sin recodificar. El Bot API no sirve aquí: corta a ~20&nbsp;MB.</p>
+        <div class="pd-meta">
+          <span class="pj-badge live">Pyrogram</span>
+          <span class="pj-badge vpn">rclone</span>
+          <span class="pj-badge fork">Drive API fallback</span>
+        </div>
+        <div class="projects-hero-ctas" style="justify-content:flex-start;margin:0">
+          <a class="pj-cta primary" href="https://github.com/davito-03/telegram-drive"><i class="fab fa-github"></i> GitHub</a>
+        </div>
+      </div>
+    </header>
+    <nav class="pd-toc">
+      <a href="#idea">Idea</a>
+      <a href="#flujo">Flujo</a>
+      <a href="#codigo">Código</a>
+      <a href="#ops">Secretos</a>
+    </nav>
+    <section class="pd-section" id="idea">
+      <h2>Qué es</h2>
+      <div data-lang-block="es">
+        <p>No es un bot de <code>@BotFather</code>. Es una <strong>sesión de usuario</strong> (API_ID / API_HASH de my.telegram.org) que solo mira el chat <code>"me"</code>. Lo uso para alimentar la librería de Jellyfin: archivo grande → Drive → el catálogo lo ve el media server.</p>
+        <p>Hay una variante <span class="file-chip">userbot_pc_amd.py</span> para un PC. En el VPS corre <span class="file-chip">userbot_drive.py</span>.</p>
+      </div>
+      <div data-lang-block="en" hidden>
+        <p>Not a BotFather bot. A <strong>user session</strong> that only watches Saved Messages. I use it to feed Jellyfin: large file → Drive → the media server sees the library. Production file: <span class="file-chip">userbot_drive.py</span>.</p>
+      </div>
+    </section>
+    <section class="pd-section" id="flujo">
+      <h2>Flujo</h2>
+      <div class="arch-flow">
+        <div class="arch-node">Saved Messages<small>Pyrogram · me</small></div>
+        <span class="arch-sep">→</span>
+        <div class="arch-node">queue.json<small>sobrevive un corte</small></div>
+        <span class="arch-sep">→</span>
+        <div class="arch-node">downloads/</div>
+        <span class="arch-sep">→</span>
+        <div class="arch-node">rclone<small>primario</small></div>
+        <span class="arch-sep">→</span>
+        <div class="arch-node">Drive API<small>fallback</small></div>
+      </div>
+      <div data-lang-block="es">
+        <p>Lock de una descarga a la vez, semáforo de hasta 5 subidas. Progreso en el propio chat (<code>/panel</code>). Si rclone se cae, <span class="file-chip">_upload_to_drive_api</span> retoma con upload resumable. No hay ffmpeg de “optimizar”: el punto era no tocar la calidad.</p>
+      </div>
+      <div data-lang-block="en" hidden>
+        <p>One download at a time, up to five uploads. In-chat progress. rclone first; Drive API as resumable fallback. No transcode.</p>
+      </div>
+    </section>
+    <section class="pd-section" id="codigo">
+      <h2>Sitios del código</h2>
+      <div class="callout" data-lang-block="es">
+        <p><strong>Cola en disco.</strong> <span class="file-chip">queue.json</span> guarda la tarea. Si el proceso muere a mitad, no se pierde el fichero a medias: se retoma.</p>
+      </div>
+      <div class="callout" data-lang-block="en" hidden>
+        <p><strong>On-disk queue.</strong> <span class="file-chip">queue.json</span> keeps the job. A crash does not drop the file; it resumes.</p>
+      </div>
+      <div class="callout" data-lang-block="es">
+        <p><strong>Nombre a mano.</strong> Antes de subir pregunta cómo se debe llamar el archivo en Drive. Útil cuando Telegram manda un <code>VID_2024….mp4</code> inservible para Jellyfin.</p>
+      </div>
+      <div class="callout" data-lang-block="en" hidden>
+        <p><strong>Chosen filename.</strong> It asks what the file should be called on Drive, so Jellyfin does not get a useless <code>VID_….mp4</code>.</p>
+      </div>
+    </section>
+    <section class="pd-section" id="ops">
+      <h2>Lo que no se publica</h2>
+      <div data-lang-block="es">
+        <p>Sesión Pyrogram (<code>*.session</code>), <code>rclone.conf</code>, JSON de Google, la cola con paths locales. En GitHub, <code>API_ID</code> / <code>API_HASH</code> / carpeta de Drive salen de <code>.env</code>.</p>
+      </div>
+      <div data-lang-block="en" hidden>
+        <p>Pyrogram session, rclone config, Google JSON, local queue paths. Public tree reads env vars only.</p>
+      </div>
+    </section>
+    <div class="pd-next">
+      <a class="pj-cta ghost" href="/proyectos/homepage"><i class="fas fa-table-columns"></i> Homepage</a>
+      <a class="pj-cta ghost" href="/proyectos/nexo"><i class="fas fa-paw"></i> Nexo</a>
+      <a class="pj-cta primary" href="/proyectos"><i class="fas fa-layer-group"></i> Portfolio</a>
+    </div>
+  </div>
+  <script src="/assets/js/project-page.js"></script>
+  <script src="/assets/js/site-shell.js?v=3.3" defer></script>
+</body>
+</html>
