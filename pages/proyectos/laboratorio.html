@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <meta name="theme-color" content="#1a1a2e">
+  <title>Laboratorio — ficha técnica</title>
+  <meta name="description" content="14 juegos en el navegador dentro de davito.es: canvas, ranking y logros.">
+  <link rel="canonical" href="https://davito.es/proyectos/laboratorio">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="icon" href="/media/favicon.ico">
+  <link rel="stylesheet" href="/assets/css/styles.css?v=3.6">
+  <link rel="stylesheet" href="/assets/css/mobile-optimizations.css?v=3.1">
+  <link rel="stylesheet" href="/assets/fontawesome/css/all.min.css?v=6.5.1">
+  <link rel="stylesheet" href="/assets/css/proyectos.css?v=4">
+  <meta property="og:title" content="Laboratorio — ficha técnica">
+  <meta property="og:image" content="https://davito.es/media/dabot.png">
+</head>
+<body class="projects-page">
+  <div class="container projects-wrap pd-wrap" id="main-content">
+    <a href="/proyectos" class="back-home"><i class="fas fa-arrow-left"></i> <span data-i18n="pj_back">Volver a proyectos</span></a>
+    <header class="pd-hero">
+      <div class="pd-logo"><img src="/media/dabot.png" alt="Laboratorio"></div>
+      <div>
+        <p class="projects-kicker">Parte de davito.es</p>
+        <h1>Laboratorio</h1>
+        <p class="bio-subtitle">Minijuegos hechos a mano en canvas/JS, con ranking y logros. No es un repo aparte: vive en el mismo árbol que la web.</p>
+        <div class="pd-meta">
+          <span class="pj-badge live">Canvas</span>
+          <span class="pj-badge live">JavaScript</span>
+        </div>
+        <div class="projects-hero-ctas" style="justify-content:flex-start;margin:0">
+          <a class="pj-cta primary" href="/laboratorio"><i class="fas fa-gamepad"></i> Jugar</a>
+          <a class="pj-cta ghost" href="https://github.com/davito-03/web/tree/main/games"><i class="fab fa-github"></i> games/</a>
+        </div>
+      </div>
+    </header>
+    <section class="pd-section">
+      <h2>Juegos</h2>
+      <div data-lang-block="es">
+        <p>Snake, Pong, Buscaminas, Flappy, 2048, Tetris, RPG por texto, Memory, Conecta 4, Space Invaders, Typing Defense, Simon, Platformer, Breakout. Cada uno es un HTML + un JS en <span class="file-chip">assets/js/games/</span>. El laboratorio lista compatibilidad desktop/móvil.</p>
+        <p>Las puntuaciones salen por <span class="file-chip">api/game_tracker.php</span> y se ven en <code>/leaderboard</code>. Los logros los lleva <span class="file-chip">achievements.js</span> en el cliente.</p>
+      </div>
+      <div data-lang-block="en" hidden>
+        <p>Fourteen handmade canvas games. Scores go through <span class="file-chip">api/game_tracker.php</span> to the leaderboard. Achievements are client-side in <span class="file-chip">achievements.js</span>.</p>
+      </div>
+    </section>
+    <div class="pd-next">
+      <a class="pj-cta ghost" href="/proyectos/web"><i class="fas fa-globe"></i> davito.es</a>
+      <a class="pj-cta primary" href="/proyectos"><i class="fas fa-layer-group"></i> Portfolio</a>
+    </div>
+  </div>
+  <script src="/assets/js/project-page.js"></script>
+  <script src="/assets/js/site-shell.js?v=3.3" defer></script>
+</body>
+</html>

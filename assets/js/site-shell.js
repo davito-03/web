@@ -83,7 +83,7 @@
     loadCss("/assets/fontawesome/css/all.min.css?v=6.5.1");
     loadCss("/assets/css/site-shell.css?v=3.1");
     loadCss("/assets/css/styles.css?v=3.6");
-    loadScript("/assets/js/i18n-pages.js?v=3");
+    loadScript("/assets/js/i18n-pages.js?v=4");
     loadScript("/assets/js/atmosphere.js?v=2");
     loadScript("/assets/js/themes.js?v=2.3");
     loadScript("/assets/js/i18n.js?v=3.2");

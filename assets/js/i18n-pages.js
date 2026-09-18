@@ -175,6 +175,8 @@ window.DAVITO_I18N_PAGES = {
 
     fab_projects: "Proyectos",
     footer_projects: "Proyectos",
+    pj_back: "Volver a proyectos",
+    pj_ficha: "Ver ficha",
     bio_role: "Bots, webs y un VPS que mantengo yo.",
     pj_doc_title: "Proyectos — @davito_03",
     pj_kicker: "Portfolio · hecho y operado por mí",
@@ -417,6 +419,8 @@ window.DAVITO_I18N_PAGES = {
 
     fab_projects: "Projects",
     footer_projects: "Projects",
+    pj_back: "Back to projects",
+    pj_ficha: "Read the write-up",
     bio_role: "Bots, sites, and a VPS I run myself.",
     pj_doc_title: "Projects — @davito_03",
     pj_kicker: "Portfolio · designed, shipped, and operated by me",

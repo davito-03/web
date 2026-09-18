@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <meta name="theme-color" content="#1a1a2e">
+  <title>Dabot — ficha técnica</title>
+  <meta name="description" content="Cómo está hecho Dabot: discord.py, FastAPI, OAuth, cogs de moderación, tickets, IA y el panel en dabot.davito.es.">
+  <link rel="canonical" href="https://davito.es/proyectos/dabot">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="icon" href="/media/favicon.ico">
+  <link rel="stylesheet" href="/assets/css/styles.css?v=3.6">
+  <link rel="stylesheet" href="/assets/css/mobile-optimizations.css?v=3.1">
+  <link rel="stylesheet" href="/assets/fontawesome/css/all.min.css?v=6.5.1">
+  <link rel="stylesheet" href="/assets/css/proyectos.css?v=4">
+  <meta property="og:title" content="Dabot — ficha técnica">
+  <meta property="og:image" content="https://davito.es/media/dabot.png">
+  <meta property="og:url" content="https://davito.es/proyectos/dabot">
+</head>
+<body class="projects-page" data-i18n-title="pd_dabot_title">
+  <div class="container projects-wrap pd-wrap" id="main-content">
+    <a href="/proyectos" class="back-home"><i class="fas fa-arrow-left"></i> <span data-i18n="pj_back">Volver a proyectos</span></a>
+
+    <header class="pd-hero">
+      <div class="pd-logo"><img src="/media/dabot.png" alt="Dabot"></div>
+      <div>
+        <p class="projects-kicker" data-i18n="pd_dabot_kicker">Producto en producción · Discord + web</p>
+        <h1>Dabot</h1>
+        <p class="bio-subtitle" data-i18n="pd_dabot_sub">Bot de Discord y panel FastAPI. Lo diseño, lo programo y lo dejo corriendo en Docker. El código de GitHub es la copia que hay en el VPS.</p>
+        <div class="pd-meta">
+          <span class="pj-badge live">Python 3.11</span>
+          <span class="pj-badge live">discord.py 2</span>
+          <span class="pj-badge live">FastAPI</span>
+          <span class="pj-badge vpn">SQLite WAL</span>
+          <span class="pj-badge fork">OAuth2 PKCE</span>
+        </div>
+        <div class="projects-hero-ctas" style="justify-content:flex-start;margin:0">
+          <a class="pj-cta primary" href="https://dabot.davito.es/"><i class="fas fa-arrow-up-right-from-square"></i> dabot.davito.es</a>
+          <a class="pj-cta ghost" href="https://github.com/davito-03/dabot"><i class="fab fa-github"></i> GitHub</a>
+        </div>
+      </div>
+    </header>
+
+    <nav class="pd-toc" aria-label="Secciones">
+      <a href="#idea">Idea</a>
+      <a href="#arch">Arquitectura</a>
+      <a href="#mods">Módulos</a>
+      <a href="#web">Panel web</a>
+      <a href="#code">Código</a>
+      <a href="#ops">Operación</a>
+    </nav>
+
+    <section class="pd-section" id="idea">
+      <h2 data-i18n="pd_idea">Qué es</h2>
+      <div data-lang-block="es">
+        <p>Dabot no es un bot de “tres comandos de moderación”. Es un producto: el mismo proceso cubre un servidor de Discord (slash commands, eventos, jobs) y un sitio público en <a href="https://dabot.davito.es">dabot.davito.es</a> donde el staff configura el guild con su cuenta de Discord.</p>
+        <p>Hay unos 70 cogs. <code>main.py</code> los carga todos salvo <span class="file-chip">tts</span> y <span class="file-chip">music</span>, que existen en disco pero no entran en runtime. Cada guild tiene un YAML propio encima de <span class="file-chip">configs/default.yaml</span>; el estado (tickets, economía, sesiones web, infracciones) vive en SQLite en WAL, compartida por el bot y la API.</p>
+      </div>
+      <div data-lang-block="en" hidden>
+        <p>Dabot is a product, not a three-command mod bot: one codebase covers a Discord server and a public dashboard at dabot.davito.es where staff signs in with Discord.</p>
+        <p>About 70 cogs. <code>main.py</code> loads all of them except <span class="file-chip">tts</span> and <span class="file-chip">music</span>. Each guild has YAML on top of <span class="file-chip">configs/default.yaml</span>; runtime state lives in SQLite WAL, shared by the bot and the API.</p>
+      </div>
+    </section>
+
+    <section class="pd-section" id="arch">
+      <h2 data-i18n="pd_arch">Cómo está montado</h2>
+      <div class="arch-flow" aria-hidden="true">
+        <div class="arch-node">Discord Gateway<small>intents all</small></div>
+        <span class="arch-sep">→</span>
+        <div class="arch-node">main.py<small>cogs + i18n</small></div>
+        <span class="arch-sep">↔</span>
+        <div class="arch-node">dabot.db<small>SQLite WAL</small></div>
+        <span class="arch-sep">↔</span>
+        <div class="arch-node">dashboard_server.py<small>FastAPI :8090</small></div>
+        <span class="arch-sep">→</span>
+        <div class="arch-node">dabot.davito.es<small>OAuth + panel</small></div>
+      </div>
+      <div data-lang-block="es">
+        <p>Docker Compose levanta <strong>dos servicios</strong>: <code>dabot-bot</code> (<code>python main.py</code>, health por <code>/tmp/bot_alive</code>) y <code>dabot-api</code> (uvicorn, health <code>GET /healthz</code>). Comparten volúmenes de código, configs, templates y la base. El puerto de la API solo escucha en localhost; nginx publica el dominio.</p>
+        <p>Al arrancar: <code>.env</code> → permisos del owner → <code>ConfigManager</code> → sesión aiohttp → <code>bot.db.setup()</code> → traductor de slash → <code>load_extensions()</code> → <code>bot.start</code>. Hay un guardia anti crash-loop (<code>restart_state.json</code>) y un <code>RepairEngine</code> si el proceso muere en bucle.</p>
+      </div>
+      <div data-lang-block="en" hidden>
+        <p>Compose runs <strong>two services</strong>: the bot (heartbeat file) and the API (<code>/healthz</code>). They share code, configs, templates and the database. The API binds localhost; nginx publishes the domain.</p>
+        <p>Boot: env → owner permissions → config → aiohttp → SQLite setup → slash translator → load cogs → start. Crash-loop guard plus a repair engine if it dies in a loop.</p>
+      </div>
+    </section>
+
+    <section class="pd-section" id="mods">
+      <h2 data-i18n="pd_mods">Módulos (cogs)</h2>
+      <div data-lang-block="es">
+        <p>Cada archivo en <span class="file-chip">cogs/</span> es una extensión de discord.py. Agrupados por lo que hacen de verdad:</p>
+      </div>
+      <div data-lang-block="en" hidden>
+        <p>Each file in <span class="file-chip">cogs/</span> is a discord.py extension, grouped by what they actually do:</p>
+      </div>
+      <div class="mod-grid">
+        <article class="mod-card">
+          <h3>Moderación</h3>
+          <p><span class="file-chip">moderation.py</span> grupo <code>/mod</code>: kick, ban, timeout, warns, purge, apelaciones, CSV.</p>
+        </article>
+        <article class="mod-card">
+          <h3>AutoMod propio</h3>
+          <p><span class="file-chip">automod.py</span> spam, flood, invites, unicode, <code>/antilinks</code>. Complementa reglas nativas en <span class="file-chip">discord_automod.py</span>.</p>
+        </article>
+        <article class="mod-card">
+          <h3>Anti-raid / anti-nuke</h3>
+          <p><span class="file-chip">antiraid.py</span> lockdown por flood de joins. <span class="file-chip">antinuke.py</span> límites y whitelist contra acciones masivas.</p>
+        </article>
+        <article class="mod-card">
+          <h3>Verificación</h3>
+          <p><span class="file-chip">verification.py</span> captcha/emoji/math. La web aporta IP/device que Discord no da al bot (<span class="file-chip">alt_intel.py</span>, <span class="file-chip">proxy_detect.py</span>).</p>
+        </article>
+        <article class="mod-card">
+          <h3>Tickets</h3>
+          <p><span class="file-chip">tickets.py</span> panel, categorías, mensajes en SQLite, transcripts HTML. <span class="file-chip">ticket_extras.py</span> CSAT y snippets.</p>
+        </article>
+        <article class="mod-card">
+          <h3>Niveles</h3>
+          <p><span class="file-chip">leveling.py</span> XP de texto (cooldown 60 s) y loop de voz, tarjetas Pillow, roles por nivel, leaderboard.</p>
+        </article>
+        <article class="mod-card">
+          <h3>IA</h3>
+          <p><span class="file-chip">chatbot.py</span> pool Gemini / Groq / Cohere / OpenAI / OpenRouter / HF / Cloudflare. <span class="file-chip">gemini_client.py</span> rota claves y modelos.</p>
+        </article>
+        <article class="mod-card">
+          <h3>Economía y juegos</h3>
+          <p><span class="file-chip">economy.py</span> <span class="file-chip">casino.py</span> <span class="file-chip">games.py</span> — por servidor, no un global único.</p>
+        </article>
+        <article class="mod-card">
+          <h3>Voz temporal</h3>
+          <p><span class="file-chip">voice.py</span> join-to-create. Stats de tiempo en <span class="file-chip">voice_stats.py</span>.</p>
+        </article>
+        <article class="mod-card">
+          <h3>Backups</h3>
+          <p><span class="file-chip">server_backup.py</span> y plantillas en <span class="file-chip">server_templates.py</span>, también disparables desde el panel.</p>
+        </article>
+        <article class="mod-card">
+          <h3>Privacidad</h3>
+          <p><span class="file-chip">privacy.py</span> exportar/borrar datos. Fingerprints en <span class="file-chip">privacy_crypto.py</span>.</p>
+        </article>
+        <article class="mod-card">
+          <h3>i18n</h3>
+          <p><span class="file-chip">langs/*.json</span> (es, en, fr, de, it, pt, ja, ko, zh). El bot traduce embeds y descripciones de slash en caliente.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="pd-section" id="web">
+      <h2 data-i18n="pd_web">El panel (dabot.davito.es)</h2>
+      <div data-lang-block="es">
+        <p><span class="file-chip">dashboard_server.py</span> es una API FastAPI, no un adorno. Login con Discord OAuth2 + <strong>PKCE S256</strong>, state en SQLite, cookie de sesión, CSRF en <code>/api/*</code>, CSP y HSTS. El staff ve canales, roles, config YAML, infracciones, tickets, leaderboard, backups y una consola live de mensajes.</p>
+        <p>Rutas públicas de producto: <code>/</code>, <code>/dashboard</code>, <code>/servers</code>, <code>/niveles</code>, <code>/normas</code>, <code>/verify</code>, <code>/premium</code>, <code>/cuenta</code>. Webhooks de Stripe / Sellix / Discord para premium. Health en <code>/healthz</code>.</p>
+      </div>
+      <div data-lang-block="en" hidden>
+        <p><span class="file-chip">dashboard_server.py</span> is a real FastAPI app: Discord OAuth2 + <strong>PKCE S256</strong>, SQLite state, session cookie, CSRF, CSP, HSTS. Staff gets config, infractions, tickets, backups and a live message console.</p>
+        <p>Product routes include dashboard, servers, levels, rules, verify, premium. Stripe/Sellix/Discord webhooks. <code>/healthz</code> for the compose healthcheck.</p>
+      </div>
+    </section>
+
+    <section class="pd-section" id="code">
+      <h2 data-i18n="pd_code">Sitios del código que importan</h2>
+      <div class="callout" data-lang-block="es">
+        <p><strong>Localización transparente.</strong> En <span class="file-chip">main.py</span> se parchean <code>Context.send</code> e <code>InteractionResponse.send_message</code> para traducir content, embeds y views según el idioma del guild. Los cogs viejos no tienen que saber de i18n.</p>
+      </div>
+      <div class="callout" data-lang-block="en" hidden>
+        <p><strong>Transparent localization.</strong> <span class="file-chip">main.py</span> patches send/response so legacy cogs get translated embeds without knowing about i18n.</p>
+      </div>
+      <div class="callout" data-lang-block="es">
+        <p><strong>IA con recambio.</strong> <span class="file-chip">utils/gemini_client.py</span> prueba varios modelos y varias claves; si una da 429, la enfría y sigue. El chatbot elige proveedor según complejidad, no un SDK único.</p>
+      </div>
+      <div class="callout" data-lang-block="en" hidden>
+        <p><strong>IA with failover.</strong> Gemini client rotates models and keys; 429 cools that key. The chatbot routes by complexity across a provider pool.</p>
+      </div>
+      <div class="callout" data-lang-block="es">
+        <p><strong>Tickets full-stack.</strong> Cada mensaje se guarda en SQLite y el panel lo lee. Si el guild tiene canal de transcripciones, se replica a Discord. El HTML de transcript se sirve en <code>/tickets/{id}/transcript</code>.</p>
+      </div>
+      <div class="callout" data-lang-block="en" hidden>
+        <p><strong>Full-stack tickets.</strong> Every message is in SQLite for the dashboard; optional Discord transcript channel; HTML at <code>/tickets/{id}/transcript</code>.</p>
+      </div>
+    </section>
+
+    <section class="pd-section" id="ops">
+      <h2 data-i18n="pd_ops">Operación</h2>
+      <div data-lang-block="es">
+        <p>Secretos solo en <code>.env</code> (token, OAuth client secret, claves de IA, Stripe). El repo público lleva <span class="file-chip">.env.example</span> vacío. Las YAML por guild y la SQLite no se publican. Healthchecks independientes bot/API. nginx termina TLS en <code>dabot.davito.es</code> y hace proxy a 127.0.0.1:8090.</p>
+      </div>
+      <div data-lang-block="en" hidden>
+        <p>Secrets live in <code>.env</code> only. Public repo has an empty example file. Per-guild YAML and SQLite stay off git. Bot and API have separate healthchecks. nginx TLS-terminates dabot.davito.es to localhost:8090.</p>
+      </div>
+    </section>
+
+    <div class="pd-next">
+      <a class="pj-cta ghost" href="/proyectos/nexo"><i class="fas fa-paw"></i> Nexo Bot</a>
+      <a class="pj-cta ghost" href="/proyectos/web"><i class="fas fa-globe"></i> davito.es</a>
+      <a class="pj-cta primary" href="/proyectos"><i class="fas fa-layer-group"></i> <span data-i18n="pj_back">Portfolio</span></a>
+    </div>
+  </div>
+  <script src="/assets/js/project-page.js"></script>
+  <script src="/assets/js/site-shell.js?v=3.3" defer></script>
+</body>
+</html>

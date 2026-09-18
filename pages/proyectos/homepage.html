@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <meta name="theme-color" content="#1a1a2e">
+  <title>Homepage — ficha técnica</title>
+  <meta name="description" content="Panel gethomepage del VPS, accesible solo por WireGuard. Inventario de media, bots, DNS, monitoring y herramientas.">
+  <link rel="canonical" href="https://davito.es/proyectos/homepage">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="icon" href="/media/favicon.ico">
+  <link rel="stylesheet" href="/assets/css/styles.css?v=3.6">
+  <link rel="stylesheet" href="/assets/css/mobile-optimizations.css?v=3.1">
+  <link rel="stylesheet" href="/assets/fontawesome/css/all.min.css?v=6.5.1">
+  <link rel="stylesheet" href="/assets/css/proyectos.css?v=4">
+  <meta property="og:title" content="Homepage — ficha técnica">
+  <meta property="og:image" content="https://davito.es/media/dabot.png">
+</head>
+<body class="projects-page">
+  <div class="container projects-wrap pd-wrap" id="main-content">
+    <a href="/proyectos" class="back-home"><i class="fas fa-arrow-left"></i> <span data-i18n="pj_back">Volver a proyectos</span></a>
+    <header class="pd-hero">
+      <div class="pd-logo"><img src="/media/dabot.png" alt="Homepage"></div>
+      <div>
+        <p class="projects-kicker">Homelab · solo VPN</p>
+        <h1>Homepage</h1>
+        <p class="bio-subtitle">Configuración de gethomepage para ver el VPS de un vistazo. El panel no es público: va por el túnel WireGuard.</p>
+        <div class="pd-meta">
+          <span class="pj-badge vpn">WireGuard</span>
+          <span class="pj-badge live">Docker</span>
+          <span class="pj-badge fork">YAML</span>
+        </div>
+        <div class="projects-hero-ctas" style="justify-content:flex-start;margin:0">
+          <a class="pj-cta primary" href="https://github.com/davito-03/homepage"><i class="fab fa-github"></i> GitHub</a>
+        </div>
+      </div>
+    </header>
+    <section class="pd-section">
+      <h2>Qué demuestra</h2>
+      <div data-lang-block="es">
+        <p>No reescribí Homepage: es la imagen oficial. Lo mío es el inventario y la frontera <strong>público / VPN</strong>. Jellyfin tiene cara en internet; Nextcloud, AdGuard, Uptime Kuma, SearXNG, Stirling, Syncthing y el panel de Dabot interno no.</p>
+      </div>
+      <div data-lang-block="en" hidden>
+        <p>I did not rewrite Homepage — official image. The work is the inventory and the public/VPN split. Jellyfin is on the internet; the rest of the UIs are not.</p>
+      </div>
+    </section>
+    <section class="pd-section">
+      <h2>Grupos en services.yaml</h2>
+      <div class="mod-grid">
+        <article class="mod-card"><h3>Media</h3><p>Jellyfin (público) y atajos al catálogo en Drive.</p></article>
+        <article class="mod-card"><h3>Nube</h3><p>Nextcloud, gestor de contraseñas, portal davito.es.</p></article>
+        <article class="mod-card"><h3>Bots</h3><p>API del trading bot, panel de Dabot, Omnisette.</p></article>
+        <article class="mod-card"><h3>Red y monitor</h3><p>Uptime Kuma, AdGuard, Beszel, SearXNG, CrowdSec, ntfy.</p></article>
+        <article class="mod-card"><h3>Herramientas</h3><p>Stirling PDF, IT-Tools, Syncthing.</p></article>
+      </div>
+      <div data-lang-block="es">
+        <p>El repo sustituye el host del túnel por <code>VPN_HOST</code>. No hay tokens de widgets ni IPs internas.</p>
+      </div>
+      <div data-lang-block="en" hidden>
+        <p>The public repo uses <code>VPN_HOST</code> instead of the tunnel address. No widget tokens, no internal IPs.</p>
+      </div>
+    </section>
+    <div class="pd-next">
+      <a class="pj-cta ghost" href="/proyectos/davogram"><i class="fab fa-telegram"></i> DavoGram</a>
+      <a class="pj-cta ghost" href="/proyectos/web"><i class="fas fa-globe"></i> davito.es</a>
+      <a class="pj-cta primary" href="/proyectos"><i class="fas fa-layer-group"></i> Portfolio</a>
+    </div>
+  </div>
+  <script src="/assets/js/project-page.js"></script>
+  <script src="/assets/js/site-shell.js?v=3.3" defer></script>
+</body>
+</html>

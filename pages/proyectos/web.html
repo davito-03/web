@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <meta name="theme-color" content="#1a1a2e">
+  <title>davito.es — ficha técnica</title>
+  <meta name="description" content="Cómo está hecha davito.es: HTML/CSS/JS a mano, PHP mínimo, nginx, laboratorio de juegos y este portfolio.">
+  <link rel="canonical" href="https://davito.es/proyectos/web">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="icon" href="/media/favicon.ico">
+  <link rel="stylesheet" href="/assets/css/styles.css?v=3.6">
+  <link rel="stylesheet" href="/assets/css/mobile-optimizations.css?v=3.1">
+  <link rel="stylesheet" href="/assets/fontawesome/css/all.min.css?v=6.5.1">
+  <link rel="stylesheet" href="/assets/css/proyectos.css?v=4">
+  <meta property="og:title" content="davito.es — ficha técnica">
+  <meta property="og:image" content="https://davito.es/media/dabot.png">
+</head>
+<body class="projects-page">
+  <div class="container projects-wrap pd-wrap" id="main-content">
+    <a href="/proyectos" class="back-home"><i class="fas fa-arrow-left"></i> <span data-i18n="pj_back">Volver a proyectos</span></a>
+    <header class="pd-hero">
+      <div class="pd-logo"><img src="/media/dabot.png" alt="davito.es"></div>
+      <div>
+        <p class="projects-kicker">Hub personal · esta web</p>
+        <h1>davito.es</h1>
+        <p class="bio-subtitle">Front a mano, un poco de PHP, nginx en un VPS que mantengo yo. El repo es el código; la galería pesada se queda en el servidor.</p>
+        <div class="pd-meta">
+          <span class="pj-badge live">HTML/CSS/JS</span>
+          <span class="pj-badge live">PHP</span>
+          <span class="pj-badge vpn">nginx</span>
+          <span class="pj-badge fork">i18n ES/EN</span>
+        </div>
+        <div class="projects-hero-ctas" style="justify-content:flex-start;margin:0">
+          <a class="pj-cta primary" href="https://davito.es/"><i class="fas fa-house"></i> Inicio</a>
+          <a class="pj-cta ghost" href="https://github.com/davito-03/web"><i class="fab fa-github"></i> GitHub</a>
+        </div>
+      </div>
+    </header>
+    <nav class="pd-toc">
+      <a href="#idea">Idea</a>
+      <a href="#arch">Arquitectura</a>
+      <a href="#mods">Piezas</a>
+      <a href="#ops">Operación</a>
+    </nav>
+    <section class="pd-section" id="idea">
+      <h2>Qué es</h2>
+      <div data-lang-block="es">
+        <p>Un hub con cara propia: temas (oscuro, cyberpunk, matrix, claro), langosta, galería, blog, chat, convertidor de imágenes, gasolineras, libro de visitas y este portfolio. No es un tema de WordPress ni un create-react-app vacío.</p>
+      </div>
+      <div data-lang-block="en" hidden>
+        <p>A personal hub with its own look: themes, gallery, blog, chat, image converter, fuel prices, guestbook and this portfolio. Not a WordPress theme and not an empty CRA.</p>
+      </div>
+    </section>
+    <section class="pd-section" id="arch">
+      <h2>Cómo está montado</h2>
+      <div class="arch-flow">
+        <div class="arch-node">pages/ + games/<small>HTML</small></div>
+        <span class="arch-sep">→</span>
+        <div class="arch-node">nginx<small>try_files</small></div>
+        <span class="arch-sep">→</span>
+        <div class="arch-node">api/*.php<small>PHP-FPM</small></div>
+        <span class="arch-sep">→</span>
+        <div class="arch-node">data/<small>fuera de git</small></div>
+      </div>
+      <div data-lang-block="es">
+        <p>nginx hace <code>try_files $uri $uri.html $uri/ /pages/$uri.html</code>, así <code>/proyectos/dabot</code> cae en <span class="file-chip">pages/proyectos/dabot.html</span>. El chrome (starfield, tema, idioma, mascota) lo inyecta <span class="file-chip">site-shell.js</span>.</p>
+      </div>
+      <div data-lang-block="en" hidden>
+        <p>nginx <code>try_files</code> maps <code>/proyectos/dabot</code> to <span class="file-chip">pages/proyectos/dabot.html</span>. Shared chrome (starfield, theme, language, mascot) comes from <span class="file-chip">site-shell.js</span>.</p>
+      </div>
+    </section>
+    <section class="pd-section" id="mods">
+      <h2>Piezas</h2>
+      <div class="mod-grid">
+        <article class="mod-card"><h3>Portfolio</h3><p>Índice en <code>/proyectos</code> y una ficha por repo. Esta página es una de ellas.</p></article>
+        <article class="mod-card"><h3>Laboratorio</h3><p>14 juegos en canvas. Ranking en <span class="file-chip">api/game_tracker.php</span>.</p></article>
+        <article class="mod-card"><h3>Galería</h3><p><span class="file-chip">api/gallery.php</span> y categorías. Los vídeos no van a GitHub.</p></article>
+        <article class="mod-card"><h3>Gasolineras</h3><p>Proxy same-origin a MITECO para no pelear con CORS.</p></article>
+        <article class="mod-card"><h3>Chat / visitas</h3><p>Libro de visitas y chat global con login sencillo.</p></article>
+        <article class="mod-card"><h3>Temas + i18n</h3><p>ES/EN, cuatro temas, FAB de atajos, PWA light (<span class="file-chip">sw.js</span>).</p></article>
+      </div>
+    </section>
+    <section class="pd-section" id="ops">
+      <h2>Operación</h2>
+      <div data-lang-block="es">
+        <p><span class="file-chip">data/token.txt</span> y <span class="file-chip">data/config.ini</span> están denegados en nginx y fuera del repo. El webhook de tuits lee el token del INI, no del código. Firebase web config es pública a propósito (restringida por referrer).</p>
+      </div>
+      <div data-lang-block="en" hidden>
+        <p><span class="file-chip">data/token.txt</span> and <span class="file-chip">data/config.ini</span> are denied by nginx and absent from git. Tweet webhook reads the INI, not source. Firebase web config is public by design (HTTP-referrer restricted).</p>
+      </div>
+    </section>
+    <div class="pd-next">
+      <a class="pj-cta ghost" href="/proyectos/laboratorio"><i class="fas fa-gamepad"></i> Laboratorio</a>
+      <a class="pj-cta ghost" href="/proyectos/dabot"><i class="fas fa-robot"></i> Dabot</a>
+      <a class="pj-cta primary" href="/proyectos"><i class="fas fa-layer-group"></i> Portfolio</a>
+    </div>
+  </div>
+  <script src="/assets/js/project-page.js"></script>
+  <script src="/assets/js/site-shell.js?v=3.3" defer></script>
+</body>
+</html>

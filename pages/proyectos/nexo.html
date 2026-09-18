@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <meta name="theme-color" content="#1a1a2e">
+  <title>Nexo Bot — ficha técnica</title>
+  <meta name="description" content="Bot de Discord a medida para Nexo: TypeScript, discord.js, VoiceMaster, tickets con IA, economía nexocoin y backups ZIP.">
+  <link rel="canonical" href="https://davito.es/proyectos/nexo">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="icon" href="/media/favicon.ico">
+  <link rel="stylesheet" href="/assets/css/styles.css?v=3.6">
+  <link rel="stylesheet" href="/assets/css/mobile-optimizations.css?v=3.1">
+  <link rel="stylesheet" href="/assets/fontawesome/css/all.min.css?v=6.5.1">
+  <link rel="stylesheet" href="/assets/css/proyectos.css?v=4">
+  <meta property="og:title" content="Nexo Bot — ficha técnica">
+  <meta property="og:image" content="https://davito.es/media/nexo.png">
+  <meta property="og:url" content="https://davito.es/proyectos/nexo">
+</head>
+<body class="projects-page">
+  <div class="container projects-wrap pd-wrap" id="main-content">
+    <a href="/proyectos" class="back-home"><i class="fas fa-arrow-left"></i> <span data-i18n="pj_back">Volver a proyectos</span></a>
+
+    <header class="pd-hero">
+      <div class="pd-logo"><img src="/media/nexo.png" alt="Nexo Bot"></div>
+      <div>
+        <p class="projects-kicker" data-i18n="pd_nexo_kicker">Bot a medida · un solo servidor</p>
+        <h1>Nexo Bot</h1>
+        <p class="bio-subtitle" data-i18n="pd_nexo_sub">TypeScript y discord.js v14 pensado para Nexo, no para invitarlo a cualquier guild. Si entra en otro servidor, se sale.</p>
+        <div class="pd-meta">
+          <span class="pj-badge live">TypeScript</span>
+          <span class="pj-badge live">discord.js 14</span>
+          <span class="pj-badge vpn">better-sqlite3</span>
+          <span class="pj-badge fork">single-tenant</span>
+        </div>
+        <div class="projects-hero-ctas" style="justify-content:flex-start;margin:0">
+          <a class="pj-cta primary" href="https://discord.gg/P2hXkTV3Jb"><i class="fab fa-discord"></i> Servidor Nexo</a>
+          <a class="pj-cta ghost" href="https://github.com/davito-03/nexo-bot"><i class="fab fa-github"></i> GitHub</a>
+        </div>
+      </div>
+    </header>
+
+    <nav class="pd-toc">
+      <a href="#idea">Idea</a>
+      <a href="#arch">Arquitectura</a>
+      <a href="#mods">Módulos</a>
+      <a href="#ai">IA Neko</a>
+      <a href="#code">Código</a>
+      <a href="#ops">Operación</a>
+    </nav>
+
+    <section class="pd-section" id="idea">
+      <h2>Qué es</h2>
+      <div data-lang-block="es">
+        <p>Nexo es un servidor de Discord (voz activa, social, gaming, anime, gatos). El bot cubre lo que un bot genérico no cubre bien: VoiceMaster, economía <em>nexocoin</em>, misiones semanales, RPG, mascotas, counting, bumps de DISBOARD y tickets con un asistente (Neko) que recuerda el hilo.</p>
+        <p>La restricción a un guild no es un “todo”. Es un producto cerrado: slash commands se despliegan solo ahí (<span class="file-chip">src/index.ts</span>) y <code>GuildCreate</code> en otro ID llama a <code>guild.leave()</code>.</p>
+      </div>
+      <div data-lang-block="en" hidden>
+        <p>Custom bot for the Nexo Discord: VoiceMaster, nexocoin economy, weekly missions, RPG, pets, counting, DISBOARD bumps, and tickets with a support AI (Neko) that remembers the thread.</p>
+        <p>Single-tenant on purpose: slash commands deploy only to that guild; joining any other server triggers <code>guild.leave()</code>.</p>
+      </div>
+    </section>
+
+    <section class="pd-section" id="arch">
+      <h2>Cómo está montado</h2>
+      <div class="arch-flow">
+        <div class="arch-node">src/index.ts<small>boot</small></div>
+        <span class="arch-sep">→</span>
+        <div class="arch-node">handlers<small>commands + events</small></div>
+        <span class="arch-sep">→</span>
+        <div class="arch-node">modules/*<small>motores</small></div>
+        <span class="arch-sep">↔</span>
+        <div class="arch-node">SQLite WAL<small>schema.ts</small></div>
+        <span class="arch-sep">→</span>
+        <div class="arch-node">dist/<small>node 22</small></div>
+      </div>
+      <div data-lang-block="es">
+        <p>Un contenedor. TypeScript se compila a <span class="file-chip">dist/</span> (Dockerfile multi-stage). Los slash viven en <span class="file-chip">src/commands/</span> agrupados por área; la lógica gorda está en <span class="file-chip">src/modules/</span>. Los events de discord.js son finos: delegan en los motores (XP, automod, VoiceMaster, invites…).</p>
+        <p>Al apagar (SIGTERM) se reembolsan mesas de casino abiertas (<span class="file-chip">economy/tables.ts</span>) y se destruye el cliente con gracia de 25 s en Compose.</p>
+      </div>
+      <div data-lang-block="en" hidden>
+        <p>One container. TypeScript compiles to <span class="file-chip">dist/</span>. Slash commands live under <span class="file-chip">src/commands/</span>; heavy logic is in <span class="file-chip">src/modules/</span>. Discord events stay thin and call those engines.</p>
+        <p>On SIGTERM, open casino tables are refunded before the client is destroyed.</p>
+      </div>
+    </section>
+
+    <section class="pd-section" id="mods">
+      <h2>Módulos</h2>
+      <div class="mod-grid">
+        <article class="mod-card">
+          <h3>Moderación</h3>
+          <p><span class="file-chip">moderation/actions.ts</span> casos warn/kick/ban/timeout/softban, DM con botón de apelación. Masivos hasta 15 objetivos.</p>
+        </article>
+        <article class="mod-card">
+          <h3>AutoMod</h3>
+          <p>Spam por ventana, invites, enlaces, caps, bad words. Hits en tabla <code>automod_hits</code>.</p>
+        </article>
+        <article class="mod-card">
+          <h3>VoiceMaster</h3>
+          <p>Hub ➕ crear sala. Panel: lock, hide, rename, límite, claim, transfer, kick. Tabla <code>temp_voices</code>.</p>
+        </article>
+        <article class="mod-card">
+          <h3>Niveles</h3>
+          <p>XP chat + minutos en VC (×1.5 boosters), role rewards, tarjeta Canvas al subir.</p>
+        </article>
+        <article class="mod-card">
+          <h3>Tickets</h3>
+          <p>Categorías, claim, cierre, transcripciones HTML. Neko responde hasta que staff reclama el ticket.</p>
+        </article>
+        <article class="mod-card">
+          <h3>Backup</h3>
+          <p>ZIP con roles, canales, emojis, bans, casos, niveles, tickets y mensajes. Restore con mapeo de IDs.</p>
+        </article>
+        <article class="mod-card">
+          <h3>Economía</h3>
+          <p>nexocoin: work/daily/crime, tienda, P2P, subastas, trading, minería, propiedades, préstamos, impuestos semanales.</p>
+        </article>
+        <article class="mod-card">
+          <h3>Misiones / RPG / pets</h3>
+          <p>Tablón semanal de 7 misiones. RPG con clanes y mazmorras. Mascotas con hambre/felicidad y expediciones.</p>
+        </article>
+        <article class="mod-card">
+          <h3>Comunidad</h3>
+          <p>Cumpleaños (zona Madrid), matrimonios, encuestas, frase del día + gatito, counting, bumps DISBOARD, invites.</p>
+        </article>
+        <article class="mod-card">
+          <h3>Logs</h3>
+          <p>Deletes, edits, voz, audit log, canales y roles, enrutados a canales por tipo.</p>
+        </article>
+        <article class="mod-card">
+          <h3>Welcome / boosts</h3>
+          <p>Tarjetas Canvas (welcome, level-up, boost). Tracker de Server Boosts para sorteos ponderados.</p>
+        </article>
+        <article class="mod-card">
+          <h3>Giveaways</h3>
+          <p>Requisitos de rol, nivel o booster. Entradas extra por boosts e invites.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="pd-section" id="ai">
+      <h2>IA de soporte (Neko)</h2>
+      <div data-lang-block="es">
+        <p><span class="file-chip">modules/ai/client.ts</span> arma una cola de intentos y se queda con el primero que responde. Si un proveedor da 429, lo enfría (cooldown) y sigue. Orden:</p>
+        <p><strong>local (Ollama)</strong> → Groq → Gemini (varias claves) → OpenRouter → Cohere → Cloudflare Workers AI → OpenAI.</p>
+        <p>La memoria del ticket (<span class="file-chip">ai/memory.ts</span>) guarda un resumen y hechos en SQLite para no reenviar todo el hilo. El prompt de normas se carga con <code>/ticket ia prompt:</code>.</p>
+      </div>
+      <div data-lang-block="en" hidden>
+        <p><span class="file-chip">modules/ai/client.ts</span> builds a failover queue; 429 cools that provider. Order: local Ollama → Groq → Gemini (multi-key) → OpenRouter → Cohere → Cloudflare → OpenAI.</p>
+        <p>Ticket memory stores a summary plus facts so the whole thread is not resent. Staff can set the policy prompt with <code>/ticket ia prompt:</code>.</p>
+      </div>
+    </section>
+
+    <section class="pd-section" id="code">
+      <h2>Sitios del código que importan</h2>
+      <div class="callout" data-lang-block="es">
+        <p><strong>Eventos delgados, motores gordos.</strong> <span class="file-chip">messageCreate.ts</span> no es un switch de mil líneas: llama a automod, XP, counting, bump y chatbot. Eso se deja testear y no se mezcla con los slash.</p>
+      </div>
+      <div class="callout" data-lang-block="en" hidden>
+        <p><strong>Thin events, fat engines.</strong> <span class="file-chip">messageCreate.ts</span> delegates to automod, XP, counting, bump and chatbot instead of a thousand-line switch.</p>
+      </div>
+      <div class="callout" data-lang-block="es">
+        <p><strong>Schema explícito.</strong> <span class="file-chip">database/schema.ts</span> declara decenas de tablas (casos, tickets, economía, RPG, pets, misiones, counting…). WAL y foreign keys. No es un JSON suelto.</p>
+      </div>
+      <div class="callout" data-lang-block="en" hidden>
+        <p><strong>Explicit schema.</strong> <span class="file-chip">database/schema.ts</span> is a real relational model (cases, tickets, economy, RPG, missions…) with WAL and foreign keys.</p>
+      </div>
+      <div class="callout" data-lang-block="es">
+        <p><strong>Canvas de marca.</strong> Welcome, level-up y boost usan las PNG de <span class="file-chip">assets/images/</span> y fuentes Inter. El logo de esta ficha es <span class="file-chip">media/nexo.png</span>.</p>
+      </div>
+      <div class="callout" data-lang-block="en" hidden>
+        <p><strong>Branded canvas cards</strong> for welcome, level-up and boosts. This page uses <span class="file-chip">media/nexo.png</span>.</p>
+      </div>
+    </section>
+
+    <section class="pd-section" id="ops">
+      <h2>Operación</h2>
+      <div data-lang-block="es">
+        <p>Un compose: <code>docker compose up -d --build</code>. Datos en <code>./data</code>, backups en <code>./backups</code>. Token y claves de IA en <code>.env</code> (Zod al cargar). El repo público no lleva la base ni los ZIP de restore.</p>
+      </div>
+      <div data-lang-block="en" hidden>
+        <p>Single compose service. Data and backups on host volumes. Token and AI keys in <code>.env</code> (Zod). Public repo has neither the database nor restore ZIPs.</p>
+      </div>
+    </section>
+
+    <div class="pd-next">
+      <a class="pj-cta ghost" href="/proyectos/dabot"><i class="fas fa-robot"></i> Dabot</a>
+      <a class="pj-cta ghost" href="/proyectos/davogram"><i class="fab fa-telegram"></i> DavoGram</a>
+      <a class="pj-cta primary" href="/proyectos"><i class="fas fa-layer-group"></i> Portfolio</a>
+    </div>
+  </div>
+  <script src="/assets/js/project-page.js"></script>
+  <script src="/assets/js/site-shell.js?v=3.3" defer></script>
+</body>
+</html>
