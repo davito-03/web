@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <meta name="theme-color" content="#1a1a2e">
+    <title>Global Chat | davito_03</title>
+    <link rel="stylesheet" href="/assets/css/styles.css">
+    <link rel="stylesheet" href="/assets/css/mobile-optimizations.css">
+    <link rel="stylesheet" href="/assets/fontawesome/css/all.min.css?v=6.5.1">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Fira+Code:wght@400;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="/assets/css/terminal.css">
+    <script src="/assets/js/themes.js" defer></script>
+    <style>
+        /* Chat Specific Styles - Glassmorphism Update */
+        body {
+            overflow: hidden;
+            /* Prevent double scrollbars */
+        }
+
+        .chat-container {
+            max-width: 1000px;
+            margin: 80px auto 20px;
+            height: calc(100vh - 140px);
+            display: flex;
+            flex-direction: column;
+            background: rgba(255, 255, 255, 0.05);
+            /* Glassmorphism background */
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            overflow: hidden;
+            position: relative;
+            z-index: 10;
+        }
+
+        .chat-header {
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.2);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chat-title {
+            font-family: 'Inter', sans-serif;
+            color: var(--color-primary, #00BFFF);
+            font-size: 16px;
+            text-shadow: 0 0 10px rgba(0, 191, 255, 0.5);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            font-family: 'Fira Code', monospace;
+            font-size: 12px;
+        }
+
+        .login-btn {
+            background: transparent;
+            border: 1px solid var(--color-primary, #00BFFF);
+            color: var(--color-primary, #00BFFF);
+            padding: 8px 16px;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            font-size: 10px;
+            transition: all 0.3s;
+            border-radius: 20px;
+        }
+
+        .login-btn:hover {
+            background: var(--color-primary, #00BFFF);
+            color: white;
+            box-shadow: 0 0 15px rgba(0, 191, 255, 0.4);
+        }
+
+        .user-info {
+            display: none;
+            /* Hidden by default */
+            align-items: center;
+            gap: 15px;
+            color: #fff;
+        }
+
+        #user-display-name {
+            color: var(--color-accent, #FFD700);
+            font-weight: bold;
+        }
+
+        .logout-btn {
+            color: #ff4444;
+            cursor: pointer;
+            font-size: 16px;
+            transition: transform 0.2s;
+        }
+
+        .logout-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            scroll-behavior: smooth;
+        }
+
+        .message {
+            display: flex;
+            flex-direction: column;
+            max-width: 80%;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .message.own {
+            align-self: flex-end;
+            align-items: flex-end;
+        }
+
+        .message-header {
+            font-family: 'Fira Code', monospace;
+            font-size: 10px;
+            margin-bottom: 4px;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .message-content {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 12px 18px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #fff;
+            font-family: 'Fira Code', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            word-wrap: break-word;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .message.own .message-content {
+            background: rgba(0, 191, 255, 0.2);
+            /* Primary color low opacity */
+            border-color: rgba(0, 191, 255, 0.4);
+            text-align: right;
+            border-bottom-right-radius: 2px;
+        }
+
+        .message:not(.own) .message-content {
+            border-bottom-left-radius: 2px;
+        }
+
+        .message.system .message-content {
+            background: rgba(255, 215, 0, 0.15);
+            /* Accent color low opacity */
+            border-color: rgba(255, 215, 0, 0.4);
+            text-align: center;
+            font-style: italic;
+            width: 100%;
+        }
+
+        .message.system {
+            align-self: center;
+            max-width: 90%;
+        }
+
+        .chat-input-area {
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        #chat-form {
+            display: none;
+            /* Hidden until logged in */
+            width: 100%;
+            display: flex;
+            gap: 10px;
+        }
+
+        #login-prompt {
+            width: 100%;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.8);
+            font-family: 'Fira Code', monospace;
+            padding: 10px;
+        }
+
+        #login-btn-prompt {
+            text-decoration: underline;
+            cursor: pointer;
+            color: var(--color-primary, #00BFFF);
+        }
+
+        #message-input {
+            flex: 1;
+            padding: 12px 15px;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            font-family: 'Fira Code', monospace;
+            border-radius: 25px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        #message-input:focus {
+            border-color: var(--color-primary, #00BFFF);
+        }
+
+        #send-btn {
+            background: var(--color-primary, #00BFFF);
+            color: white;
+            border: none;
+            padding: 0 25px;
+            height: 42px;
+            font-family: 'Inter', sans-serif;
+            font-size: 12px;
+            cursor: pointer;
+            border-radius: 25px;
+            transition: all 0.2s;
+            box-shadow: 0 4px 15px rgba(0, 191, 255, 0.3);
+        }
+
+        #send-btn:hover {
+            background: #009ACD;
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(0, 191, 255, 0.5);
+        }
+
+        #send-btn:disabled {
+            background: #555;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Auth Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(8px);
+        }
+
+        .modal-content {
+            background: rgba(25, 25, 35, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 40px;
+            width: 90%;
+            max-width: 400px;
+            border-radius: 20px;
+            box-shadow: 0 0 40px rgba(0, 191, 255, 0.2);
+            position: relative;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 24px;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .close-modal:hover {
+            color: white;
+        }
+
+        .auth-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .auth-form h2 {
+            color: var(--color-primary, #00BFFF);
+            font-family: 'Inter', sans-serif;
+            font-size: 16px;
+            text-align: center;
+            margin-bottom: 20px;
+            text-shadow: 0 0 10px rgba(0, 191, 255, 0.3);
+        }
+
+        .auth-input {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 12px 15px;
+            color: #fff;
+            font-family: 'Fira Code', monospace;
+            border-radius: 10px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .auth-input:focus {
+            border-color: var(--color-primary, #00BFFF);
+        }
+
+        .auth-submit {
+            background: var(--color-primary, #00BFFF);
+            color: white;
+            border: none;
+            padding: 14px;
+            font-family: 'Inter', sans-serif;
+            font-size: 12px;
+            cursor: pointer;
+            margin-top: 10px;
+            border-radius: 10px;
+            transition: all 0.2s;
+        }
+
+        .auth-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 191, 255, 0.3);
+        }
+
+        .auth-toggle {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 12px;
+            margin-top: 15px;
+            cursor: pointer;
+            font-family: 'Fira Code', monospace;
+            transition: color 0.3s;
+        }
+
+        .auth-toggle:hover {
+            color: var(--color-primary, #00BFFF);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Scrollbar */
+        .chat-messages::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .chat-messages::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.1);
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.4);
+        }
+
+        @media (max-width: 768px) {
+            .chat-container {
+                margin: 10px 8px;
+                height: calc(100vh - 20px);
+                border-radius: 12px;
+            }
+
+            .chat-header {
+                padding: 14px;
+            }
+
+            .chat-title {
+                font-size: 13px;
+                gap: 8px;
+            }
+
+            .user-controls {
+                gap: 10px;
+            }
+
+            .login-btn {
+                padding: 6px 12px;
+                font-size: 9px;
+            }
+
+            .chat-messages {
+                padding: 14px;
+                gap: 12px;
+            }
+
+            .message {
+                max-width: 88%;
+            }
+
+            .message-header {
+                font-size: 9px;
+            }
+
+            .message-content {
+                padding: 10px 14px;
+                font-size: 13px;
+                border-radius: 10px;
+                line-height: 1.45;
+            }
+
+            .chat-input-area {
+                padding: 14px;
+                gap: 8px;
+            }
+
+            #message-input {
+                padding: 10px 14px;
+                font-size: 13px;
+                border-radius: 22px;
+            }
+
+            #send-btn {
+                padding: 0 18px;
+                height: 38px;
+                font-size: 11px;
+                border-radius: 22px;
+            }
+
+            #login-prompt {
+                font-size: 12px;
+                padding: 8px;
+            }
+
+            .modal-content {
+                padding: 28px 20px;
+                width: 92%;
+                max-width: 360px;
+                border-radius: 16px;
+            }
+
+            .auth-form h2 {
+                font-size: 14px;
+                margin-bottom: 16px;
+            }
+
+            .auth-input {
+                padding: 10px 14px;
+                font-size: 13px;
+                border-radius: 8px;
+            }
+
+            .auth-submit {
+                padding: 12px;
+                font-size: 11px;
+                border-radius: 8px;
+            }
+
+            .auth-toggle {
+                font-size: 11px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .chat-container {
+                margin: 6px;
+                height: calc(100vh - 12px);
+                border-radius: 10px;
+            }
+
+            .chat-title {
+                font-size: 11px;
+            }
+
+            .message {
+                max-width: 92%;
+            }
+
+            .message-content {
+                font-size: 12px;
+                padding: 8px 12px;
+            }
+
+            #message-input {
+                font-size: 12px;
+            }
+
+            #send-btn {
+                padding: 0 14px;
+                height: 36px;
+                font-size: 10px;
+            }
+        }
+    </style>
+</head>
+
+<body data-i18n-title="chat_doc_title">
+    
+    <div class="chat-container" id="main-content">
+        <div class="chat-header">
+            <div class="chat-title">
+                <i class="fas fa-comment-dots"></i> <span data-i18n="chat_title">GLOBAL_CHAT_V1.0</span>
+            </div>
+            <div class="user-controls">
+                <button id="login-btn-header" class="login-btn" data-i18n="chat_login">LOGIN</button>
+                <div id="user-info" class="user-info">
+                    <span id="user-display-name" data-i18n="chat_user">Usuario</span>
+                    <i id="logout-btn" class="fas fa-sign-out-alt logout-btn" data-i18n-aria="chat_logout" title="Cerrar Sesión"></i>
+                </div>
+            </div>
+        </div>
+
+        <div id="chat-messages" class="chat-messages">
+            <!-- Messages will be loaded here -->
+            <div class="message system">
+                <div class="message-content" data-i18n="chat_connecting">Conectando al servidor seguro...</div>
+            </div>
+        </div>
+
+        <div class="chat-input-area">
+            <div id="login-prompt">
+                <span data-i18n="chat_need">Debes</span> <span id="login-btn-prompt" data-i18n="chat_need_link">iniciar sesión</span> <span data-i18n="chat_need_end">para chatear.</span>
+            </div>
+
+            <form id="chat-form" style="display: none;">
+                <input type="text" id="message-input" placeholder="Escribe un mensaje..." autocomplete="off" data-i18n-placeholder="chat_ph">
+                <button type="submit" id="send-btn" data-i18n="chat_send">ENVIAR</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Auth Modal -->
+    <div id="auth-modal" class="modal">
+        <div class="modal-content">
+            <span id="close-auth-modal" class="close-modal">&times;</span>
+            <form id="auth-form" class="auth-form">
+                <h2>ACCESO REQUERIDO</h2>
+
+                <div id="register-fields" style="display: none;">
+                    <input type="text" id="auth-username" class="auth-input" placeholder="Nombre de Usuario">
+                </div>
+
+                <input type="email" id="auth-email" class="auth-input" placeholder="Email" required>
+                <input type="password" id="auth-password" class="auth-input" placeholder="Contraseña" required>
+
+                <button type="submit" id="auth-submit-btn" class="auth-submit">LOGIN</button>
+
+                <div id="toggle-auth-mode" class="auth-toggle">
+                    ¿No tienes cuenta? Regístrate
+                </div>
+            </form>
+        </div>
+    </div>
+
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.9/purify.min.js"></script>
+    <script type="module" src="/assets/js/secrets.js"></script>
+    <script type="module" src="/assets/js/pages/chat.js"></script>
+  <script src="/assets/js/site-shell.js?v=3.2" defer></script>
+</body>
+
+</html>
+

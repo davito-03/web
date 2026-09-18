@@ -1,0 +1,188 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0a0a0a">
+    <meta name="description" content="Juego Breakout cl�sico con power-ups, niveles y leaderboard.">
+    <title>Breakout - davito_03</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/assets/fontawesome/css/all.min.css?v=6.5.1">
+    <link rel="stylesheet" href="/assets/css/styles.css">
+    <link rel="stylesheet" href="/assets/css/mobile-optimizations.css">
+    <link rel="stylesheet" href="/assets/css/games.css">
+    <link rel="stylesheet" href="/assets/css/terminal.css">
+
+    <style>
+        body {
+            touch-action: none;
+            overflow: hidden;
+            background: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .game-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #game-canvas {
+            background: #000;
+            border: 2px solid #00BFFF;
+            box-shadow: 0 0 25px rgba(0, 191, 255, 0.2);
+            cursor: none;
+        }
+
+        .hud {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 15px;
+            font-family: 'Inter', sans-serif;
+            color: #fff;
+            font-size: 14px;
+        }
+
+        .hud-item {
+            background: rgba(0, 191, 255, 0.1);
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: 1px solid rgba(0, 191, 255, 0.2);
+        }
+
+        .hud-item span {
+            color: #00BFFF;
+            font-weight: 700;
+        }
+
+        /* Modal */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .modal.active {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .modal-content {
+            background: #1a1a1a;
+            padding: 30px;
+            border-radius: 10px;
+            border: 2px solid #00BFFF;
+            text-align: center;
+            color: #fff;
+            font-family: 'Inter', sans-serif;
+            max-width: 350px;
+        }
+
+        .modal button {
+            background: #00BFFF;
+            color: #000;
+            border: none;
+            padding: 12px 24px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 16px;
+            border-radius: 5px;
+            margin-top: 10px;
+            font-weight: 600;
+        }
+
+        .modal button:hover {
+            background: #00A3E0;
+        }
+
+        .desktop-instructions {
+            position: fixed;
+            bottom: 15px;
+            width: 100%;
+            text-align: center;
+            color: #555;
+            font-size: 10px;
+            font-family: 'Inter', sans-serif;
+            pointer-events: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="game-wrapper">
+        <div style="position: fixed; top: 15px; left: 15px; z-index: 60;">
+            <a href="/pages/laboratorio" style="color: #fff; text-decoration: none; font-family: monospace;"><span data-i18n="game_back">Back</span></a>
+        </div>
+
+        <div class="hud">
+            <div class="hud-item"><span data-i18n="game_score">SCORE</span>: <span id="score">0</span></div>
+            <div class="hud-item">LIVES: <span id="lives">3</span></div>
+            <div class="hud-item">LVL: <span id="level-num">1</span></div>
+        </div>
+
+        <canvas id="game-canvas" width="600" height="400"></canvas>
+
+        <div class="desktop-instructions">
+            MOUSE / ARROWS: MOVE PADDLE | CLICK / SPACE: LAUNCH BALL
+        </div>
+    </div>
+
+    <!-- Start Screen -->
+    <div id="start-screen" class="modal active">
+        <div class="modal-content">
+            <h1 style="color: #00BFFF; margin-bottom: 10px;">BREAKOUT</h1>
+            <p style="margin-bottom: 20px; color: #aaa; font-size: 13px;">Rompe todos los ladrillos con la bola. Recoge power-ups para ventajas especiales.</p>
+
+            <div style="text-align: left; margin-bottom: 20px; font-size: 12px; line-height: 1.8; color: #ccc;">
+                <p><span style="color: #00FF00;">� W</span> Paleta m�s ancha</p>
+                <p><span style="color: #FF0000;">� ?</span> Vida extra</p>
+                <p><span style="color: #00BFFF;">� S</span> Bola m�s lenta</p>
+            </div>
+
+            <div style="text-align: left; margin-bottom: 20px; font-size: 12px; line-height: 1.6;">
+                <p><i class="fas fa-desktop"></i> Rat�n o flechas para mover</p>
+                <p><i class="fas fa-mobile-alt"></i> Toca y arrastra en pantalla</p>
+            </div>
+
+            <button id="start-btn" style="font-size: 18px; padding: 15px 30px;" data-i18n="game_start">START GAME</button>
+            <br><br>
+            <a href="/pages/laboratorio" style="color: #666; font-size: 10px; text-decoration: none;" data-i18n="game_exit">EXIT</a>
+        </div>
+    </div>
+
+    <!-- Game Over Modal -->
+    <div id="game-over-modal" class="modal">
+        <div class="modal-content">
+            <h2 id="result-text" style="color: #f00;" data-i18n="game_over">GAME OVER</h2>
+            <p>Score: <span id="final-score">0</span></p>
+            <button id="restart-btn">PLAY AGAIN</button>
+        </div>
+    </div>
+
+    <script src="/assets/js/leaderboard.js"></script>
+    <script type="module" src="/assets/js/games/breakout.js"></script>
+
+  <script src="/assets/js/site-shell.js?v=3.2" defer></script>
+</body>
+
+</html>
+
+

@@ -1,0 +1,170 @@
+/* Terminal Overlay - Quake Style */
+#terminal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 0;
+    /* Hidden by default */
+    background-color: rgba(10, 10, 15, 0.95);
+    color: #00ff00;
+    font-family: 'Courier New', monospace;
+    z-index: 9999;
+    overflow: hidden;
+    transition: height 0.3s ease-in-out;
+    box-shadow: 0 5px 20px rgba(0, 255, 0, 0.2);
+    border-bottom: 2px solid #00ff00;
+    display: flex;
+    flex-direction: column;
+}
+
+#terminal-overlay.open {
+    height: 50vh;
+    /* Covers half screen */
+}
+
+.terminal-header {
+    background: #003300;
+    padding: 5px 10px;
+    font-size: 12px;
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid #00ff00;
+    user-select: none;
+}
+
+.terminal-content {
+    flex: 1;
+    padding: 10px;
+    overflow-y: auto;
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.terminal-line {
+    margin-bottom: 5px;
+    word-wrap: break-word;
+}
+
+.terminal-line.error {
+    color: #ff3333;
+}
+
+.terminal-line.success {
+    color: #00ffff;
+}
+
+.terminal-line.system {
+    color: #ffff00;
+}
+
+.terminal-input-area {
+    display: flex;
+    padding: 10px;
+    background: rgba(0, 0, 0, 0.5);
+    align-items: center;
+}
+
+.terminal-prompt {
+    color: #00ff00;
+    margin-right: 10px;
+    font-weight: bold;
+}
+
+#terminal-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: #00ff00;
+    font-family: 'Courier New', monospace;
+    font-size: 14px;
+    outline: none;
+}
+
+/* Matrix Effect Canvas */
+#matrix-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    /* Behind everything but visible when active */
+    pointer-events: none;
+    display: none;
+}
+
+#matrix-canvas.active {
+    display: block;
+    z-index: 9998;
+    /* Just below terminal */
+}
+
+/* Glitch Effect Classes */
+.glitch-mode {
+    animation: glitch-anim 0.2s infinite;
+    filter: hue-rotate(90deg) contrast(1.2);
+}
+
+@keyframes glitch-anim {
+    0% {
+        transform: translate(0)
+    }
+
+    20% {
+        transform: translate(-2px, 2px)
+    }
+
+    40% {
+        transform: translate(-2px, -2px)
+    }
+
+    60% {
+        transform: translate(2px, 2px)
+    }
+
+    80% {
+        transform: translate(2px, -2px)
+    }
+
+    100% {
+        transform: translate(0)
+    }
+}
+
+/* God Mode (Konami) */
+.god-mode {
+    animation: rainbow-border 2s linear infinite;
+}
+
+@keyframes rainbow-border {
+    0% {
+        border-color: red;
+        box-shadow: 0 0 10px red;
+    }
+
+    20% {
+        border-color: orange;
+        box-shadow: 0 0 10px orange;
+    }
+
+    40% {
+        border-color: yellow;
+        box-shadow: 0 0 10px yellow;
+    }
+
+    60% {
+        border-color: green;
+        box-shadow: 0 0 10px green;
+    }
+
+    80% {
+        border-color: blue;
+        box-shadow: 0 0 10px blue;
+    }
+
+    100% {
+        border-color: violet;
+        box-shadow: 0 0 10px violet;
+    }
+}

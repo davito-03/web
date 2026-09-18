@@ -1,0 +1,14 @@
+data/token.txt
+data/config.ini
+media/memes/
+media/gatos/
+media/depresión/
+media/ego/
+media/personajes/
+media/gigachad/
+media/fondos de pantalla/
+*.mp4
+*.mov
+*.webm
+.env
+.DS_Store

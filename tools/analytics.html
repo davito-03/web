@@ -1,0 +1,67 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+<meta http-equiv="X-Frame-Options" content="DENY">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta name="theme-color" content="#1a1a2e">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Analytics - davito_03</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="/media/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/assets/css/styles.css">
+    <link rel="stylesheet" href="/assets/css/analytics.css">
+    <link rel="stylesheet" href="/assets/fontawesome/css/all.min.css?v=6.5.1">
+    <link rel="stylesheet" href="/assets/css/terminal.css">
+</head>
+
+<body class="analytics-page">
+    
+    <div class="analytics-container">
+        <header class="analytics-header">
+            <a href="/" style="text-decoration: none;">
+                <h1>📊 Analytics Dashboard</h1>
+            </a>
+            <p>Estadísticas en tiempo real de davito.es</p>
+        </header>
+
+        <!-- Overview Stats -->
+        <section id="analytics-overview"></section>
+
+        <!-- Main Dashboard Grid -->
+        <div class="dashboard-grid">
+            <!-- Charts Row -->
+            <div class="dashboard-row charts-row">
+                <div class="chart-card" id="daily-chart"></div>
+                <div class="chart-card" id="hourly-chart"></div>
+            </div>
+
+            <!-- Top Lists Row -->
+            <div class="dashboard-row lists-row">
+                <div class="chart-card" id="top-pages"></div>
+                <div class="chart-card" id="top-games"></div>
+                <div class="chart-card" id="top-achievements"></div>
+            </div>
+
+            <!-- Detailed Stats -->
+            <div class="dashboard-row full-width">
+                <div class="chart-card" id="game-stats"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="/assets/js/logger.js"></script>
+    <script type="module" src="/assets/js/analytics-tracker.js"></script>
+    <script src="/assets/js/analytics-dashboard.js"></script>
+    <script type="module" src="/assets/js/main.js"></script>
+    <script type="module" src="/assets/js/achievements.js"></script>
+        <script src="/assets/js/terminal.js"></script>
+    <script type="module" src="/assets/js/secrets.js"></script>
+</body>
+
+</html>
+

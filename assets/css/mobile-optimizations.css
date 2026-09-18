@@ -1,0 +1,1195 @@
+/* ================================================================
+   MOBILE OPTIMIZATIONS — Comprehensive Responsive Styles
+   Breakpoints: 768px (tablet), 480px (phone), 390px (small phone), 320px (tiny)
+   ================================================================ */
+
+/* ============ GLOBAL TOUCH & SELECTION ============ */
+@media (max-width: 768px) {
+
+  /* --- Prevent accidental text selection on interactive elements --- */
+  * {
+    -webkit-touch-callout: none;
+    -webkit-tap-highlight-color: rgba(255, 255, 255, 0.08);
+  }
+
+  input,
+  textarea,
+  [contenteditable],
+  .tweet-content,
+  .post-content,
+  .about-intro,
+  .quote-text,
+  .message-content {
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
+  }
+
+  /* ============ BODY & LAYOUT ============ */
+  body {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+
+  .container {
+    padding: 15px;
+    margin: 30px auto;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  /* ============ PROFILE / HERO ============ */
+  .profile-image-container {
+    width: 100px;
+    height: 100px;
+    margin-bottom: 16px;
+  }
+
+  .main-title {
+    font-size: 1.7rem;
+    padding: 0 10px;
+    line-height: 1.3;
+  }
+
+  .bio-subtitle {
+    font-size: 0.95rem;
+    padding: 0 15px;
+  }
+
+  /* ============ GLASS CONTAINER ============ */
+  .glass-container {
+    margin: 10px 12px;
+    width: calc(100% - 24px);
+    max-width: 100%;
+    padding: 28px 20px;
+    border-radius: 20px;
+    box-sizing: border-box;
+  }
+
+  /* ============ SOCIAL BUTTONS ============ */
+  #social-links {
+    gap: 14px;
+  }
+
+  .social-button {
+    height: 54px;
+    font-size: 0.95rem;
+    border-radius: 14px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .social-button .icon {
+    margin-left: 14px;
+    font-size: 1.3em;
+  }
+
+  .social-button .label {
+    font-size: 0.9em;
+    padding: 0 4px;
+  }
+
+  .social-button .action-icon {
+    margin-right: 14px;
+    font-size: 1.1em;
+  }
+
+  /* ============ THEME SELECTOR ============ */
+  #theme-selector {
+    top: 12px;
+    left: 12px;
+    padding: 8px 12px;
+    gap: 8px;
+    font-size: 12px;
+  }
+
+  /* ============ LANYARD ============ */
+  #lanyard-toggle {
+    padding: 6px 12px;
+    gap: 8px;
+  }
+
+  .lanyard-title-text {
+    font-size: 0.8em;
+  }
+
+  #lanyard-content {
+    max-width: 240px;
+  }
+
+  .lanyard-info-box {
+    padding: 12px;
+  }
+
+  #lanyard-name {
+    font-size: 0.95em;
+  }
+
+  #lanyard-activity {
+    font-size: 0.8em;
+  }
+
+  /* ============ CONTENT SECTIONS ============ */
+  .content-section {
+    margin: 24px auto;
+    padding: 0 14px;
+  }
+
+  .section-header {
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+
+  .section-header h2 {
+    font-size: 1.2rem;
+  }
+
+  .section-icon {
+    font-size: 1.2rem;
+  }
+
+  .glass-card {
+    padding: 18px;
+    border-radius: 14px;
+  }
+
+  /* ---- About Grid ---- */
+  .about-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .about-intro p {
+    font-size: 0.9rem;
+  }
+
+  .about-details {
+    gap: 8px;
+  }
+
+  .about-detail-item {
+    font-size: 0.8rem;
+    padding: 5px 10px;
+  }
+
+  /* ---- Discord Activity ---- */
+  .activity-tabs {
+    gap: 8px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding-bottom: 6px;
+  }
+
+  .activity-tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .activity-tab {
+    font-size: 0.8rem;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .activity-item {
+    padding: 10px;
+    gap: 10px;
+  }
+
+  .activity-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+  }
+
+  .activity-name {
+    font-size: 0.85rem;
+  }
+
+  .activity-state,
+  .activity-time {
+    font-size: 0.7rem;
+  }
+
+  /* ---- Quote ---- */
+  #daily-quote .quote-card {
+    padding: 30px 20px 24px;
+  }
+
+  .quote-text {
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+
+  .quote-deco-icon {
+    font-size: 2.4rem;
+    top: 10px;
+    left: 14px;
+  }
+
+  /* ---- Tweet Feed ---- */
+  .tweets-grid {
+    gap: 12px;
+  }
+
+  .tweet-card {
+    padding: 16px;
+  }
+
+  .tweet-header {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .tweet-author strong {
+    font-size: 0.9rem;
+  }
+
+  .tweet-handle {
+    font-size: 0.8rem;
+  }
+
+  .tweet-content {
+    font-size: 0.9rem;
+  }
+
+  .tweet-media img {
+    max-height: 280px;
+  }
+
+  .tweet-stats {
+    gap: 12px;
+    font-size: 0.75rem;
+  }
+
+  .tweet-empty {
+    padding: 30px 16px;
+  }
+
+  .tweet-follow-btn {
+    padding: 8px 20px;
+    font-size: 0.85rem;
+  }
+
+  /* ---- Projects ---- */
+  .projects-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .project-card {
+    padding: 14px;
+    gap: 12px;
+  }
+
+  .project-icon {
+    width: 42px;
+    height: 42px;
+    min-width: 42px;
+    border-radius: 12px;
+    font-size: 1.1rem;
+  }
+
+  .project-info h3 {
+    font-size: 0.95rem;
+  }
+
+  .project-info p {
+    font-size: 0.78rem;
+  }
+
+  .project-arrow {
+    opacity: 1;
+  }
+
+  /* ============ FLOATING BUTTONS ============ */
+  .floating-button-stack {
+    bottom: 14px;
+    left: 14px;
+    gap: 10px;
+  }
+
+  .floating-button {
+    width: 48px;
+    height: 48px;
+    font-size: 1.15em;
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  .fab-toggle {
+    display: flex;
+  }
+
+  .fab-menu {
+    display: none;
+  }
+
+  .floating-button-stack.is-open .fab-menu {
+    display: flex;
+  }
+
+  /* ============ GALLERY ============ */
+  .gallery-grid {
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px;
+    padding: 10px;
+  }
+
+  .category-card {
+    min-width: 140px;
+    padding: 12px 8px;
+  }
+
+  .category-preview {
+    gap: 4px;
+  }
+
+  .category-preview img {
+    width: 60px;
+    height: 60px;
+    min-width: 60px;
+    min-height: 60px;
+    object-fit: cover;
+  }
+
+  .category-title {
+    font-size: 0.9em;
+    line-height: 1.3;
+    margin-top: 8px;
+    word-break: break-word;
+    hyphens: auto;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-height: 2.6em;
+  }
+
+  .gallery-item {
+    max-width: 100%;
+  }
+
+  /* ============ GAMES ============ */
+  .game-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+    margin-top: 24px;
+  }
+
+  .game-card {
+    padding: 16px;
+    border-radius: 12px;
+  }
+
+  .game-card h2 {
+    font-size: 1.1em;
+    margin-bottom: 10px;
+  }
+
+  .game-header {
+    padding: 10px;
+    font-size: 0.8em;
+  }
+
+  .game-header .space-title {
+    font-size: 1.4em;
+    margin: 8px 0 14px;
+  }
+
+  .back-link {
+    font-size: 0.85em;
+    padding: 8px 12px;
+  }
+
+  .game-container {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    padding: 10px;
+    box-sizing: border-box;
+    overflow: hidden;
+  }
+
+  canvas {
+    max-width: 100%;
+    max-height: 70vh;
+    touch-action: none;
+  }
+
+  .control-button,
+  .control-button-tetris {
+    min-height: 48px;
+    min-width: 48px;
+    font-size: 1.2em;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: rgba(255, 255, 255, 0.2);
+  }
+
+  .social-button:active,
+  .control-button:active,
+  .control-button-tetris:active {
+    transform: scale(0.95);
+    transition: transform 0.1s ease;
+  }
+
+  /* ---- Buscaminas ---- */
+  .buscaminas-container {
+    margin: 10px;
+    padding: 14px;
+  }
+
+  .game-controls {
+    gap: 8px;
+  }
+
+  .game-controls select,
+  .game-controls button {
+    padding: 8px;
+    font-size: 0.85em;
+  }
+
+  .game-info {
+    font-size: 1em;
+    padding: 8px;
+  }
+
+  .cell {
+    width: 26px;
+    height: 26px;
+    font-size: 13px;
+  }
+
+  /* ============ BLOG ============ */
+  .post-list-container {
+    padding: 8px 14px;
+    margin-top: 24px;
+  }
+
+  .post-summary-card {
+    padding: 16px 12px;
+  }
+
+  .post-summary-card:hover {
+    transform: none;
+    background-color: rgba(0, 191, 255, 0.08);
+  }
+
+  .post-summary-title {
+    font-size: 1.05em;
+  }
+
+  .post-container {
+    padding: 20px 16px;
+    margin-top: 14px;
+  }
+
+  .post-title {
+    font-size: 1.6em;
+    line-height: 1.3;
+  }
+
+  .post-content pre {
+    font-size: 0.8em;
+    padding: 12px;
+  }
+
+  .post-content blockquote {
+    padding: 8px 12px;
+    margin: 12px 0;
+  }
+
+  /* ============ CHAT ============ */
+  .chat-container {
+    margin: 10px 8px;
+    height: calc(100vh - 20px);
+    border-radius: 12px;
+  }
+
+  .chat-header {
+    padding: 14px;
+  }
+
+  .chat-title {
+    font-size: 13px;
+    gap: 8px;
+  }
+
+  .chat-messages {
+    padding: 14px;
+    gap: 12px;
+  }
+
+  .message {
+    max-width: 88%;
+  }
+
+  .message-header {
+    font-size: 9px;
+  }
+
+  .message-content {
+    padding: 10px 14px;
+    font-size: 13px;
+    border-radius: 10px;
+  }
+
+  #message-input {
+    padding: 10px 14px;
+    font-size: 13px;
+    border-radius: 22px;
+  }
+
+  #send-btn {
+    padding: 0 18px;
+    height: 38px;
+    font-size: 11px;
+    border-radius: 22px;
+  }
+
+  .chat-input-area {
+    padding: 14px;
+  }
+
+  /* Auth Modal */
+  .modal-content {
+    padding: 28px 20px;
+    width: 92%;
+    border-radius: 16px;
+  }
+
+  .auth-form h2 {
+    font-size: 14px;
+  }
+
+  .auth-input {
+    padding: 10px 14px;
+    font-size: 13px;
+  }
+
+  /* ============ MESSAGES PAGE ============ */
+  .review-form-container {
+    max-width: 100%;
+    padding: 0 10px;
+  }
+
+  .form-title {
+    font-size: 1.2em;
+    margin-bottom: 24px;
+  }
+
+  #review-form {
+    padding: 18px 14px;
+  }
+
+  .form-group {
+    margin-bottom: 20px;
+  }
+
+  .form-group label {
+    font-size: 0.9em;
+  }
+
+  .form-group input[type="text"],
+  .form-group textarea {
+    font-size: 1em;
+    padding: 10px 4px;
+  }
+
+  .star-rating label {
+    font-size: 1.6em;
+  }
+
+  .submit-button {
+    width: 100%;
+    padding: 14px;
+    font-size: 1em;
+  }
+
+  .review-card {
+    padding: 18px;
+    border-radius: 12px;
+  }
+
+  .review-username {
+    font-size: 1em;
+  }
+
+  .review-body {
+    font-size: 1em;
+  }
+
+  /* ============ LEADERBOARD ============ */
+  .leaderboard-container {
+    padding: 14px;
+    margin-top: 20px;
+  }
+
+  .leaderboard-container h2 {
+    font-size: 1.2em;
+    margin-bottom: 14px;
+  }
+
+  .leaderboard-table {
+    font-size: 0.9em;
+  }
+
+  .leaderboard-table th,
+  .leaderboard-table td {
+    padding: 8px 6px;
+  }
+
+  /* ============ MODAL ============ */
+  .modal-overlay .modal-content {
+    width: 92%;
+    padding: 20px;
+  }
+
+  .modal-content h2 {
+    font-size: 1.1em;
+  }
+
+  .modal-content p {
+    font-size: 0.85em;
+  }
+
+  /* ============ FOOTER ============ */
+  .site-footer {
+    margin-top: 40px;
+    padding: 30px 16px 24px;
+  }
+
+  .footer-links {
+    gap: 8px;
+  }
+
+  .footer-links a {
+    font-size: 0.8rem;
+  }
+
+  .footer-sep {
+    font-size: 0.8rem;
+  }
+
+  .footer-copy {
+    font-size: 0.7rem;
+  }
+
+  /* ============ ACHIEVEMENT NOTIFICATION ============ */
+  .achievement-notification {
+    width: calc(100vw - 24px);
+    max-width: 340px;
+    right: -400px;
+    bottom: 12px;
+    padding: 12px 16px;
+    gap: 14px;
+    border-radius: 8px;
+  }
+
+  .achievement-notification.show {
+    right: 12px;
+  }
+
+  .achievement-icon {
+    font-size: 2em;
+  }
+
+  .achievement-text h4 {
+    font-size: 0.9em;
+  }
+
+  .achievement-text p {
+    font-size: 0.75em;
+  }
+
+  /* ============ STATUS PANEL ============ */
+  .status-panel {
+    bottom: 12px;
+    right: 12px;
+    font-size: 10px;
+    padding: 8px;
+  }
+
+  /* ============ BACK TO TOP ============ */
+  #back-to-top {
+    bottom: 80px;
+    right: 14px;
+    width: 44px;
+    height: 44px;
+    font-size: 1.2rem;
+  }
+
+  /* ============ SCROLL PROGRESS ============ */
+  #scroll-progress {
+    height: 2px;
+  }
+
+  /* ============ SECURITY INDICATOR ============ */
+  #security-indicator {
+    display: none !important;
+  }
+
+  /* ============ AUDIO CONTROLS ============ */
+  .audio-controls {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    z-index: 1000;
+    background: rgba(0, 0, 0, 0.8);
+    border-radius: 10px;
+    padding: 5px;
+  }
+
+  .audio-controls input[type="range"] {
+    width: 60px;
+  }
+
+  /* ============ SPACE TITLE ============ */
+  .space-title {
+    font-size: 1.6em;
+    line-height: 1.4;
+    margin: 12px 0;
+    padding: 0 10px;
+  }
+
+  /* ============ SECRET MESSAGE ============ */
+  .secret-message {
+    width: 90vw;
+    max-width: 340px;
+    padding: 20px;
+  }
+}
+
+/* ============ SMALL PHONES (≤ 480px) ============ */
+@media screen and (max-width: 480px) {
+
+  .container {
+    padding: 10px;
+    margin: 20px auto;
+  }
+
+  .profile-image-container {
+    width: 85px;
+    height: 85px;
+  }
+
+  .main-title {
+    font-size: 1.4rem;
+  }
+
+  .bio-subtitle {
+    font-size: 0.85rem;
+  }
+
+  .glass-container {
+    padding: 22px 16px;
+    margin: 8px 8px;
+    width: calc(100% - 16px);
+    border-radius: 16px;
+  }
+
+  #social-links {
+    gap: 12px;
+  }
+
+  .social-button {
+    height: 50px;
+    font-size: 0.88rem;
+  }
+
+  .social-button .icon {
+    margin-left: 12px;
+    font-size: 1.2em;
+  }
+
+  .social-button .action-icon {
+    margin-right: 12px;
+  }
+
+  /* Content sections */
+  .content-section {
+    margin: 18px auto;
+    padding: 0 10px;
+  }
+
+  .section-header h2 {
+    font-size: 1.1rem;
+  }
+
+  .glass-card {
+    padding: 14px;
+  }
+
+  .about-detail-item {
+    font-size: 0.75rem;
+    padding: 4px 9px;
+  }
+
+  .quote-text {
+    font-size: 0.92rem;
+  }
+
+  .tweet-card {
+    padding: 14px;
+  }
+
+  .tweet-content {
+    font-size: 0.88rem;
+  }
+
+  .project-info p {
+    -webkit-line-clamp: 1;
+    line-clamp: 1;
+  }
+
+  /* Gallery */
+  .category-card {
+    min-width: 120px;
+    padding: 10px 6px;
+  }
+
+  .category-preview img {
+    width: 50px;
+    height: 50px;
+    min-width: 50px;
+    min-height: 50px;
+  }
+
+  .category-title {
+    font-size: 0.8em;
+  }
+
+  .gallery-grid {
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 8px;
+    padding: 8px;
+  }
+
+  /* Games */
+  .cell {
+    width: 22px;
+    height: 22px;
+    font-size: 11px;
+  }
+
+  /* Floating buttons */
+  .floating-button-stack {
+    bottom: 10px;
+    left: 10px;
+    gap: 8px;
+  }
+
+  .floating-button {
+    width: 44px;
+    height: 44px;
+    font-size: 1em;
+  }
+
+  /* Blog */
+  .post-title {
+    font-size: 1.4em;
+  }
+
+  .post-container {
+    padding: 16px 12px;
+  }
+
+  /* Chat */
+  .chat-container {
+    margin: 6px;
+    border-radius: 10px;
+  }
+
+  .message {
+    max-width: 92%;
+  }
+
+  /* Footer */
+  .site-footer {
+    padding: 24px 12px 20px;
+  }
+
+  .footer-links {
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .footer-sep {
+    display: none;
+  }
+}
+
+/* ============ VERY SMALL PHONES (≤ 390px) ============ */
+@media screen and (max-width: 390px) {
+
+  .main-title {
+    font-size: 1.25rem;
+  }
+
+  .glass-container {
+    padding: 18px 12px;
+    border-radius: 14px;
+  }
+
+  .social-button {
+    height: 48px;
+    font-size: 0.82rem;
+  }
+
+  .social-button .icon {
+    margin-left: 10px;
+    font-size: 1.1em;
+  }
+
+  .social-button .label {
+    font-size: 0.82em;
+  }
+
+  .social-button .action-icon {
+    margin-right: 10px;
+    font-size: 1em;
+  }
+
+  .section-header h2 {
+    font-size: 1rem;
+  }
+
+  .glass-card {
+    padding: 12px;
+    border-radius: 12px;
+  }
+
+  .activity-icon {
+    width: 36px;
+    height: 36px;
+  }
+
+  /* Chat mobile */
+  .chat-title {
+    font-size: 11px;
+  }
+
+  .message-content {
+    font-size: 12px;
+    padding: 8px 12px;
+  }
+
+  #message-input {
+    font-size: 12px;
+  }
+}
+
+/* ============ TINY SCREENS (≤ 320px) ============ */
+@media screen and (max-width: 320px) {
+
+  .main-title {
+    font-size: 1.1rem;
+  }
+
+  .profile-image-container {
+    width: 70px;
+    height: 70px;
+  }
+
+  .glass-container {
+    padding: 14px 10px;
+    margin: 6px;
+    width: calc(100% - 12px);
+  }
+
+  .social-button {
+    height: 44px;
+    font-size: 0.78rem;
+  }
+
+  .category-card {
+    min-width: 100px;
+    padding: 8px 4px;
+  }
+
+  .category-preview img {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    min-height: 40px;
+  }
+
+  .category-title {
+    font-size: 0.7em;
+  }
+
+  .gallery-grid {
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 6px;
+    padding: 6px;
+  }
+
+  .cell {
+    width: 18px;
+    height: 18px;
+    font-size: 9px;
+  }
+}
+
+/* ============ LANDSCAPE (short viewport) ============ */
+@media screen and (orientation: landscape) and (max-height: 500px) {
+  .container {
+    margin: 5px auto;
+  }
+
+  .glass-container {
+    padding: 10px;
+  }
+
+  .social-button {
+    height: 40px;
+    font-size: 0.7em;
+  }
+
+  .space-title {
+    font-size: 1.5rem;
+    margin-bottom: 5px;
+  }
+
+  .game-container {
+    height: 95vh;
+  }
+
+  .floating-button-stack {
+    bottom: 8px;
+    left: 8px;
+    gap: 6px;
+  }
+
+  .floating-button {
+    width: 40px;
+    height: 40px;
+    font-size: 0.9em;
+  }
+
+  .content-section {
+    margin: 14px auto;
+  }
+
+  .chat-container {
+    margin: 4px;
+    height: calc(100vh - 8px);
+  }
+}
+
+/* ============ PWA SAFE AREAS ============ */
+.pwa-mode {
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+}
+
+/* Notch-aware positioning for floating buttons */
+@supports (padding: env(safe-area-inset-bottom)) {
+  @media (max-width: 768px) {
+    .floating-button-stack {
+      bottom: calc(14px + env(safe-area-inset-bottom));
+      left: calc(14px + env(safe-area-inset-left));
+    }
+
+    .chat-input-area {
+      padding-bottom: calc(14px + env(safe-area-inset-bottom));
+    }
+
+    #back-to-top {
+      bottom: calc(80px + env(safe-area-inset-bottom));
+    }
+
+    .achievement-notification.show {
+      bottom: calc(12px + env(safe-area-inset-bottom));
+    }
+  }
+}
+
+/* ============ DARK MODE ENHANCEMENTS ============ */
+@media (prefers-color-scheme: dark) and (max-width: 768px) {
+  body {
+    background-color: #000;
+  }
+
+  .glass-container {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+
+  .glass-card {
+    background: rgba(20, 30, 48, 0.6);
+  }
+}
+
+/* ============ HIGH CONTRAST ============ */
+@media (prefers-contrast: high) and (max-width: 768px) {
+  .social-button {
+    border-width: 3px !important;
+    font-weight: bold;
+  }
+
+  .glass-container {
+    border-width: 2px;
+  }
+
+  .glass-card {
+    border-width: 2px;
+  }
+
+  .message-content {
+    border-width: 2px;
+  }
+}
+
+/* ============ REDUCED MOTION ============ */
+@media (prefers-reduced-motion: reduce) and (max-width: 768px) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ============ NO HOVER (touch devices) ============ */
+@media (hover: none) {
+
+  .social-button:hover,
+  .category-card:hover,
+  .gallery-item:hover,
+  .game-card:hover,
+  .post-summary-card:hover,
+  .back-link:hover,
+  .floating-button:hover,
+  .submit-button:hover,
+  .delete-button:hover,
+  .review-card:hover,
+  .glass-card:hover,
+  .project-card:hover,
+  .activity-item:hover,
+  .tweet-follow-btn:hover {
+    transform: none !important;
+    filter: none !important;
+  }
+
+  .social-button:active,
+  .category-card:active,
+  .gallery-item:active,
+  .floating-button:active,
+  .project-card:active,
+  .glass-card:active {
+    transform: scale(0.97) !important;
+    transition: transform 0.1s ease !important;
+  }
+
+  /* Show arrow on mobile since no hover */
+  .project-arrow {
+    opacity: 0.5;
+  }
+}

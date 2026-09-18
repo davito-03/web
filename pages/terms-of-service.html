@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Términos de Servicio - Dabot</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/assets/fontawesome/css/all.min.css?v=6.5.1">
+
+    <style>
+        :root {
+            --font-primary: 'Inter', sans-serif;
+            --font-secondary: 'Courier New', Courier, monospace;
+            --color-primary: #00BFFF;
+            --color-accent: #FFD700;
+            --color-secondary-accent: #FF0050;
+            --color-discord: #5865F2;
+            --color-text-light: #fff;
+            --color-text-dark: #000;
+            --color-success: #00FF00;
+            --bg-dark: #0d0d0d;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-secondary);
+            color: var(--color-text-light);
+            background-color: var(--bg-dark);
+            line-height: 1.8;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        #star-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(ellipse at bottom, #1B2735 0%, #090A0F 100%);
+            overflow: hidden;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .star {
+            position: absolute;
+            background-color: white;
+            border-radius: 50%;
+            animation: starTwinkle 2s infinite alternate;
+        }
+
+        @keyframes starTwinkle {
+            0% {
+                opacity: 0.3;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: 1;
+                transform: scale(1.05);
+            }
+
+            100% {
+                opacity: 0.3;
+                transform: scale(1);
+            }
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 50px auto;
+            padding: 40px;
+            position: relative;
+            z-index: 1;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 3px solid rgba(0, 191, 255, 0.3);
+            border-radius: 20px;
+            box-shadow: 0 0 30px rgba(0, 191, 255, 0.2), inset 0 0 20px rgba(255, 255, 255, 0.05);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 30px;
+            border-bottom: 2px solid rgba(255, 215, 0, 0.3);
+        }
+
+        .bot-icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        h1 {
+            font-family: var(--font-primary);
+            font-size: 2em;
+            color: #fde68a;
+            text-shadow: 0 0 14px rgba(251, 191, 36, 0.45);
+            margin-bottom: 15px;
+            letter-spacing: 3px;
+        }
+
+        .subtitle {
+            font-size: 1em;
+            color: var(--color-accent);
+            margin-bottom: 10px;
+        }
+
+        .last-updated {
+            font-size: 0.9em;
+            color: rgba(255, 255, 255, 0.6);
+            font-style: italic;
+        }
+
+        h2 {
+            font-family: var(--font-primary);
+            font-size: 1.2em;
+            color: #fbbf24;
+            margin-top: 35px;
+            margin-bottom: 20px;
+            padding-left: 15px;
+            border-left: 4px solid #fbbf24;
+            text-shadow: 0 0 8px rgba(251, 191, 36, 0.35);
+        }
+
+        h3 {
+            font-size: 1.1em;
+            color: #fde68a;
+            margin-top: 25px;
+            margin-bottom: 15px;
+        }
+
+        p {
+            margin-bottom: 15px;
+            text-align: justify;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        ul,
+        ol {
+            margin-left: 30px;
+            margin-bottom: 20px;
+        }
+
+        li {
+            margin-bottom: 10px;
+            color: rgba(255, 255, 255, 0.85);
+        }
+
+        .important-box {
+            background: rgba(255, 0, 80, 0.1);
+            border: 2px solid var(--color-secondary-accent);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 25px 0;
+            box-shadow: 0 0 15px rgba(255, 0, 80, 0.2);
+        }
+
+        .important-box h3 {
+            color: var(--color-secondary-accent);
+            margin-top: 0;
+        }
+
+        .info-box {
+            background: rgba(0, 191, 255, 0.1);
+            border: 2px solid var(--color-primary);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 25px 0;
+            box-shadow: 0 0 15px rgba(0, 191, 255, 0.2);
+        }
+
+        .back-button {
+            display: inline-block;
+            margin-top: 30px;
+            padding: 15px 30px;
+            background-color: var(--color-discord);
+            color: var(--color-text-light);
+            text-decoration: none;
+            border-radius: 25px;
+            font-family: var(--font-primary);
+            font-size: 0.8em;
+            letter-spacing: 2px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .back-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 16px rgba(88, 101, 242, 0.4), 0 0 20px rgba(88, 101, 242, 0.3);
+            filter: brightness(1.2);
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 50px;
+            padding-top: 30px;
+            border-top: 2px solid rgba(255, 215, 0, 0.3);
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9em;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 20px;
+                padding: 25px;
+            }
+
+            h1 {
+                font-size: 1.3em;
+            }
+
+            h2 {
+                font-size: 1em;
+            }
+
+            .bot-icon {
+                font-size: 3em;
+            }
+        }
+    </style>
+</head>
+
+<body data-i18n-title="tos_doc_title">
+    <div class="container">
+        <div class="header">
+            <div class="bot-icon">🤖</div>
+            <h1 data-i18n="tos_title">Términos de Servicio</h1>
+            <p class="subtitle" data-i18n="pp_subtitle">Dabot - Bot de Discord</p>
+            <p class="last-updated" data-i18n="pp_updated">Última actualización: 23 de agosto de 2026</p>
+        </div>
+
+        <section>
+            <h2 data-i18n="tos_h1">1. Aceptación de los Términos</h2>
+            <p data-i18n="tos_p1">Al invitar, acceder o utilizar Dabot (en adelante, "el Bot") en tu servidor de Discord, aceptas estar sujeto a estos Términos de Servicio. Si no estás de acuerdo con alguna parte de estos términos, no debes utilizar el Bot.</p>
+        </section>
+
+        <section>
+            <h2 data-i18n="tos_h2">2. Descripción del Servicio</h2>
+            <p data-i18n="tos_p2">Dabot es un bot multipropósito para Discord con moderación, entretenimiento, utilidades, tickets, niveles, economía virtual y dashboard web en dabot.davito.es. El servicio se proporciona "tal cual" y puede ser modificado, actualizado o discontinuado en cualquier momento.</p>
+        </section>
+
+        <section>
+            <h2 data-i18n="tos_h3">3. Uso Aceptable</h2>
+            <p data-i18n="tos_p3">Al utilizar Dabot, te comprometes a:</p>
+            <ul>
+                <li data-i18n="tos_a1">No utilizar el Bot para actividades ilegales, fraudulentas o no autorizadas</li>
+                <li data-i18n="tos_a2">No intentar hackear, modificar o realizar ingeniería inversa del Bot</li>
+                <li data-i18n="tos_a3">No utilizar el Bot para acosar, abusar o dañar a otros usuarios</li>
+                <li data-i18n="tos_a4">No sobrecargar intencionalmente el Bot con solicitudes excesivas (spam)</li>
+                <li data-i18n="tos_a5">Cumplir con los Términos de Servicio y Directrices de la Comunidad de Discord</li>
+                <li data-i18n="tos_a6">No utilizar el Bot para distribuir malware, virus o contenido malicioso</li>
+                <li data-i18n="tos_a7">No intentar eludir las medidas de seguridad o restricciones del Bot</li>
+            </ul>
+        </section>
+
+        <div class="important-box">
+            <h3><i class="fas fa-exclamation-triangle"></i> <span data-i18n="tos_pro_h">Prohibiciones Importantes</span></h3>
+            <p data-i18n="tos_pro_p">El uso del Bot para actividades que violen las leyes locales, nacionales o internacionales resultará en la suspensión inmediata del servicio y puede ser reportado a las autoridades competentes.</p>
+        </div>
+
+        <section>
+            <h2 data-i18n="tos_h4">4. Permisos y Acceso</h2>
+            <p data-i18n="tos_p4">Para funcionar correctamente, Dabot requiere permisos que dependen de los módulos que active cada servidor. El administrador debe conceder solo los permisos necesarios y puede gestionar la configuración desde dabot.davito.es.</p>
+            <ul>
+                <li data-i18n="tos_perm1">Leer y enviar mensajes</li>
+                <li data-i18n="tos_perm2">Gestionar mensajes y canales</li>
+                <li data-i18n="tos_perm3">Gestionar roles y miembros</li>
+                <li data-i18n="tos_perm4">Conectarse y hablar en canales de voz</li>
+                <li data-i18n="tos_perm5">Ver registros de auditoría</li>
+            </ul>
+            <p data-i18n="tos_p5">Es responsabilidad del administrador del servidor otorgar únicamente los permisos necesarios para las funcionalidades deseadas.</p>
+        </section>
+
+        <section>
+            <h2 data-i18n="tos_h5">5. Recopilación y Uso de Datos</h2>
+            <p><span data-i18n="tos_p6_a">El Bot puede recopilar y almacenar ciertos datos necesarios para su funcionamiento. Para más información sobre qué datos se recopilan y cómo se utilizan, consulta nuestra</span>
+                <a href="/pages/privacy-policy" style="color: var(--color-primary); text-decoration: underline;" data-i18n="privacy_policy">Política de Privacidad</a>.</p>
+        </section>
+
+        <section>
+            <h2 data-i18n="tos_h6">6. Disponibilidad del Servicio</h2>
+            <p data-i18n="tos_p7">Aunque nos esforzamos por mantener el Bot operativo 24/7, no garantizamos que el servicio esté disponible de forma ininterrumpida. El Bot puede experimentar:</p>
+            <ul>
+                <li data-i18n="tos_av1">Tiempo de inactividad por mantenimiento programado o no programado</li>
+                <li data-i18n="tos_av2">Interrupciones debido a problemas técnicos</li>
+                <li data-i18n="tos_av3">Limitaciones de funcionalidad debido a cambios en la API de Discord</li>
+                <li data-i18n="tos_av4">Suspensión temporal o permanente sin previo aviso</li>
+            </ul>
+        </section>
+
+        <div class="info-box">
+            <h3><i class="fas fa-info-circle"></i> <span data-i18n="tos_up_h">Actualizaciones y Cambios</span></h3>
+            <p data-i18n="tos_up_p">Nos reservamos el derecho de modificar, actualizar o discontinuar cualquier funcionalidad del Bot en cualquier momento. Los cambios importantes serán comunicados a través de nuestro servidor de Discord oficial.</p>
+        </div>
+
+        <section>
+            <h2 data-i18n="tos_h7">7. Limitación de Responsabilidad</h2>
+            <p data-i18n="tos_p8">Dabot se proporciona "tal cual" sin garantías de ningún tipo, ya sean expresas o implícitas. No nos hacemos responsables de:</p>
+            <ul>
+                <li data-i18n="tos_li1">Pérdida de datos o contenido en tu servidor</li>
+                <li data-i18n="tos_li2">Daños directos o indirectos causados por el uso del Bot</li>
+                <li data-i18n="tos_li3">Acciones tomadas por el Bot debido a configuraciones incorrectas</li>
+                <li data-i18n="tos_li4">Interrupciones del servicio o pérdida de funcionalidad</li>
+                <li data-i18n="tos_li5">Comportamiento de terceros que interactúen con el Bot</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2 data-i18n="tos_h8">8. Moderación y Sanciones</h2>
+            <p data-i18n="tos_p9">Nos reservamos el derecho de suspender o prohibir el acceso al Bot a cualquier servidor o usuario que:</p>
+            <ul>
+                <li data-i18n="tos_m1">Viole estos Términos de Servicio</li>
+                <li data-i18n="tos_m2">Use el Bot de manera abusiva o maliciosa</li>
+                <li data-i18n="tos_m3">Intente explotar vulnerabilidades del Bot</li>
+                <li data-i18n="tos_m4">Genere un impacto negativo en el rendimiento del servicio</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2 data-i18n="tos_h9">9. Propiedad Intelectual</h2>
+            <p data-i18n="tos_p10">Todos los derechos, títulos e intereses en y para el Bot, incluyendo todo el código, diseño, gráficos y documentación, son propiedad exclusiva del desarrollador. No se otorga ninguna licencia o derecho más allá del uso del Bot según estos términos.</p>
+        </section>
+
+        <section>
+            <h2 data-i18n="tos_h10">10. Modificaciones a los Términos</h2>
+            <p data-i18n="tos_p11">Nos reservamos el derecho de modificar estos Términos de Servicio en cualquier momento. Los cambios entrarán en vigor inmediatamente después de su publicación. El uso continuado del Bot después de cualquier modificación constituye tu aceptación de los nuevos términos.</p>
+        </section>
+
+        <section>
+            <h2 data-i18n="tos_h11">11. Contacto y Soporte</h2>
+            <p data-i18n="tos_p12">Si tienes preguntas sobre estos Términos de Servicio o necesitas soporte, puedes contactarnos a través de:</p>
+            <ul>
+                <li><span data-i18n="pp_c1">Servidor de Discord:</span> <a href="https://discord.gg/S22tUgJztd" style="color: var(--color-primary);">langosta's gang</a></li>
+                <li><span data-i18n="pp_c2">Perfil de Discord:</span> davito_03</li>
+                <li><span data-i18n="pp_c3">Sitio web:</span> <a href="https://davito.es" style="color: var(--color-primary);">davito.es</a></li>
+            </ul>
+        </section>
+
+        <section>
+            <h2 data-i18n="tos_h12">12. Jurisdicción y Ley Aplicable</h2>
+            <p data-i18n="tos_p13">Estos Términos de Servicio se regirán e interpretarán de acuerdo con las leyes aplicables, sin tener en cuenta sus disposiciones sobre conflictos de leyes. Cualquier disputa relacionada con estos términos estará sujeta a la jurisdicción exclusiva de los tribunales competentes.</p>
+        </section>
+
+        <div class="footer">
+            <p><i class="fas fa-robot"></i> <span data-i18n="pp_foot">Dabot © 2025 - Desarrollado por @davito_03</span></p>
+            <p>
+                <a href="/pages/privacy-policy" style="color: var(--color-primary); text-decoration: none;" data-i18n="privacy_policy">Política de Privacidad</a> |
+                <a href="https://davito.es" style="color: var(--color-primary); text-decoration: none;" data-i18n="pp_web">Sitio Web</a>
+            </p>
+            <a href="https://davito.es" class="back-button">
+                <i class="fas fa-arrow-left"></i> <span data-i18n="pp_back">Volver al Sitio</span>
+            </a>
+        </div>
+    </div>
+  <script src="/assets/js/site-shell.js?v=3.2" defer></script>
+</body>
+</html>

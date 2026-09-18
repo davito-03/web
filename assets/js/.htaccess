@@ -1,0 +1,7 @@
+# Security: Assets JS directory
+# This file intentionally does NOT override the root .htaccess CSP
+# The root .htaccess handles all security headers
+
+# Only set correct MIME type for JS files
+AddType application/javascript .js
+AddType application/json .json

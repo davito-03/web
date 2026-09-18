@@ -1,0 +1,442 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>RPG Adventure - davito_03</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/assets/fontawesome/css/all.min.css?v=6.5.1">
+    <link rel="stylesheet" href="/assets/css/styles.css">
+    <link rel="stylesheet" href="/assets/css/mobile-optimizations.css">
+    <link rel="stylesheet" href="/assets/css/games.css">
+    <link rel="stylesheet" href="/assets/css/terminal.css">
+
+    <style>
+        body {
+            background: #0d0d0d;
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            touch-action: none;
+        }
+
+        .rpg-layout {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            grid-template-rows: 60px 1fr auto;
+            gap: 15px;
+            width: 100%;
+            max-width: 1000px;
+            height: 90vh;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+
+        /* Responsive Layout */
+        @media (max-width: 800px) {
+            .rpg-layout {
+                grid-template-columns: 1fr;
+                grid-template-rows: auto 1fr auto auto;
+                height: 100vh;
+                gap: 10px;
+            }
+
+            .sidebar {
+                display: none;
+            }
+
+            /* Show sidebar content differently on mobile or toggle */
+            .sidebar.mobile-visible {
+                display: flex;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: #000;
+                z-index: 50;
+            }
+        }
+
+        /* Modules */
+        .panel {
+            background: rgba(10, 15, 10, 0.9);
+            border: 2px solid #33ff33;
+            box-shadow: 0 0 10px rgba(51, 255, 51, 0.2);
+            padding: 15px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Sidebar stats */
+        .sidebar {
+            grid-row: 1 / -1;
+            gap: 15px;
+        }
+
+        .stat-block {
+            margin-bottom: 20px;
+            font-family: 'Inter', sans-serif;
+            font-size: 10px;
+            color: #33ff33;
+        }
+
+        .stat-label {
+            color: #88ff88;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        .bar-container {
+            background: #003300;
+            height: 10px;
+            border: 1px solid #33ff33;
+        }
+
+        .bar-fill {
+            height: 100%;
+            background: #33ff33;
+            width: 100%;
+            transition: width 0.3s;
+        }
+
+        .bar-fill.red {
+            background: #ff3333;
+        }
+
+        .bar-fill.blue {
+            background: #3333ff;
+        }
+
+        /* Main Story Area */
+        .story-display {
+            grid-column: 2;
+            grid-row: 2;
+            overflow-y: auto;
+            font-family: 'Fira Code', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            color: #ddd;
+            padding-right: 10px;
+        }
+
+        .story-entry {
+            margin-bottom: 15px;
+            animation: fadeIn 0.3s;
+        }
+
+        .narrator-icon {
+            font-size: 20px;
+            margin-right: 10px;
+            vertical-align: middle;
+        }
+
+        .story-text {}
+
+        /* Command Input */
+        .input-area {
+            grid-column: 2;
+            grid-row: 3;
+            display: flex;
+            gap: 10px;
+            font-family: 'Fira Code', monospace;
+        }
+
+        #cmd-input {
+            flex: 1;
+            background: #000;
+            border: 1px solid #33ff33;
+            color: #33ff33;
+            padding: 10px;
+            font-family: inherit;
+            font-size: 14px;
+            outline: none;
+        }
+
+        #send-btn {
+            background: #33ff33;
+            color: #000;
+            border: none;
+            padding: 0 20px;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        /* Suggestions */
+        .suggestions {
+            grid-column: 2;
+            grid-row: 1;
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            white-space: nowrap;
+            padding-bottom: 5px;
+            align-items: center;
+        }
+
+        .chip {
+            background: #003300;
+            border: 1px solid #33ff33;
+            color: #33ff33;
+            padding: 5px 10px;
+            border-radius: 15px;
+            cursor: pointer;
+            font-family: 'Fira Code';
+            font-size: 12px;
+        }
+
+        .chip:hover {
+            background: #33ff33;
+            color: #000;
+        }
+
+        /* Mobile Controls */
+        .mobile-pad {
+            display: none;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 5px;
+            width: 150px;
+            margin: 0 auto;
+        }
+
+        @media (max-width: 800px) {
+            .rpg-layout {
+                display: flex;
+                flex-direction: column;
+            }
+
+            .story-display {
+                flex: 1;
+                min-height: 0;
+            }
+
+            .suggestions {
+                overflow-x: auto;
+                flex-shrink: 0;
+                padding: 10px 0;
+            }
+
+            .mobile-pad {
+                display: grid;
+                padding: 10px 0;
+            }
+
+            .input-area {
+                margin-bottom: 10px;
+            }
+        }
+
+        .pad-btn {
+            background: rgba(51, 255, 51, 0.1);
+            border: 1px solid #33ff33;
+            color: #33ff33;
+            aspect-ratio: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .pad-btn:active {
+            background: #33ff33;
+            color: #000;
+        }
+
+        /* Modal for Combat/Inventory */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 100;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .modal.active {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .modal-content {
+            background: #000;
+            padding: 20px;
+            border: 2px solid #33ff33;
+            color: #33ff33;
+            font-family: 'Fira Code', monospace;
+            width: 90%;
+            max-width: 500px;
+        }
+
+        /* Inventory Grid */
+        .inv-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .inv-slot {
+            aspect-ratio: 1;
+            border: 1px solid #336633;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .inv-slot:hover {
+            border-color: #33ff33;
+            background: #001100;
+        }
+
+        .inv-count {
+            position: absolute;
+            bottom: 2px;
+            right: 2px;
+            font-size: 10px;
+            color: #fff;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="rpg-layout">
+        <!-- Sidebar (Stats) -->
+        <div class="panel sidebar" id="sidebar">
+            <h3 style="font-family: 'Inter', sans-serif; color: #33ff33; margin-bottom: 20px;">STATUS</h3>
+
+            <div class="stat-block">
+                <span class="stat-label">HEALTH <span id="hp-text">100/100</span></span>
+                <div class="bar-container">
+                    <div class="bar-fill red" id="hp-bar"></div>
+                </div>
+            </div>
+
+            <div class="stat-block">
+                <span class="stat-label">ENERGY <span id="en-text">100/100</span></span>
+                <div class="bar-container">
+                    <div class="bar-fill blue" id="en-bar"></div>
+                </div>
+            </div>
+
+            <div class="stat-block">
+                <span class="stat-label">EXP Lvl <span id="lvl-text">1</span></span>
+                <div class="bar-container">
+                    <div class="bar-fill" id="xp-bar" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <div class="stat-block">
+                <span class="stat-label">GOLD: <span id="gold-text" style="color: #ffff00">0</span></span>
+            </div>
+
+            <div class="stat-block">
+                <span class="stat-label">LOC: <span id="loc-text" style="color: #fff">...</span></span>
+            </div>
+
+            <div style="margin-top: auto;">
+                <button class="pad-btn" id="toggle-inv-btn"
+                    style="width: 100%; height: 40px; aspect-ratio: auto; font-family: 'Inter', sans-serif; font-size: 10px;">INVENTORY</button>
+            </div>
+        </div>
+
+        <!-- Top Bar (Suggestions) -->
+        <div class="suggestions" id="suggestions">
+            <div class="chip">look</div>
+            <div class="chip">inv</div>
+            <div class="chip">help</div>
+        </div>
+
+        <!-- Main Story -->
+        <div class="panel story-display" id="story-display">
+            <div class="story-entry">
+                <span class="narrator-icon">?</span>
+                <span class="story-text">System initialized. Welcome to the Realm.</span>
+            </div>
+        </div>
+
+        <!-- Input -->
+        <div class="input-area">
+            <input type="text" id="cmd-input" placeholder="Enter command..." autocomplete="off">
+            <button id="send-btn">SEND</button>
+        </div>
+
+        <!-- Mobile Controls -->
+        <div class="mobile-pad">
+            <div></div>
+            <div class="pad-btn" data-cmd="north">N</div>
+            <div></div>
+            <div class="pad-btn" data-cmd="west">W</div>
+            <div class="pad-btn" data-cmd="look">???</div>
+            <div class="pad-btn" data-cmd="east">E</div>
+            <div class="pad-btn" id="mob-inv-btn">??</div>
+            <div class="pad-btn" data-cmd="south">S</div>
+            <div class="pad-btn" data-cmd="stats">??</div>
+        </div>
+    </div>
+
+    <!-- Start Screen -->
+    <div id="start-screen" class="modal active">
+        <div class="modal-content" style="text-align: center;">
+            <h1 style="color: #33ff33; font-family: 'Inter', sans-serif; margin-bottom: 20px;">TEXT RPG</h1>
+            <p style="margin-bottom: 30px; font-size: 12px; line-height: 1.5; color: #aaa;">
+                A classic text adventure.<br>
+                Explore, Fight, Loot.
+            </p>
+            <button id="start-game-btn"
+                style="background: #33ff33; color: #000; border: none; padding: 15px 30px; font-family: 'Inter', sans-serif; cursor: pointer;">ENTER
+                WORLD</button>
+        </div>
+    </div>
+
+    <!-- Inventory Modal -->
+    <div id="inv-modal" class="modal">
+        <div class="modal-content">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <h3 style="margin: 0;">INVENTORY</h3>
+                <button id="close-inv"
+                    style="background: none; border: none; color: #33ff33; cursor: pointer;">X</button>
+            </div>
+            <div class="inv-grid" id="inv-grid">
+                <!-- Items -->
+            </div>
+            <p id="item-desc" style="margin-top: 15px; min-height: 40px; color: #888; font-size: 12px;"></p>
+            <div style="text-align: right; margin-top: 10px;">
+                <button id="use-btn"
+                    style="background: #336633; color: #fff; border: 1px solid #33ff33; padding: 5px 15px; cursor: pointer;"
+                    disabled>USE</button>
+            </div>
+        </div>
+    </div>
+
+    <div style="position: absolute; top: 10px; left: 10px;">
+        <a href="/pages/laboratorio"
+            style="color: #33ff33; text-decoration: none; font-family: monospace; font-size: 12px;">&lt; EXIT</a>
+    </div>
+
+    <script src="/assets/js/leaderboard.js"></script>
+    <script type="module" src="/assets/js/games/rpg-text.js"></script>
+
+  <script src="/assets/js/site-shell.js?v=3.2" defer></script>
+</body>
+
+</html>
+

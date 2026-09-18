@@ -1,0 +1,150 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Flappy - davito_03</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/assets/fontawesome/css/all.min.css?v=6.5.1">
+    <link rel="stylesheet" href="/assets/css/styles.css">
+    <link rel="stylesheet" href="/assets/css/mobile-optimizations.css">
+    <link rel="stylesheet" href="/assets/css/games.css">
+    <link rel="stylesheet" href="/assets/css/terminal.css">
+
+    <style>
+        body {
+            background: #000;
+            touch-action: none;
+            overflow: hidden;
+        }
+
+        .game-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        #game-canvas {
+            background: linear-gradient(#4EC0CA, #fff);
+            /* Sky */
+            border: 2px solid #333;
+            max-width: 95vw;
+        }
+
+        .score-board {
+            position: absolute;
+            top: 10%;
+            font-family: 'Inter', sans-serif;
+            font-size: 40px;
+            color: #fff;
+            text-shadow: 2px 2px #000;
+            z-index: 10;
+            pointer-events: none;
+        }
+
+        /* Modal */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 100;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .modal.active {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .modal-content {
+            background: #e9e9e9;
+            padding: 30px;
+            border: 4px solid #543847;
+            text-align: center;
+            color: #543847;
+            font-family: 'Inter', sans-serif;
+        }
+
+        button {
+            padding: 15px;
+            margin-top: 15px;
+            background: #E06030;
+            color: #fff;
+            border: 2px solid #fff;
+            font-family: inherit;
+            cursor: pointer;
+            box-shadow: 0 4px #9e4322;
+        }
+
+        button:active {
+            transform: translateY(4px);
+            box-shadow: 0 0 #9e4322;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="game-wrapper">
+        <div style="position: absolute; top: 20px; left: 20px; z-index: 20;">
+            <a href="/pages/laboratorio"
+                style="color: #fff; text-decoration: none; font-family: monospace; background: rgba(0,0,0,0.5); padding: 5px;">&lt;
+                Exit</a>
+        </div>
+
+        <div class="score-board" id="score">0</div>
+
+        <canvas id="game-canvas" width="320" height="480"></canvas>
+
+        <div class="desktop-instructions"
+            style="margin-top: 20px; color: #666; font-size: 10px; font-family: 'Inter', sans-serif;">
+            SPACE OR CLICK TO FLAP
+        </div>
+        <div class="mobile-controls"
+            style="margin-top: 20px; color: #666; font-size: 10px; font-family: 'Inter', sans-serif;">
+            TAP SCREEN TO FLAP
+        </div>
+    </div>
+
+    <!-- Start Screen -->
+    <div id="start-screen" class="modal active">
+        <div class="modal-content">
+            <h1 style="color: #E06030;">FLAPPY</h1>
+            <p style="margin: 20px 0; font-size: 10px; line-height: 1.5; color: #555;">
+                Avoid pipes.<br>
+                Don't hit the ground.
+            </p>
+            <button id="start-btn" data-i18n="game_start">START</button>
+        </div>
+    </div>
+
+    <!-- Game Over Modal -->
+    <div id="game-over-modal" class="modal">
+        <div class="modal-content">
+            <h2 data-i18n="game_over">GAME OVER</h2>
+            <p>Score: <span id="final-score">0</span></p>
+            <p>High Score: <span id="high-score">0</span></p>
+            <button id="restart-btn">RETRY</button>
+        </div>
+    </div>
+
+    <script src="/assets/js/leaderboard.js"></script>
+    <script type="module" src="/assets/js/games/flappy.js"></script>
+
+  <script src="/assets/js/site-shell.js?v=3.2" defer></script>
+</body>
+
+</html>
+

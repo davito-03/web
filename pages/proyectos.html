@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+  <meta name="theme-color" content="#1a1a2e">
+  <title>Proyectos — @davito_03</title>
+  <meta name="description" content="Proyectos públicos de @davito_03: davito.es, Dabot, Nexo, DavoGram, homelab y el código en GitHub.">
+  <link rel="canonical" href="https://davito.es/proyectos">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="icon" href="/media/favicon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="/assets/css/styles.css?v=3.5">
+  <link rel="stylesheet" href="/assets/css/mobile-optimizations.css?v=3.1">
+  <link rel="stylesheet" href="/assets/fontawesome/css/all.min.css?v=6.5.1">
+  <link rel="stylesheet" href="/assets/css/proyectos.css?v=1">
+  <meta property="og:title" content="Proyectos — @davito_03">
+  <meta property="og:description" content="Bots, webs y homelab. Código en GitHub, sin secretos.">
+  <meta property="og:url" content="https://davito.es/proyectos">
+  <meta property="og:image" content="https://davito.es/media/Davo.jpg">
+  <meta property="og:type" content="website">
+</head>
+
+<body class="projects-page" data-i18n-title="pj_doc_title">
+  <div class="container projects-wrap" id="main-content">
+    <header class="projects-hero">
+      <a href="/" class="back-home"><i class="fas fa-arrow-left" aria-hidden="true"></i> <span data-i18n="back_home">Volver al inicio</span></a>
+      <h1 data-i18n="pj_title">Proyectos</h1>
+      <p class="bio-subtitle" data-i18n="pj_sub">Código, bots y el homelab. Lo que se puede contar en público, con el repo al lado.</p>
+    </header>
+
+    <div class="projects-intro">
+      <p data-i18n="pj_intro_1">Esta es la lista de proyectos que mantengo yo. El código vive en GitHub; las claves, tokens y sesiones se quedan en el servidor.</p>
+      <p data-i18n="pj_intro_2">La versión que corre en este VPS es la que cuenta. Los repos antiguos de Dabot siguen como archivo histórico para no mezclar dos códigos distintos.</p>
+    </div>
+
+    <div class="projects-filters" role="tablist" aria-label="Filtrar proyectos">
+      <button type="button" class="pj-filter is-active" data-filter="all" data-i18n="pj_all">Todos</button>
+      <button type="button" class="pj-filter" data-filter="web" data-i18n="pj_f_web">Webs</button>
+      <button type="button" class="pj-filter" data-filter="bot" data-i18n="pj_f_bot">Bots</button>
+      <button type="button" class="pj-filter" data-filter="homelab" data-i18n="pj_f_lab">Homelab</button>
+      <button type="button" class="pj-filter" data-filter="archive" data-i18n="pj_f_old">Archivo</button>
+    </div>
+
+    <section class="projects-section" aria-labelledby="pj-live">
+      <h2 id="pj-live" data-i18n="pj_sec_live">En producción</h2>
+      <div class="projects-grid">
+
+        <article class="project-card" data-cat="web">
+          <div class="project-top">
+            <div class="project-icon web" aria-hidden="true"><i class="fas fa-globe"></i></div>
+            <div class="project-badges"><span class="pj-badge live" data-i18n="pj_live">Público</span></div>
+          </div>
+          <h3>davito.es</h3>
+          <p class="lede" data-i18n="pj_web_lede">Hub personal: galería, juegos, blog, chat y herramientas.</p>
+          <p class="body" data-i18n="pj_web_body">La web que estás viendo. HTML/CSS/JS con PHP para APIs pequeñas, temas, i18n, laboratorio de juegos, convertidor de imágenes, gasolineras y un libro de visitas. El repo lleva el código; la galería pesada se queda en el servidor.</p>
+          <div class="project-tags"><span>HTML</span><span>JS</span><span>PHP</span><span>nginx</span></div>
+          <div class="project-links">
+            <a href="https://davito.es/"><i class="fas fa-arrow-up-right-from-square"></i> davito.es</a>
+            <a class="ghost" href="https://github.com/davito-03/web"><i class="fab fa-github"></i> GitHub</a>
+          </div>
+        </article>
+
+        <article class="project-card" data-cat="bot web">
+          <div class="project-top">
+            <div class="project-icon bot" aria-hidden="true"><i class="fas fa-robot"></i></div>
+            <div class="project-badges"><span class="pj-badge live" data-i18n="pj_live">Público</span></div>
+          </div>
+          <h3>Dabot</h3>
+          <p class="lede" data-i18n="pj_dabot_lede">Bot de Discord multipropósito y panel en dabot.davito.es.</p>
+          <p class="body" data-i18n="pj_dabot_body">Moderación, niveles, tickets, economía, IA, música, bienvenidas y un dashboard con OAuth de Discord. Python, discord.py y FastAPI. El sitio público del bot y el código del bot van juntos en el mismo repo.</p>
+          <div class="project-tags"><span>Python</span><span>discord.py</span><span>FastAPI</span><span>Docker</span></div>
+          <div class="project-links">
+            <a href="https://dabot.davito.es/"><i class="fas fa-arrow-up-right-from-square"></i> dabot.davito.es</a>
+            <a class="ghost" href="https://github.com/davito-03/dabot"><i class="fab fa-github"></i> GitHub</a>
+          </div>
+        </article>
+
+        <article class="project-card" data-cat="bot">
+          <div class="project-top">
+            <div class="project-icon nexo" aria-hidden="true"><i class="fas fa-paw"></i></div>
+            <div class="project-badges"><span class="pj-badge live" data-i18n="pj_live">Público</span></div>
+          </div>
+          <h3>Nexo Bot</h3>
+          <p class="lede" data-i18n="pj_nexo_lede">Bot a medida del servidor Nexo: voz, tickets, niveles y backups.</p>
+          <p class="body" data-i18n="pj_nexo_body">TypeScript y discord.js. Moderación, VoiceMaster, sorteos, transcripciones, IA de soporte en tickets y copias del servidor. Está pensado para un solo guild; no es un bot genérico de invitar a cualquier lado.</p>
+          <div class="project-tags"><span>TypeScript</span><span>discord.js</span><span>SQLite</span><span>Docker</span></div>
+          <div class="project-links">
+            <a href="https://discord.gg/P2hXkTV3Jb"><i class="fab fa-discord"></i> Servidor Nexo</a>
+            <a class="ghost" href="https://github.com/davito-03/nexo-bot"><i class="fab fa-github"></i> GitHub</a>
+          </div>
+        </article>
+
+        <article class="project-card" data-cat="bot">
+          <div class="project-top">
+            <div class="project-icon tg" aria-hidden="true"><i class="fab fa-telegram"></i></div>
+            <div class="project-badges"><span class="pj-badge live" data-i18n="pj_live">Público</span></div>
+          </div>
+          <h3>DavoGram</h3>
+          <p class="lede" data-i18n="pj_davo_lede">Userbot de Telegram que sube multimedia a Google Drive sin comprimir.</p>
+          <p class="body" data-i18n="pj_davo_body">Pyrogram + rclone. Lo que llega a Mensajes Guardados se descarga y se sube a Drive con el nombre que elijas, pensado para películas y archivos grandes. El repo explica el flujo; la sesión de Telegram y las credenciales de Drive no se publican.</p>
+          <div class="project-tags"><span>Python</span><span>Pyrogram</span><span>Google Drive</span><span>rclone</span></div>
+          <div class="project-links">
+            <a class="ghost" href="https://github.com/davito-03/davogram"><i class="fab fa-github"></i> GitHub</a>
+          </div>
+        </article>
+
+        <article class="project-card" data-cat="web">
+          <div class="project-top">
+            <div class="project-icon lab" aria-hidden="true"><i class="fas fa-gamepad"></i></div>
+            <div class="project-badges"><span class="pj-badge live" data-i18n="pj_live">Público</span></div>
+          </div>
+          <h3 data-i18n="pj_lab_name">Laboratorio</h3>
+          <p class="lede" data-i18n="pj_lab_lede">Juegos en el navegador: Snake, Tetris, 2048, RPG de texto y más.</p>
+          <p class="body" data-i18n="pj_lab_body">Una colección de minijuegos hecha a mano, con ranking y logros en la misma web. Forma parte de davito.es; no es un repo aparte.</p>
+          <div class="project-tags"><span>Canvas</span><span>JS</span><span>HTML</span></div>
+          <div class="project-links">
+            <a href="/laboratorio"><i class="fas fa-gamepad"></i> <span data-i18n="pj_open_lab">Abrir laboratorio</span></a>
+          </div>
+        </article>
+
+      </div>
+    </section>
+
+    <section class="projects-section" aria-labelledby="pj-lab">
+      <h2 id="pj-lab" data-i18n="pj_sec_lab">Homelab (VPN)</h2>
+      <div class="projects-grid">
+
+        <article class="project-card" data-cat="homelab">
+          <div class="project-top">
+            <div class="project-icon home" aria-hidden="true"><i class="fas fa-table-columns"></i></div>
+            <div class="project-badges"><span class="pj-badge vpn" data-i18n="pj_vpn">Solo VPN</span></div>
+          </div>
+          <h3>Homepage</h3>
+          <p class="lede" data-i18n="pj_hp_lede">Panel de servicios del VPS, accesible por el túnel WireGuard.</p>
+          <p class="body" data-i18n="pj_hp_body">Configuración de gethomepage: tarjetas, widgets y docker-compose. El repo lleva la estructura con huecos para host y claves; no publica IPs internas ni tokens de APIs.</p>
+          <div class="project-tags"><span>Docker</span><span>YAML</span><span>WireGuard</span></div>
+          <div class="project-links">
+            <a class="ghost" href="https://github.com/davito-03/homepage"><i class="fab fa-github"></i> GitHub</a>
+          </div>
+        </article>
+
+        <article class="project-card" data-cat="homelab">
+          <div class="project-top">
+            <div class="project-icon home" aria-hidden="true"><i class="fas fa-server"></i></div>
+            <div class="project-badges"><span class="pj-badge vpn" data-i18n="pj_vpn">Solo VPN</span></div>
+          </div>
+          <h3 data-i18n="pj_stack_name">Stack del VPS</h3>
+          <p class="lede" data-i18n="pj_stack_lede">Servicios autoalojados detrás del mismo túnel.</p>
+          <p class="body" data-i18n="pj_stack_body">Nextcloud, AdGuard, Uptime Kuma, SearXNG, Stirling PDF, Syncthing, ntfy y el resto del panel. Jellyfin sí tiene cara pública para cine y series. No hay repo único: son imágenes oficiales con compose en el servidor.</p>
+          <div class="project-tags"><span>Docker</span><span>nginx</span><span>Jellyfin</span><span>Nextcloud</span></div>
+          <div class="project-links">
+            <a class="ghost" href="https://private.davito.es/jellyfin/"><i class="fas fa-film"></i> Jellyfin</a>
+          </div>
+        </article>
+
+        <article class="project-card" data-cat="homelab">
+          <div class="project-top">
+            <div class="project-icon trade" aria-hidden="true"><i class="fas fa-chart-line"></i></div>
+            <div class="project-badges"><span class="pj-badge private" data-i18n="pj_priv">Privado</span></div>
+          </div>
+          <h3>Trading bot</h3>
+          <p class="lede" data-i18n="pj_tr_lede">Bot multi-activo. Solo desde la VPN, sin repo público.</p>
+          <p class="body" data-i18n="pj_tr_body">Panel y API en el VPS. No lo subo a GitHub: lleva claves de mercado y no aporta nada enseñable sin ellas.</p>
+          <div class="project-tags"><span>Python</span><span>FastAPI</span></div>
+        </article>
+
+      </div>
+    </section>
+
+    <section class="projects-section" aria-labelledby="pj-old">
+      <h2 id="pj-old" data-i18n="pj_sec_old">También en GitHub</h2>
+      <div class="projects-grid">
+
+        <article class="project-card" data-cat="archive">
+          <div class="project-top">
+            <div class="project-icon git" aria-hidden="true"><i class="fas fa-coins"></i></div>
+            <div class="project-badges"><span class="pj-badge archive" data-i18n="pj_old">Archivo</span></div>
+          </div>
+          <h3>coin_converter</h3>
+          <p class="lede" data-i18n="pj_cc_lede">Conversor de divisas en Python, de las primeras pruebas en GitHub.</p>
+          <p class="body" data-i18n="pj_cc_body">Script pequeño con una lista de monedas. Lo dejo porque forma parte del historial; no es lo que uso ahora (el convertidor de la web es de imágenes).</p>
+          <div class="project-tags"><span>Python</span></div>
+          <div class="project-links">
+            <a class="ghost" href="https://github.com/davito-03/coin_converter"><i class="fab fa-github"></i> GitHub</a>
+          </div>
+        </article>
+
+        <article class="project-card" data-cat="archive">
+          <div class="project-top">
+            <div class="project-icon git" aria-hidden="true"><i class="fas fa-chart-pie"></i></div>
+            <div class="project-badges"><span class="pj-badge archive" data-i18n="pj_old">Archivo</span></div>
+          </div>
+          <h3>economy_sim</h3>
+          <p class="lede" data-i18n="pj_eco_lede">Simulador de mercado con roles, eventos y una GUI.</p>
+          <p class="body" data-i18n="pj_eco_body">Proyecto de aprendizaje: comerciante, hacker, ciudadano, crisis aleatorias y gráficos de precios. Independiente de la economía de Dabot.</p>
+          <div class="project-tags"><span>Python</span></div>
+          <div class="project-links">
+            <a class="ghost" href="https://github.com/davito-03/economy_sim"><i class="fab fa-github"></i> GitHub</a>
+          </div>
+        </article>
+
+        <article class="project-card" data-cat="archive">
+          <div class="project-top">
+            <div class="project-icon git" aria-hidden="true"><i class="fab fa-spotify"></i></div>
+            <div class="project-badges"><span class="pj-badge fork">Fork</span></div>
+          </div>
+          <h3>EeveeSpotifyReborn</h3>
+          <p class="lede" data-i18n="pj_eevee_lede">Fork de un tweak para Spotify. No es código mío de cero.</p>
+          <p class="body" data-i18n="pj_eevee_body">Está en el perfil porque lo biforqué. El desarrollo original es de otros; aquí no hay versión “final” del VPS.</p>
+          <div class="project-tags"><span>Fork</span></div>
+          <div class="project-links">
+            <a class="ghost" href="https://github.com/davito-03/EeveeSpotifyReborn"><i class="fab fa-github"></i> GitHub</a>
+          </div>
+        </article>
+
+        <article class="project-card" data-cat="archive bot">
+          <div class="project-top">
+            <div class="project-icon bot" aria-hidden="true"><i class="fas fa-clock-rotate-left"></i></div>
+            <div class="project-badges"><span class="pj-badge archive" data-i18n="pj_old">Archivo</span></div>
+          </div>
+          <h3>dabot-v2</h3>
+          <p class="lede" data-i18n="pj_v2_lede">Instantánea de 2025. El bot que corre ahora está en davito-03/dabot.</p>
+          <p class="body" data-i18n="pj_v2_body">Era otra arquitectura (nextcord, dashboard estático). Lo dejo como historia para no duplicar el código actual. Si quieres el Dabot de verdad, usa el repo principal.</p>
+          <div class="project-tags"><span>Python</span><span>histórico</span></div>
+          <div class="project-links">
+            <a href="https://github.com/davito-03/dabot"><i class="fas fa-code-branch"></i> Dabot actual</a>
+            <a class="ghost" href="https://github.com/davito-03/dabot-v2"><i class="fab fa-github"></i> dabot-v2</a>
+          </div>
+        </article>
+
+      </div>
+      <p class="projects-note" data-i18n="pj_note">El código de terceros y lo que no es mío para publicar no está aquí.</p>
+    </section>
+  </div>
+
+  <script>
+    (function () {
+      const buttons = document.querySelectorAll(".pj-filter");
+      const cards = document.querySelectorAll(".project-card");
+      buttons.forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          const filter = btn.getAttribute("data-filter");
+          buttons.forEach(function (b) { b.classList.toggle("is-active", b === btn); });
+          cards.forEach(function (card) {
+            const cat = " " + (card.getAttribute("data-cat") || "") + " ";
+            const show = filter === "all" || cat.indexOf(" " + filter + " ") !== -1;
+            card.classList.toggle("is-hidden", !show);
+          });
+        });
+      });
+    })();
+  </script>
+  <script src="/assets/js/site-shell.js?v=3.3" defer></script>
+</body>
+
+</html>

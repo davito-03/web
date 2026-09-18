@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Libro de Visitas — @davito_03</title>
+    <meta name="description" content="Deja tu firma en el muro de davito_03. Un recuerdo de tu visita.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/assets/fontawesome/css/all.min.css?v=6.5.1">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.9/purify.min.js"></script>
+    <script src="/assets/js/themes.js" defer></script>
+    <script src="/assets/js/page-transitions.js"></script>
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --color-primary: #00C6FF;
+            --color-accent: #0072FF;
+            --glass-bg: rgba(255, 255, 255, 0.06);
+            --glass-border: rgba(255, 255, 255, 0.12);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #060b14;
+            color: #f0f0f0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 60px 20px;
+            overflow-x: hidden;
+        }
+
+        /* Ambient glow */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background:
+                radial-gradient(ellipse 60% 50% at 20% 20%, rgba(0, 114, 255, 0.18) 0%, transparent 70%),
+                radial-gradient(ellipse 50% 60% at 80% 80%, rgba(0, 198, 255, 0.12) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .page-wrapper {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 680px;
+        }
+
+        /* Back link */
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: rgba(255, 255, 255, 0.55);
+            text-decoration: none;
+            font-size: 0.88rem;
+            margin-bottom: 40px;
+            transition: color 0.2s;
+        }
+
+        .back-link:hover {
+            color: var(--color-primary);
+        }
+
+        /* Header */
+        header {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+
+        header .icon-wrap {
+            width: 64px;
+            height: 64px;
+            background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+            border-radius: 20px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 32px rgba(0, 198, 255, 0.3);
+        }
+
+        header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            color: transparent;
+            margin-bottom: 8px;
+        }
+
+        header p {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.95rem;
+        }
+
+        /* Glass card */
+        .glass {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            padding: 30px;
+        }
+
+        /* Form */
+        .form-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 20px;
+        }
+
+        .form-row {
+            margin-bottom: 16px;
+        }
+
+        label {
+            display: block;
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.5);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 6px;
+        }
+
+        input[type="text"],
+        textarea {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: #f0f0f0;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+            padding: 12px 16px;
+            outline: none;
+            transition: border-color 0.25s, box-shadow 0.25s;
+            resize: none;
+        }
+
+        input[type="text"]:focus,
+        textarea:focus {
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 3px rgba(0, 198, 255, 0.15);
+        }
+
+        textarea {
+            min-height: 100px;
+        }
+
+        .char-count {
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.3);
+            text-align: right;
+            margin-top: 4px;
+        }
+
+        .submit-btn {
+            width: 100%;
+            background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
+            border: none;
+            border-radius: 12px;
+            color: #fff;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 600;
+            padding: 13px;
+            cursor: pointer;
+            margin-top: 6px;
+            transition: opacity 0.2s, transform 0.15s;
+        }
+
+        .submit-btn:hover {
+            opacity: 0.88;
+            transform: translateY(-1px);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        /* Divider */
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 32px 0;
+            color: rgba(255, 255, 255, 0.2);
+            font-size: 0.8rem;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        /* Messages list */
+        #messages-list {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .message-card {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 18px 20px;
+            animation: slideIn 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .message-author {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--color-primary);
+        }
+
+        .message-date {
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        .message-body {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.75);
+            line-height: 1.55;
+            word-break: break-word;
+        }
+
+        .empty-state {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.25);
+            font-size: 0.9rem;
+            padding: 30px 0;
+        }
+
+        /* Toast */
+        #toast {
+            position: fixed;
+            bottom: 28px;
+            left: 50%;
+            transform: translateX(-50%) translateY(80px);
+            background: rgba(0, 198, 255, 0.15);
+            border: 1px solid rgba(0, 198, 255, 0.4);
+            color: #fff;
+            padding: 12px 24px;
+            border-radius: 40px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            backdrop-filter: blur(12px);
+            transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.35s;
+            opacity: 0;
+            z-index: 9999;
+        }
+
+        #toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 40px 16px;
+            }
+
+            header h1 {
+                font-size: 1.6rem;
+            }
+
+            .glass {
+                padding: 22px 18px;
+            }
+        }
+
+        /* --- THEMES OVERRIDES --- */
+        html[data-theme="cyberpunk"] {
+            --color-primary: #f0f;
+            --color-accent: #0ff;
+            --glass-bg: rgba(0, 11, 24, 0.6);
+            --glass-border: rgba(255, 0, 255, 0.25);
+        }
+        html[data-theme="cyberpunk"] body {
+            background: #000b18;
+            color: #0ff;
+        }
+        html[data-theme="cyberpunk"] body::before {
+            background:
+                radial-gradient(ellipse 60% 50% at 20% 20%, rgba(255, 0, 255, 0.15) 0%, transparent 70%),
+                radial-gradient(ellipse 50% 60% at 80% 80%, rgba(0, 255, 255, 0.12) 0%, transparent 70%);
+        }
+        html[data-theme="cyberpunk"] .message-card {
+            border-color: rgba(255, 0, 255, 0.2);
+            background: rgba(255, 0, 255, 0.03);
+        }
+
+        html[data-theme="matrix"] {
+            --color-primary: #0f0;
+            --color-accent: #00ff00;
+            --glass-bg: rgba(0, 0, 0, 0.8);
+            --glass-border: rgba(0, 255, 0, 0.3);
+        }
+        html[data-theme="matrix"] body {
+            background: #000000;
+            color: #0f0;
+            font-family: 'Courier New', Courier, monospace;
+        }
+        html[data-theme="matrix"] body::before {
+            background:
+                radial-gradient(ellipse 60% 50% at 20% 20%, rgba(0, 128, 0, 0.15) 0%, transparent 70%),
+                radial-gradient(ellipse 50% 60% at 80% 80%, rgba(0, 255, 0, 0.1) 0%, transparent 70%);
+        }
+        html[data-theme="matrix"] input[type="text"],
+        html[data-theme="matrix"] textarea {
+            font-family: 'Courier New', Courier, monospace;
+            border-color: rgba(0, 255, 0, 0.25);
+        }
+        html[data-theme="matrix"] .message-card {
+            border-color: rgba(0, 255, 0, 0.2);
+            background: rgba(0, 255, 0, 0.02);
+        }
+
+        html[data-theme="light"] {
+            --color-primary: #3b82f6;
+            --color-accent: #1d4ed8;
+            --glass-bg: rgba(255, 255, 255, 0.7);
+            --glass-border: rgba(0, 0, 0, 0.08);
+        }
+        html[data-theme="light"] body {
+            background: #f8fafc;
+            color: #0f172a;
+        }
+        html[data-theme="light"] body::before {
+            background:
+                radial-gradient(ellipse 60% 50% at 20% 20%, rgba(59, 130, 246, 0.1) 0%, transparent 70%),
+                radial-gradient(ellipse 50% 60% at 80% 80%, rgba(139, 92, 246, 0.08) 0%, transparent 70%);
+        }
+        html[data-theme="light"] input[type="text"],
+        html[data-theme="light"] textarea {
+            background: rgba(0, 0, 0, 0.03);
+            border-color: rgba(0, 0, 0, 0.1);
+            color: #0f172a;
+        }
+        html[data-theme="light"] .message-card {
+            background: rgba(0, 0, 0, 0.02);
+            border-color: rgba(0, 0, 0, 0.06);
+        }
+        html[data-theme="light"] .message-body {
+            color: #334155;
+        }
+        html[data-theme="light"] .message-date {
+            color: rgba(0, 0, 0, 0.4);
+        }
+    </style>
+</head>
+
+<body data-i18n-title="msg_doc_title">
+    <div id="toast" data-i18n="msg_toast">✨ ¡Firma añadida!</div>
+
+    <div class="page-wrapper" id="main-content">
+        <a href="/" class="back-link">
+            <i class="fas fa-arrow-left"></i> <span data-i18n="back_home">Volver al inicio</span>
+        </a>
+
+        <header>
+            <div class="icon-wrap"><i class="fas fa-book-open"></i></div>
+            <h1 data-i18n="msg_title">Libro de Visitas</h1>
+            <p data-i18n="msg_sub">Deja tu nombre y un mensajito, me hará mucho 🤍</p>
+        </header>
+
+        <!-- Form -->
+        <div class="glass" id="form-section">
+            <p class="form-title" data-i18n="msg_form">✍️ Firma el muro</p>
+            <div class="form-row">
+                <label for="author" data-i18n="msg_name">Tu nombre</label>
+                <input type="text" id="author" placeholder="¿Cómo te llamas?" maxlength="40" data-i18n-placeholder="msg_name_ph">
+            </div>
+            <div class="form-row">
+                <label for="msg" data-i18n="msg_body">Mensaje</label>
+                <textarea id="msg" placeholder="Escribe lo que quieras..." maxlength="280" data-i18n-placeholder="msg_body_ph"></textarea>
+                <p class="char-count"><span id="char-left">280</span> <span data-i18n="msg_chars">caracteres restantes</span></p>
+            </div>
+            <div class="form-row">
+                <label data-i18n="msg_doodle">Tu Grafiti / Dibujo (Opcional)</label>
+                <div style="background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 12px; display: flex; flex-direction: column; align-items: center; gap: 10px;">
+                    <canvas id="doodle-canvas" width="200" height="150" style="background: #000; border-radius: 8px; cursor: crosshair; touch-action: none; border: 1px solid rgba(255,255,255,0.2);"></canvas>
+                    <div style="display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; align-items: center;">
+                        <input type="color" id="brush-color" value="#00C6FF" style="border: none; width: 30px; height: 30px; border-radius: 50%; cursor: pointer; background: none;">
+                        <button type="button" id="clear-canvas-btn" style="background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4); padding: 4px 10px; border-radius: 8px; font-size: 0.8rem; cursor: pointer;">
+                            <i class="fas fa-eraser"></i> <span data-i18n="msg_erase">Borrar</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <button class="submit-btn" id="submit-btn">
+                <i class="fas fa-paper-plane" style="margin-right:6px;"></i> <span data-i18n="msg_submit">Dejar firma</span>
+            </button>
+        </div>
+
+        <div class="divider" data-i18n="msg_prev">Firmas anteriores</div>
+
+        <!-- Messages -->
+        <div id="messages-list">
+            <div class="empty-state" id="empty-state" data-i18n="msg_empty">Aún no hay firmas. ¡Sé el primero! 🎉</div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+        import {
+            getFirestore,
+            collection,
+            addDoc,
+            query,
+            orderBy,
+            limit,
+            onSnapshot,
+            serverTimestamp
+        } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+
+        import { firebaseConfig } from "/assets/js/firebase-config.js";
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        const list = document.getElementById('messages-list');
+        const empty = document.getElementById('empty-state');
+
+        function formatDate(timestamp) {
+            if (!timestamp) return 'Ahora mismo';
+            const d = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+            return d.toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+        }
+
+        // Sanitización y prevención XSS estricta
+        function sanitize(str) {
+            const clean = DOMPurify.sanitize(str);
+            return String(clean)
+                .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;').replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;').replace(/\n/g, '<br>');
+        }
+
+        // Lógica de Dibujo Canvas
+        const canvas = document.getElementById('doodle-canvas');
+        const ctx = canvas.getContext('2d');
+        const colorPicker = document.getElementById('brush-color');
+        const clearBtn = document.getElementById('clear-canvas-btn');
+
+        let isDrawing = false;
+        let hasDrawn = false;
+
+        function getPos(e) {
+            const rect = canvas.getBoundingClientRect();
+            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+            return {
+                x: clientX - rect.left,
+                y: clientY - rect.top
+            };
+        }
+
+        function startDraw(e) {
+            isDrawing = true;
+            hasDrawn = true;
+            const pos = getPos(e);
+            ctx.beginPath();
+            ctx.moveTo(pos.x, pos.y);
+        }
+
+        function draw(e) {
+            if (!isDrawing) return;
+            e.preventDefault();
+            const pos = getPos(e);
+            ctx.strokeStyle = colorPicker.value;
+            ctx.lineWidth = 3;
+            ctx.lineCap = 'round';
+            ctx.lineTo(pos.x, pos.y);
+            ctx.stroke();
+        }
+
+        function stopDraw() { isDrawing = false; }
+
+        canvas.addEventListener('mousedown', startDraw);
+        canvas.addEventListener('mousemove', draw);
+        canvas.addEventListener('mouseup', stopDraw);
+        canvas.addEventListener('mouseleave', stopDraw);
+
+        canvas.addEventListener('touchstart', startDraw);
+        canvas.addEventListener('touchmove', draw);
+        canvas.addEventListener('touchend', stopDraw);
+
+        clearBtn.addEventListener('click', () => {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            hasDrawn = false;
+        });
+
+        // Carga de firmas en tiempo real desde Firestore
+        const guestbookRef = collection(db, "guestbook_messages");
+        const q = query(guestbookRef, orderBy("date", "desc"), limit(50));
+
+        onSnapshot(q, (snapshot) => {
+            list.querySelectorAll('.message-card').forEach(c => c.remove());
+
+            if (snapshot.empty) {
+                empty.style.display = 'block';
+                return;
+            }
+
+            empty.style.display = 'none';
+
+            snapshot.forEach((doc) => {
+                const m = doc.data();
+                const card = document.createElement('div');
+                card.className = 'message-card';
+                const isValidDrawing = typeof m.drawing === 'string' && /^data:image\/png;base64,[A-Za-z0-9+/=]+$/.test(m.drawing.trim());
+                card.innerHTML = `
+                    <div class="message-header">
+                        <span class="message-author">${sanitize(m.author || 'Anónimo')}</span>
+                        <span class="message-date">${formatDate(m.date)}</span>
+                    </div>
+                    <p class="message-body">${sanitize(m.text || '')}</p>
+                    ${isValidDrawing ? `<div style="margin-top: 10px;"><img src="${m.drawing.trim()}" style="max-width: 100%; border-radius: 8px; border: 1px solid rgba(255,255,255,0.15);" alt="Dibujo"></div>` : ''}
+                `;
+                list.appendChild(card);
+            });
+        }, (error) => {
+            console.error("Error al cargar firmas de Firestore:", error);
+        });
+
+        function showToast() {
+            const t = document.getElementById('toast');
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 2800);
+        }
+
+        document.getElementById('msg').addEventListener('input', function () {
+            const left = 280 - this.value.length;
+            document.getElementById('char-left').textContent = left;
+        });
+
+        let isSubmitting = false;
+        document.getElementById('submit-btn').addEventListener('click', async () => {
+            if (isSubmitting) return;
+
+            const authorInput = document.getElementById('author');
+            const msgInput = document.getElementById('msg');
+
+            const author = authorInput.value.trim() || 'Anónimo';
+            const text = msgInput.value.trim();
+
+            if (!text && !hasDrawn) {
+                msgInput.focus();
+                return;
+            }
+
+            try {
+                isSubmitting = true;
+                const submitBtn = document.getElementById('submit-btn');
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
+
+                const drawingData = hasDrawn ? canvas.toDataURL('image/png') : null;
+
+                await addDoc(guestbookRef, {
+                    author: author,
+                    text: text,
+                    drawing: drawingData,
+                    date: serverTimestamp()
+                });
+
+                authorInput.value = '';
+                msgInput.value = '';
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                hasDrawn = false;
+                document.getElementById('char-left').textContent = '280';
+
+                showToast();
+            } catch (err) {
+                console.error("Error al añadir firma a Firestore:", err);
+                alert("Error al enviar la firma. Por favor, inténtalo de nuevo.");
+            } finally {
+                isSubmitting = false;
+                const submitBtn = document.getElementById('submit-btn');
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-paper-plane" style="margin-right:6px;"></i> Dejar firma';
+            }
+        });
+    </script>
+  <script src="/assets/js/site-shell.js?v=3.2" defer></script>
+</body>
+
+</html>
+

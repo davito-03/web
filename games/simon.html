@@ -1,0 +1,204 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Simon Says - davito_03</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/assets/css/styles.css">
+    <link rel="stylesheet" href="/assets/css/mobile-optimizations.css">
+    <link rel="stylesheet" href="/assets/css/games.css">
+
+    <style>
+        body {
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Inter', sans-serif;
+        }
+
+        #game-container {
+            position: relative;
+            width: 500px;
+            height: 500px;
+            max-width: 90vmin;
+            max-height: 90vmin;
+        }
+
+        #simon-board {
+            width: 100%;
+            height: 100%;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: 1fr 1fr;
+            gap: 10px;
+            background: #000;
+            border-radius: 50%;
+            padding: 10px;
+            box-shadow: 0 0 50px rgba(0, 0, 0, 0.8);
+        }
+
+        .simon-btn {
+            cursor: pointer;
+            transition: all 0.1s;
+            border: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .simon-btn:nth-child(1) {
+            background: #00ff00;
+            border-top-left-radius: 100%;
+        }
+
+        .simon-btn:nth-child(2) {
+            background: #ff0000;
+            border-top-right-radius: 100%;
+        }
+
+        .simon-btn:nth-child(3) {
+            background: #ffff00;
+            border-bottom-left-radius: 100%;
+        }
+
+        .simon-btn:nth-child(4) {
+            background: #0000ff;
+            border-bottom-right-radius: 100%;
+        }
+
+        .simon-btn:active,
+        .simon-btn.flash {
+            filter: brightness(2);
+            transform: scale(0.98);
+        }
+
+        .simon-btn.disabled {
+            cursor: not-allowed;
+            opacity: 0.4;
+        }
+
+        #center-circle {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 35%;
+            height: 35%;
+            background: #000;
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 12px;
+            text-align: center;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
+            pointer-events: none;
+        }
+
+        #level {
+            font-size: 32px;
+            margin-bottom: 10px;
+            color: #0ff;
+        }
+
+        .exit-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #f00;
+            color: #fff;
+            padding: 8px 12px;
+            border: 2px solid #fff;
+            text-decoration: none;
+            font-size: 8px;
+            z-index: 20;
+        }
+
+        .message {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #0ff;
+            font-size: 14px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            text-shadow: 0 0 10px #0ff;
+            pointer-events: none;
+        }
+
+        .message.show {
+            opacity: 1;
+        }
+    </style>
+</head>
+
+<body>
+
+    <a href="/pages/laboratorio" class="exit-btn">? BACK</a>
+
+    <div class="message" id="message"></div>
+
+    <div id="game-container">
+        <div id="simon-board">
+            <button class="simon-btn disabled" data-color="0"></button>
+            <button class="simon-btn disabled" data-color="1"></button>
+            <button class="simon-btn disabled" data-color="2"></button>
+            <button class="simon-btn disabled" data-color="3"></button>
+        </div>
+
+        <div id="center-circle">
+            <div id="level">1</div>
+            <div id="status">READY</div>
+        </div>
+    </div>
+
+    <!-- Start Screen -->
+    <div id="start-screen" class="game-modal active">
+        <div class="modal-box" style="background: linear-gradient(135deg, #1a1a2e, #16213e); border: 3px solid #0ff;">
+            <h1 style="font-family: 'Inter', sans-serif; color: #0ff; text-shadow: 0 0 20px #0ff; margin-bottom: 20px;">
+                SIMON SAYS</h1>
+            <p class="instructions" style="line-height: 1.8; margin: 30px 0;">
+                <span style="color: #0ff; font-size: 14px;">MEMORY CHALLENGE</span><br><br>
+                Watch the color sequence<br>
+                and repeat it perfectly.<br><br>
+                Click or tap the colored buttons<br>
+                in the exact same order.<br><br>
+                <span style="color: #ff0;">How far can you go?</span>
+            </p>
+            <button id="start-btn" class="game-btn"
+                style="background: linear-gradient(45deg, #0ff, #0aa); color: #000; border: none; padding: 15px 40px; font-family: 'Inter', sans-serif; font-size: 12px; cursor: pointer;">BEGIN
+                TEST</button>
+        </div>
+    </div>
+
+    <!-- Game Over Modal -->
+    <div id="game-over-modal" class="game-modal">
+        <div class="modal-box" style="background: linear-gradient(135deg, #2e1a1a, #3e1616); border: 3px solid #f00;">
+            <h2 style="font-family: 'Inter', sans-serif; color: #f00; text-shadow: 0 0 20px #f00; margin-bottom: 30px;">
+                MEMORY FAILED</h2>
+            <div style="margin: 20px 0; font-family: 'Inter', sans-serif; font-size: 12px;">
+                <p style="margin: 10px 0;">LEVEL REACHED: <span id="final-level" style="color: #0ff;">1</span></p>
+                <p style="margin: 10px 0;">SEQUENCE LENGTH: <span id="final-seq" style="color: #ff0;">0</span></p>
+            </div>
+            <button id="restart-btn" class="game-btn"
+                style="background: linear-gradient(45deg, #0ff, #0aa); color: #000; border: none; padding: 15px 40px; font-family: 'Inter', sans-serif; font-size: 12px; cursor: pointer; margin-top: 20px;">TRY
+                AGAIN</button>
+        </div>
+    </div>
+
+    <script src="/assets/js/leaderboard.js"></script>
+    <script type="module" src="/assets/js/games/simon.js"></script>
+
+  <script src="/assets/js/site-shell.js?v=3.2" defer></script>
+</body>
+
+</html>
+

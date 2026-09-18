@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <meta name="theme-color" content="#1a1a2e">
+    <title>Donaciones - davito_03</title>
+    <link rel="stylesheet" href="/assets/css/styles.css">
+    <link rel="stylesheet" href="/assets/css/mobile-optimizations.css">
+    <link rel="stylesheet" href="/assets/fontawesome/css/all.min.css?v=6.5.1">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/assets/css/terminal.css">
+    <style>
+        .donations-container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .donation-card {
+            background: rgba(0, 0, 0, 0.4);
+            border: 2px solid var(--color-primary);
+            border-radius: 15px;
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            transition: transform 0.3s, box-shadow 0.3s;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(5px);
+        }
+
+        .donation-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0, 191, 255, 0.2);
+            border-color: var(--color-accent);
+        }
+
+        .donation-icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+            color: var(--color-accent);
+        }
+
+        .donation-title {
+            font-family: 'Inter', sans-serif;
+            font-size: 1.2em;
+            color: #fff;
+            margin-bottom: 15px;
+            text-shadow: 0 0 5px var(--color-primary);
+        }
+
+        .donation-address {
+            background: rgba(0, 0, 0, 0.6);
+            padding: 10px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            word-break: break-all;
+            margin-bottom: 15px;
+            border: 1px solid #333;
+            width: 100%;
+        }
+
+        .action-btn {
+            background: var(--color-primary);
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.8em;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            min-width: 120px;
+        }
+
+        .action-btn:hover {
+            transform: scale(1.05);
+            background: var(--color-accent);
+            box-shadow: 0 0 10px var(--color-accent);
+            color: #000;
+        }
+
+        .copy-btn {
+            background: transparent;
+            border: 2px solid var(--color-primary);
+            color: var(--color-primary);
+            min-width: auto;
+            width: 40px;
+            height: 40px;
+            padding: 0;
+            border-radius: 50%;
+        }
+
+        .copy-btn:hover {
+            background: var(--color-primary);
+            color: #000;
+        }
+
+        .btn-group {
+            margin-top: auto;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+            width: 100%;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--color-success);
+            color: #000;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.8em;
+            display: none;
+            z-index: 1000;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.4);
+        }
+
+        .toast.show {
+            display: block;
+            animation: fadeInOut 2s ease-in-out;
+        }
+
+        @keyframes fadeInOut {
+            0% {
+                opacity: 0;
+                transform: translate(-50%, 20px);
+            }
+
+            20% {
+                opacity: 1;
+                transform: translate(-50%, 0);
+            }
+
+            80% {
+                opacity: 1;
+                transform: translate(-50%, 0);
+            }
+
+            100% {
+                opacity: 0;
+                transform: translate(-50%, -20px);
+            }
+        }
+
+        .revolut {
+            color: #0075EB;
+        }
+
+        .paypal {
+            color: #003087;
+        }
+
+        .bitcoin {
+            color: #F7931A;
+        }
+
+        .solana {
+            color: #14F195;
+        }
+
+        .ethereum {
+            color: #627EEA;
+        }
+
+        .bnb {
+            color: #F3BA2F;
+        }
+    </style>
+</head>
+
+<body data-i18n-title="don_doc_title">
+        <div class="container" id="main-content">
+        <header>
+            <a href="/" class="back-home"><i class="fas fa-arrow-left"></i> <span data-i18n="back_home">Volver al inicio</span></a>
+            <h1 class="space-title" data-i18n="don_title">Donaciones</h1>
+            <p style="color: #ccc; margin-bottom: 20px;" data-i18n="don_sub">Gracias por apoyar el proyecto ❤️</p>
+        </header>
+
+        <div class="donations-container">
+            <!-- PayPal -->
+            <div class="donation-card">
+                <i class="fab fa-paypal donation-icon paypal"></i>
+                <h3 class="donation-title">PayPal</h3>
+                <p data-i18n="don_paypal_p">Donación directa y segura</p>
+                <div class="btn-group">
+                    <a href="https://www.paypal.com/paypalme/davito03" target="_blank" class="action-btn">
+                        <i class="fas fa-external-link-alt"></i> <span data-i18n="don_open_pp">Abrir PayPal</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Revolut -->
+            <div class="donation-card">
+                <i class="fas fa-university donation-icon revolut"></i>
+                <h3 class="donation-title">Revolut</h3>
+                <div class="donation-address">@davito03</div>
+                <div class="btn-group">
+                    <a href="https://revolut.me/davito03" target="_blank" class="action-btn">
+                        <i class="fas fa-external-link-alt"></i> <span data-i18n="don_revolut">Pagar con Revolut</span>
+                    </a>
+                    <button class="action-btn copy-btn" onclick="copyToClipboard('@davito03')" title="Copiar Usuario">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Bitcoin -->
+            <div class="donation-card">
+                <i class="fab fa-bitcoin donation-icon bitcoin"></i>
+                <h3 class="donation-title">Bitcoin</h3>
+                <div class="donation-address">bc1q6e9y905fzdz5d6ja6299fuqzjunwx69r49ne2y</div>
+                <div class="btn-group">
+                    <a href="bitcoin:bc1q6e9y905fzdz5d6ja6299fuqzjunwx69r49ne2y" class="action-btn">
+                        <i class="fas fa-wallet"></i> <span data-i18n="don_open_app">Abrir App</span>
+                    </a>
+                    <button class="action-btn copy-btn"
+                        onclick="copyToClipboard('bc1q6e9y905fzdz5d6ja6299fuqzjunwx69r49ne2y')"
+                        title="Copiar Dirección">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Solana -->
+            <div class="donation-card">
+                <i class="fas fa-layer-group donation-icon solana"></i>
+                <h3 class="donation-title">Solana</h3>
+                <div class="donation-address">Hnnrri4xR2UgDrQXrrTPDXZyXmkYU4WER2aGYvnv3F2B</div>
+                <div class="btn-group">
+                    <a href="solana:Hnnrri4xR2UgDrQXrrTPDXZyXmkYU4WER2aGYvnv3F2B" class="action-btn">
+                        <i class="fas fa-wallet"></i> <span data-i18n="don_open_app">Abrir App</span>
+                    </a>
+                    <button class="action-btn copy-btn"
+                        onclick="copyToClipboard('Hnnrri4xR2UgDrQXrrTPDXZyXmkYU4WER2aGYvnv3F2B')"
+                        title="Copiar Dirección">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- BNB Smart Chain -->
+            <div class="donation-card">
+                <i class="fas fa-coins donation-icon bnb"></i>
+                <h3 class="donation-title">BNB Smart Chain</h3>
+                <div class="donation-address">0x27386E29eF5e361D9e9b9a82632f54C47E4f9622</div>
+                <div class="btn-group">
+                    <button class="action-btn copy-btn"
+                        onclick="copyToClipboard('0x27386E29eF5e361D9e9b9a82632f54C47E4f9622')" title="Copiar Dirección"
+                        style="width: auto; padding: 10px 20px; border-radius: 25px;">
+                        <i class="fas fa-copy"></i> Copiar Dirección
+                    </button>
+                </div>
+            </div>
+
+            <!-- Ethereum -->
+            <div class="donation-card">
+                <i class="fab fa-ethereum donation-icon ethereum"></i>
+                <h3 class="donation-title">Ethereum + Stablecoins</h3>
+                <div class="donation-address">0x27386E29eF5e361D9e9b9a82632f54C47E4f9622</div>
+                <div style="font-size: 0.8em; color: #aaa; margin-bottom: 15px;">
+                    <span style="border: 1px solid #aaa; padding: 2px 5px; border-radius: 4px;">ETH</span>
+                    <span
+                        style="border: 1px solid #26A17B; color: #26A17B; padding: 2px 5px; border-radius: 4px;">USDT</span>
+                    <span
+                        style="border: 1px solid #2775CA; color: #2775CA; padding: 2px 5px; border-radius: 4px;">USDC</span>
+                </div>
+                <div class="btn-group">
+                    <a href="ethereum:0x27386E29eF5e361D9e9b9a82632f54C47E4f9622" class="action-btn">
+                        <i class="fas fa-wallet"></i> <span data-i18n="don_open_app">Abrir App</span>
+                    </a>
+                    <button class="action-btn copy-btn"
+                        onclick="copyToClipboard('0x27386E29eF5e361D9e9b9a82632f54C47E4f9622')"
+                        title="Copiar Dirección">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Litecoin -->
+            <div class="donation-card">
+                <i class="fas fa-coins donation-icon" style="color: #345D9D;"></i>
+                <h3 class="donation-title">Litecoin</h3>
+                <div class="donation-address">ltc1q26z8yrssnw4eyhyunkucx54u5thlttdfe6snc8</div>
+                <div class="btn-group">
+                    <a href="litecoin:ltc1q26z8yrssnw4eyhyunkucx54u5thlttdfe6snc8" class="action-btn">
+                        <i class="fas fa-wallet"></i> <span data-i18n="don_open_app">Abrir App</span>
+                    </a>
+                    <button class="action-btn copy-btn"
+                        onclick="copyToClipboard('ltc1q26z8yrssnw4eyhyunkucx54u5thlttdfe6snc8')"
+                        title="Copiar Dirección">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Dogecoin -->
+            <div class="donation-card">
+                <i class="fas fa-dog donation-icon" style="color: #C2A633;"></i>
+                <h3 class="donation-title">Dogecoin</h3>
+                <div class="donation-address">DPYcKSbsj3pXESgrtf9k4mAmgnDaHEx98c</div>
+                <div class="btn-group">
+                    <a href="dogecoin:DPYcKSbsj3pXESgrtf9k4mAmgnDaHEx98c" class="action-btn">
+                        <i class="fas fa-wallet"></i> <span data-i18n="don_open_app">Abrir App</span>
+                    </a>
+                    <button class="action-btn copy-btn" onclick="copyToClipboard('DPYcKSbsj3pXESgrtf9k4mAmgnDaHEx98c')"
+                        title="Copiar Dirección">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Monero (Solana) -->
+            <div class="donation-card">
+                <i class="fas fa-user-secret donation-icon monero"></i>
+                <h3 class="donation-title">Monero (SPL)</h3>
+                <p style="font-size: 0.8em; color: #ff9900; margin-bottom: 10px;">⚠️ Red Solana (SPL) ⚠️</p>
+                <div class="donation-address">5XQcK8zg1cLUzCxzQp2WPrN4chphoc4tgMAxyohzc934</div>
+                <div class="btn-group">
+                    <a href="solana:5XQcK8zg1cLUzCxzQp2WPrN4chphoc4tgMAxyohzc934" class="action-btn">
+                        <i class="fas fa-wallet"></i> <span data-i18n="don_open_app">Abrir App</span>
+                    </a>
+                    <button class="action-btn copy-btn"
+                        onclick="copyToClipboard('5XQcK8zg1cLUzCxzQp2WPrN4chphoc4tgMAxyohzc934')"
+                        title="Copiar Dirección">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast" class="toast">¡Copiado al portapapeles!</div>
+
+    <script>
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                const toast = document.getElementById('toast');
+                toast.classList.add('show');
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                }, 2000);
+            }).catch(err => {
+                console.error('Error al copiar: ', err);
+            });
+        }
+    </script>
+
+        <script src="/assets/js/terminal.js"></script>
+    <script type="module" src="/assets/js/secrets.js"></script>
+  <script src="/assets/js/site-shell.js?v=3.2" defer></script>
+</body>
+
+</html>
+

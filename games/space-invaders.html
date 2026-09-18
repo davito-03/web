@@ -1,0 +1,149 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Space Invaders - davito_03</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/assets/fontawesome/css/all.min.css?v=6.5.1">
+    <link rel="stylesheet" href="/assets/css/styles.css">
+    <link rel="stylesheet" href="/assets/css/mobile-optimizations.css">
+    <link rel="stylesheet" href="/assets/css/games.css">
+
+    <style>
+        body {
+            background: #000;
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #game-canvas {
+            background: #000;
+            border: 2px solid #0f0;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+        }
+
+        .hud {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 10;
+            font-family: 'Inter', sans-serif;
+            color: #0f0;
+            font-size: 14px;
+        }
+
+        .lives {
+            color: #f00;
+            margin-top: 10px;
+        }
+
+        .exit-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 20;
+            background: #f00;
+            color: #fff;
+            padding: 10px 15px;
+            border: 2px solid #fff;
+            text-decoration: none;
+            font-family: 'Inter', sans-serif;
+            font-size: 10px;
+        }
+
+        .touch-controls {
+            position: absolute;
+            bottom: 20px;
+            width: 100%;
+            display: none;
+            justify-content: space-around;
+            padding: 0 20px;
+        }
+
+        .touch-btn {
+            width: 70px;
+            height: 70px;
+            background: rgba(0, 255, 0, 0.2);
+            border: 2px solid #0f0;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #0f0;
+            font-size: 24px;
+        }
+
+        .touch-btn:active {
+            background: rgba(0, 255, 0, 0.5);
+        }
+
+        @media (max-width: 768px) {
+            .touch-controls {
+                display: flex;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <a href="/pages/laboratorio" class="exit-btn">? BACK</a>
+
+    <div class="hud">
+        <div><span data-i18n="game_score">SCORE</span>: <span id="score">0</span></div>
+        <div class="lives">LIVES: <span id="lives">3</span></div>
+        <div style="margin-top: 10px; font-size: 10px;">WAVE: <span id="wave">1</span></div>
+    </div>
+
+    <canvas id="game-canvas"></canvas>
+
+    <div class="touch-controls">
+        <div class="touch-btn" id="btn-left"><i class="fas fa-chevron-left"></i></div>
+        <div class="touch-btn" id="btn-shoot" style="border-color: #f00; color: #f00;"><i class="fas fa-rocket"></i>
+        </div>
+        <div class="touch-btn" id="btn-right"><i class="fas fa-chevron-right"></i></div>
+    </div>
+
+    <!-- Start Screen -->
+    <div id="start-screen" class="game-modal active">
+        <div class="modal-box">
+            <h1 style="font-family: 'Inter', sans-serif; color: #0f0; text-shadow: 0 0 20px #0f0;">SPACE INVADERS</h1>
+            <p class="instructions" style="margin: 30px 0; line-height: 1.8;">
+                Defend Earth from the alien invasion!<br><br>
+                <span style="color: #0f0;">CONTROLS:</span><br>
+                <kbd>?</kbd> <kbd>?</kbd> Move Ship<br>
+                <kbd>SPACE</kbd> Fire Laser
+            </p>
+            <button id="start-btn" class="game-btn"
+                style="background: linear-gradient(45deg, #0f0, #0a0); color: #000; border: none; padding: 15px 40px; font-family: 'Inter', sans-serif; font-size: 12px; cursor: pointer;">LAUNCH</button>
+        </div>
+    </div>
+
+    <!-- Game Over Modal -->
+    <div id="game-over-modal" class="game-modal">
+        <div class="modal-box">
+            <h2 style="font-family: 'Inter', sans-serif; color: #f00; text-shadow: 0 0 20px #f00; margin-bottom: 30px;">
+                EARTH DESTROYED</h2>
+            <div style="margin: 20px 0; font-family: 'Inter', sans-serif; font-size: 12px;">
+                <p style="margin: 10px 0;">FINAL <span data-i18n="game_score">SCORE</span>: <span id="final-score" style="color: #0f0;">0</span></p>
+                <p style="margin: 10px 0;">WAVE REACHED: <span id="final-wave" style="color: #ff0;">1</span></p>
+            </div>
+            <button id="restart-btn" class="game-btn"
+                style="background: linear-gradient(45deg, #0f0, #0a0); color: #000; border: none; padding: 15px 40px; font-family: 'Inter', sans-serif; font-size: 12px; cursor: pointer; margin-top: 20px;">RETRY</button>
+        </div>
+    </div>
+
+    <script src="/assets/js/leaderboard.js"></script>
+    <script type="module" src="/assets/js/games/space-invaders.js"></script>
+
+  <script src="/assets/js/site-shell.js?v=3.2" defer></script>
+</body>
+
+</html>
+

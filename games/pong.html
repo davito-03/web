@@ -1,0 +1,197 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Pong - davito_03</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/assets/fontawesome/css/all.min.css?v=6.5.1">
+    <link rel="stylesheet" href="/assets/css/styles.css">
+    <link rel="stylesheet" href="/assets/css/mobile-optimizations.css">
+    <link rel="stylesheet" href="/assets/css/games.css">
+    <link rel="stylesheet" href="/assets/css/terminal.css">
+
+    <style>
+        body {
+            touch-action: none;
+            overflow: hidden;
+            background: #000;
+        }
+
+        .game-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            width: 100vw;
+        }
+
+        #game-canvas {
+            background: #000;
+            border-top: 2px solid #fff;
+            border-bottom: 2px solid #fff;
+            max-width: 95vw;
+            max-height: 60vh;
+        }
+
+        .score-board {
+            font-family: 'Inter', sans-serif;
+            color: #fff;
+            margin-bottom: 20px;
+            font-size: 20px;
+            display: flex;
+            gap: 50px;
+        }
+
+        /* Modal */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .modal.active {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .modal-content {
+            background: #111;
+            padding: 40px;
+            border: 4px solid #fff;
+            text-align: center;
+            color: #fff;
+            font-family: 'Inter', sans-serif;
+            max-width: 400px;
+        }
+
+        button {
+            background: #fff;
+            color: #000;
+            border: none;
+            padding: 15px 20px;
+            cursor: pointer;
+            font-family: inherit;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+
+        button:hover {
+            background: #ccc;
+        }
+
+        .touch-controls {
+            display: flex;
+            width: 100%;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 5;
+            pointer-events: none;
+            /* Let clicks pass through generally */
+        }
+
+        .touch-zone {
+            flex: 1;
+            pointer-events: auto;
+            /* Catch touches */
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="game-wrapper">
+        <div style="position: absolute; top: 20px; left: 20px; z-index: 10;">
+            <a href="/pages/laboratorio" style="color: #fff; text-decoration: none; font-family: monospace;"><span data-i18n="game_back">Back</span></a>
+        </div>
+
+        <div class="score-board">
+            <span id="player-score">0</span>
+            <span id="cpu-score">0</span>
+        </div>
+
+        <canvas id="game-canvas" width="600" height="400"></canvas>
+
+        <div class="desktop-instructions"
+            style="color: #666; font-size: 10px; margin-top: 10px; font-family: 'Inter', sans-serif;">
+            USE MOUSE TO MOVE PADDLE
+        </div>
+
+        <div class="mobile-controls"
+            style="color: #666; font-size: 10px; margin-top: 10px; font-family: 'Inter', sans-serif; text-align: center;">
+            TOUCH AND DRAG TO MOVE
+        </div>
+    </div>
+
+    <!-- Start Screen -->
+    <div id="start-screen" class="modal active">
+        <div class="modal-content">
+            <h1>PONG</h1>
+            <p style="margin: 20px 0; font-size: 12px; line-height: 1.5; color: #aaa;">
+                First to 5 wins.<br>
+                Move your paddle to hit the ball.
+            </p>
+            <div class="difficulty-select">
+                <p style="margin-bottom: 10px; color: #fff;">SELECT DIFFICULTY</p>
+                <button class="diff-btn" data-speed="2.5" style="border-color: #00ff00; color: #00ff00;">EASY</button>
+                <button class="diff-btn" data-speed="4.5" style="border-color: #ffff00; color: #ffff00;">MEDIUM</button>
+                <button class="diff-btn" data-speed="7.5" style="border-color: #ff8800; color: #ff8800;">HARD</button>
+                <button class="diff-btn" data-speed="15"
+                    style="border-color: #ff0000; color: #ff0000;">IMPOSSIBLE</button>
+            </div>
+
+            <style>
+                .diff-btn {
+                    background: transparent;
+                    border: 2px solid #fff;
+                    margin: 5px;
+                    padding: 10px 15px;
+                    font-family: 'Inter', sans-serif;
+                    font-size: 10px;
+                    cursor: pointer;
+                    transition: transform 0.1s;
+                }
+
+                .diff-btn:hover {
+                    transform: scale(1.1);
+                    background: rgba(255, 255, 255, 0.1);
+                }
+
+                .diff-btn:active {
+                    transform: scale(0.95);
+                }
+            </style>
+        </div>
+    </div>
+
+    <!-- Game Over Modal -->
+    <div id="game-over-modal" class="modal">
+        <div class="modal-content">
+            <h2 id="result-title">YOU WIN!</h2>
+            <button id="restart-btn">PLAY AGAIN</button>
+        </div>
+    </div>
+
+    <script src="/assets/js/leaderboard.js"></script>
+    <script type="module" src="/assets/js/games/pong.js"></script>
+
+  <script src="/assets/js/site-shell.js?v=3.2" defer></script>
+</body>
+
+</html>
+

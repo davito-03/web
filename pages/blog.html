@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+
+    <meta name="theme-color" content="#1a1a2e">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="mobile-web-app-capable" content="yes">
+    <title>davito's blog</title>
+    <link rel="stylesheet" href="/assets/css/styles.css?v=3.1">
+    <link rel="stylesheet" href="/assets/css/mobile-optimizations.css?v=3.0">
+    <link rel="stylesheet" href="/assets/fontawesome/css/all.min.css?v=6.5.1">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/assets/css/terminal.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.9/purify.min.js"></script>
+    <script src="/assets/js/themes.js" defer></script>
+</head>
+
+<body class="messages-page" data-i18n-title="blog_doc_title">
+    <div class="container blog-container" id="main-content">
+        <header style="grid-column: 1 / -1; text-align: center; margin-bottom: 2rem;">
+            <a href="/" class="back-home"><i class="fas fa-arrow-left"></i> <span data-i18n="back_home">Volver al inicio</span></a>
+            <h1 class="space-title" data-i18n="blog_title">davito's hub</h1>
+            <p style="color: #888; font-family: 'Fira Code', monospace; font-size: 0.9rem;" data-i18n="blog_sub">feed & blog</p>
+        </header>
+
+        <div class="blog-grid" style="display: grid; grid-template-columns: 1fr; gap: 30px; margin-bottom: 40px; max-width: 700px; margin-left: auto; margin-right: auto;">
+            <style>
+                .feed-section,
+                .posts-section {
+                    background: rgba(20, 20, 30, 0.5);
+                    border-radius: 15px;
+                    padding: 20px;
+                    border: 1px solid rgba(255, 255, 255, 0.1);
+                    backdrop-filter: blur(10px);
+                }
+
+                .section-header {
+                    color: #fff;
+                    font-family: 'Inter', sans-serif;
+                    font-size: 1.2rem;
+                    margin-bottom: 20px;
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+                    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+                    padding-bottom: 10px;
+                }
+            </style>
+
+            <!-- Sección: Posts (Blog) -->
+            <div class="posts-section">
+                <h2 class="section-header"><i class="fas fa-pen-nib" style="color: #00f2fe;"></i> <span data-i18n="blog_articles">Artículos</span></h2>
+                <div id="post-list" class="post-list-container"
+                    style="display: flex; flex-direction: column; gap: 15px;">
+                    <p style="color: #666; font-size: 0.9rem; text-align: center; padding: 20px;" data-i18n="blog_loading">Cargando base de
+                        datos...</p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <script type="module" src="/assets/js/main.js" defer></script>
+    <script type="module" src="/assets/js/pages/blog.js?v=3" defer></script>
+    <script type="module" src="/assets/js/achievements.js" defer></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            if (typeof unlockAchievement === 'function') {
+                unlockAchievement('lector');
+            }
+        });
+    </script>
+
+    <script src="/assets/js/terminal.js"></script>
+    <script type="module" src="/assets/js/secrets.js"></script>
+  <script src="/assets/js/site-shell.js?v=3.2" defer></script>
+</body>
+
+</html>

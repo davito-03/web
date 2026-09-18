@@ -1,0 +1,257 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Tetris - davito_03</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/assets/fontawesome/css/all.min.css?v=6.5.1">
+    <link rel="stylesheet" href="/assets/css/styles.css">
+    <link rel="stylesheet" href="/assets/css/mobile-optimizations.css">
+    <link rel="stylesheet" href="/assets/css/games.css">
+    <link rel="stylesheet" href="/assets/css/terminal.css">
+
+    <style>
+        body {
+            background: #000;
+            touch-action: none;
+            overflow: hidden;
+        }
+
+        .game-wrapper {
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            height: 100vh;
+            gap: 20px;
+            padding-top: 20px;
+        }
+
+        #game-canvas {
+            background: #111;
+            border: 2px solid #555;
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.1);
+        }
+
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .info-box {
+            background: #222;
+            padding: 10px;
+            border: 1px solid #444;
+            color: #fff;
+            text-align: center;
+            font-family: 'Inter', sans-serif;
+            font-size: 10px;
+            width: 80px;
+        }
+
+        .info-box h3 {
+            margin: 0 0 5px 0;
+            color: #0ff;
+            font-size: 8px;
+        }
+
+        #next-piece-canvas {
+            background: #000;
+            margin: 0 auto;
+            display: block;
+        }
+
+        /* Controls */
+        .controls-container {
+            position: fixed;
+            bottom: 20px;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+        }
+
+        .d-pad {
+            display: grid;
+            grid-template-columns: 60px 60px 60px;
+            grid-template-rows: 60px 60px;
+            gap: 5px;
+        }
+
+        .action-btn {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: rgba(255, 0, 0, 0.2);
+            border: 2px solid rgba(255, 0, 0, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .action-btn:active {
+            background: rgba(255, 0, 0, 0.5);
+        }
+
+        .d-btn {
+            width: 60px;
+            height: 60px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        .d-btn:active {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .d-btn.up {
+            grid-column: 2;
+            grid-row: 1;
+            border-radius: 10px 10px 0 0;
+        }
+
+        .d-btn.left {
+            grid-column: 1;
+            grid-row: 2;
+            border-radius: 10px 0 0 10px;
+        }
+
+        .d-btn.right {
+            grid-column: 3;
+            grid-row: 2;
+            border-radius: 0 10px 10px 0;
+        }
+
+        .d-btn.down {
+            grid-column: 2;
+            grid-row: 2;
+        }
+
+        /* Modal */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 100;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .modal.active {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .modal-content {
+            background: #111;
+            padding: 30px;
+            border: 2px solid #0ff;
+            text-align: center;
+            color: #fff;
+            font-family: 'Inter', sans-serif;
+        }
+
+        button {
+            padding: 15px;
+            margin-top: 15px;
+            background: #0ff;
+            border: none;
+            font-family: inherit;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="game-wrapper">
+        <div style="position: absolute; top: 10px; left: 10px;">
+            <a href="/pages/laboratorio" style="color: #fff; text-decoration: none; font-family: monospace;">&lt; Exit</a>
+        </div>
+
+        <!-- Main Game -->
+        <canvas id="game-canvas" width="240" height="480"></canvas>
+
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="info-box">
+                <h3>SCORE</h3>
+                <span id="score">0</span>
+            </div>
+            <div class="info-box">
+                <h3>LEVEL</h3>
+                <span id="level">1</span>
+            </div>
+            <div class="info-box">
+                <h3>NEXT</h3>
+                <canvas id="next-piece-canvas" width="60" height="60"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Controls -->
+    <div class="controls-container mobile-controls">
+        <div class="d-pad">
+            <div class="d-btn up" id="btn-rotate"><i class="fas fa-undo"></i></div>
+            <div class="d-btn left" id="btn-left"><i class="fas fa-arrow-left"></i></div>
+            <div class="d-btn down" id="btn-down"><i class="fas fa-arrow-down"></i></div>
+            <div class="d-btn right" id="btn-right"><i class="fas fa-arrow-right"></i></div>
+        </div>
+        <div class="action-btn" id="btn-drop">
+            <i class="fas fa-angle-double-down"></i>
+        </div>
+    </div>
+
+    <div class="desktop-instructions"
+        style="position: fixed; bottom: 20px; width: 100%; text-align: center; color: #666; font-size: 10px; font-family: 'Inter', sans-serif; pointer-events: none;">
+        ARROWS: MOVE/ROTATE | SPACE: DROP
+    </div>
+
+    <!-- Start Screen -->
+    <div id="start-screen" class="modal active">
+        <div class="modal-content">
+            <h1 style="color: #0ff;">TETRIS</h1>
+            <p style="margin: 20px 0; font-size: 10px; line-height: 1.5; color: #aaa;">
+                Stack blocks to clear lines.<br>
+                Don't let them reach the top!
+            </p>
+            <button id="start-btn" data-i18n="game_start">START GAME</button>
+        </div>
+    </div>
+
+    <!-- Game Over Modal -->
+    <div id="game-over-modal" class="modal">
+        <div class="modal-content">
+            <h2 style="color: #f00;" data-i18n="game_over">GAME OVER</h2>
+            <p>Score: <span id="final-score">0</span></p>
+            <button id="restart-btn">TRY AGAIN</button>
+        </div>
+    </div>
+
+    <script src="/assets/js/leaderboard.js"></script>
+    <script type="module" src="/assets/js/games/tetris.js"></script>
+
+  <script src="/assets/js/site-shell.js?v=3.2" defer></script>
+</body>
+
+</html>
+

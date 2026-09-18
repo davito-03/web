@@ -1,0 +1,3 @@
+# Deny all access to the data directory
+# This directory contains push notification subscriptions and logs
+Require all denied

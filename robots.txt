@@ -1,0 +1,23 @@
+# robots.txt para davito_03
+User-agent: *
+Allow: /
+Allow: /pages/
+Allow: /games/
+Allow: /media/
+Allow: /assets/css/
+Allow: /assets/js/
+
+# Disallow sensitive or private paths
+Disallow: /data/
+Disallow: /scripts/
+Disallow: /api/
+Disallow: /tools/
+Disallow: /media/ego/
+Disallow: /sw.js
+Disallow: /.git/
+
+# Crawl delay
+Crawl-delay: 1
+
+# Sitemap
+Sitemap: https://davito.es/sitemap.xml

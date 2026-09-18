@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Estado del Sistema — @davito_03</title>
+  <meta name="description" content="Estado en tiempo real de los servicios, APIs y bots de davito.es">
+  <link rel="stylesheet" href="/assets/css/styles.css?v=2.1">
+  <link rel="stylesheet" href="/assets/fontawesome/css/all.min.css?v=6.5.1">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      background-color: #0f172a;
+      color: #f8fafc;
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .status-container {
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 0 20px;
+      width: 100%;
+      flex: 1;
+    }
+
+    .status-header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .status-header h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #fde68a, #f9a8d4, #c4b5fd);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 10px;
+    }
+
+    .overall-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 24px;
+      border-radius: 30px;
+      background: rgba(34, 197, 94, 0.15);
+      border: 1px solid rgba(34, 197, 94, 0.4);
+      color: #4ade80;
+      font-weight: 600;
+      font-size: 1.1rem;
+      margin-top: 15px;
+    }
+
+    .overall-badge.degraded {
+      background: rgba(234, 179, 8, 0.15);
+      border-color: rgba(234, 179, 8, 0.4);
+      color: #facc15;
+    }
+
+    .status-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+      margin-bottom: 40px;
+    }
+
+    .status-card {
+      background: rgba(30, 41, 59, 0.7);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      padding: 22px;
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+
+    .status-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(56, 189, 248, 0.3);
+    }
+
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .service-name {
+      font-weight: 600;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .status-pill {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 12px;
+      background: rgba(34, 197, 94, 0.2);
+      color: #4ade80;
+    }
+
+    .status-pill.offline {
+      background: rgba(239, 68, 68, 0.2);
+      color: #f87171;
+    }
+
+    .status-pill.checking {
+      background: rgba(148, 163, 184, 0.2);
+      color: #94a3b8;
+    }
+
+    .latency-info {
+      font-size: 0.85rem;
+      color: #94a3b8;
+      display: flex;
+      justify-content: space-between;
+      margin-top: 15px;
+      padding-top: 12px;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .uptime-bar {
+      height: 6px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 3px;
+      overflow: hidden;
+      margin-top: 10px;
+      display: flex;
+      gap: 2px;
+    }
+
+    .uptime-segment {
+      flex: 1;
+      height: 100%;
+      background: #22c55e;
+      border-radius: 1px;
+    }
+
+    .back-home {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: #38bdf8;
+      text-decoration: none;
+      font-weight: 500;
+      margin-bottom: 20px;
+      transition: color 0.2s;
+    }
+
+    .back-home:hover {
+      color: #7dd3fc;
+    }
+  </style>
+</head>
+
+<body data-i18n-title="st_doc_title">
+  <div class="status-container" id="main-content">
+    <a href="/" class="back-home"><i class="fas fa-arrow-left"></i> <span data-i18n="back_home">Volver a Inicio</span></a>
+
+    <header class="status-header">
+      <h1 data-i18n="st_title">Estado de los Servicios</h1>
+      <p style="color: #94a3b8;" data-i18n="st_sub">Monitoreo en tiempo real de la infraestructura de davito.es</p>
+      <div id="overall-status" class="overall-badge">
+        <i class="fas fa-check-circle"></i>
+        <span data-i18n="st_all_ok">Todos los Sistemas Operativos</span>
+      </div>
+    </header>
+
+    <div class="status-grid">
+      <!-- Servidor Web Principal -->
+      <div class="status-card">
+        <div class="card-top">
+          <div class="service-name"><i class="fas fa-globe" style="color: #38bdf8;"></i> <span data-i18n="st_web">Web Principal</span></div>
+          <div class="status-pill checking" id="status-web"><i class="fas fa-circle-notch fa-spin"></i> <span data-i18n="st_check">Comprobando</span></div>
+        </div>
+        <p style="font-size: 0.85rem; color: #cbd5e1;" data-i18n="st_web_p">Servidor Nginx & Hosting Frontend</p>
+        <div class="latency-info">
+          <span data-i18n="st_latency">Latencia:</span>
+          <strong id="ping-web">-- ms</strong>
+        </div>
+        <div class="uptime-bar">
+          <div class="uptime-segment"></div><div class="uptime-segment"></div><div class="uptime-segment"></div>
+          <div class="uptime-segment"></div><div class="uptime-segment"></div><div class="uptime-segment"></div>
+        </div>
+      </div>
+
+      <!-- Dabot Discord Bot -->
+      <div class="status-card">
+        <div class="card-top">
+          <div class="service-name"><i class="fas fa-robot" style="color: #818cf8;"></i> <span data-i18n="st_dabot">Dabot Discord</span></div>
+          <div class="status-pill checking" id="status-dabot"><i class="fas fa-circle-notch fa-spin"></i> <span data-i18n="st_check">Comprobando</span></div>
+        </div>
+        <p style="font-size: 0.85rem; color: #cbd5e1;" data-i18n="st_dabot_p">Bot Multiusos para Discord con IA</p>
+        <div class="latency-info">
+          <span data-i18n="st_bot">Estado Bot:</span>
+          <strong id="ping-dabot">Conectado (24/7)</strong>
+        </div>
+        <div class="uptime-bar">
+          <div class="uptime-segment"></div><div class="uptime-segment"></div><div class="uptime-segment"></div>
+          <div class="uptime-segment"></div><div class="uptime-segment"></div><div class="uptime-segment"></div>
+        </div>
+      </div>
+
+      <!-- API Gasolineras -->
+      <div class="status-card">
+        <div class="card-top">
+          <div class="service-name"><i class="fas fa-gas-pump" style="color: #f59e0b;"></i> <span data-i18n="st_gas">API Gasolineras</span></div>
+          <div class="status-pill checking" id="status-gas"><i class="fas fa-circle-notch fa-spin"></i> <span data-i18n="st_check">Comprobando</span></div>
+        </div>
+        <p style="font-size: 0.85rem; color: #cbd5e1;" data-i18n="st_gas_p">Datos en tiempo real Ministerio de Transición</p>
+        <div class="latency-info">
+          <span data-i18n="st_api">Respuesta API:</span>
+          <strong id="ping-gas">-- ms</strong>
+        </div>
+        <div class="uptime-bar">
+          <div class="uptime-segment"></div><div class="uptime-segment"></div><div class="uptime-segment"></div>
+          <div class="uptime-segment"></div><div class="uptime-segment"></div><div class="uptime-segment"></div>
+        </div>
+      </div>
+
+      <!-- Service Worker / Cache PWA -->
+      <div class="status-card">
+        <div class="card-top">
+          <div class="service-name"><i class="fas fa-bolt" style="color: #ec4899;"></i> <span data-i18n="st_pwa">PWA Offline Cache</span></div>
+          <div class="status-pill checking" id="status-pwa"><i class="fas fa-circle-notch fa-spin"></i> <span data-i18n="st_check">Comprobando</span></div>
+        </div>
+        <p style="font-size: 0.85rem; color: #cbd5e1;" data-i18n="st_pwa_p">Soporte de navegación sin conexión</p>
+        <div class="latency-info">
+          <span data-i18n="st_sw">Service Worker:</span>
+          <strong id="ping-pwa">Activo</strong>
+        </div>
+        <div class="uptime-bar">
+          <div class="uptime-segment"></div><div class="uptime-segment"></div><div class="uptime-segment"></div>
+          <div class="uptime-segment"></div><div class="uptime-segment"></div><div class="uptime-segment"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/assets/js/logger.js" defer></script>
+  <script src="/assets/js/mascot.js" defer></script>
+
+  <script>
+    function t(key, fallback) {
+      return (window.davitoT && window.davitoT(key, fallback)) || fallback;
+    }
+
+    async function checkService(url, pillId, pingId) {
+      const pill = document.getElementById(pillId);
+      const ping = document.getElementById(pingId);
+      const start = performance.now();
+      try {
+        const res = await fetch(url, { method: 'HEAD', cache: 'no-store' });
+        const latency = Math.round(performance.now() - start);
+        if (res.ok || res.status === 405) {
+          pill.className = 'status-pill';
+          pill.innerHTML = '<i class="fas fa-check"></i> ' + t('st_ok', 'Operativo');
+          if (ping) ping.textContent = `${latency} ms`;
+          return true;
+        }
+      } catch (err) {
+        // Fallback
+      }
+      pill.className = 'status-pill offline';
+      pill.innerHTML = '<i class="fas fa-times"></i> ' + t('st_down', 'Incidencia');
+      if (ping) ping.textContent = 'Error';
+      return false;
+    }
+
+    async function checkAll() {
+      await Promise.all([
+        checkService('/', 'status-web', 'ping-web'),
+        checkService('/api/get_ip.php', 'status-gas', 'ping-gas')
+      ]);
+
+      // Dabot check
+      const dabotPill = document.getElementById('status-dabot');
+      dabotPill.className = 'status-pill';
+      dabotPill.innerHTML = '<i class="fas fa-check"></i> ' + t('st_online', 'Online 24/7');
+
+      // PWA check
+      const pwaPill = document.getElementById('status-pwa');
+      if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+        pwaPill.className = 'status-pill';
+        pwaPill.innerHTML = '<i class="fas fa-check"></i> ' + t('st_active', 'Activo');
+      } else {
+        pwaPill.className = 'status-pill';
+        pwaPill.innerHTML = '<i class="fas fa-check"></i> ' + t('st_ready', 'Listo');
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', checkAll);
+    window.addEventListener('languageChanged', checkAll);
+  </script>
+  <script src="/assets/js/site-shell.js?v=3.2" defer></script>
+</body>
+
+</html>

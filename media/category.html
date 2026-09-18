@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+<meta http-equiv="X-Frame-Options" content="DENY">
+  <meta http-equiv="X-Content-Type-Options" content="nosniff">
+  <meta name="theme-color" content="#1B2735">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>Galería - Categoría</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      background: radial-gradient(ellipse at bottom, #1B2735 0%, #090A0F 100%);
+      color: white;
+      font-family: 'Courier New', monospace;
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      position: relative;
+    }
+
+
+    .star {
+      position: absolute;
+      background: white;
+      border-radius: 50%;
+      opacity: 0.8;
+      animation: twinkle ease-in-out infinite alternate;
+    }
+
+    .shooting-star {
+      position: absolute;
+      background: linear-gradient(90deg, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0) 100%);
+      border-radius: 1px;
+    }
+
+    @keyframes twinkle {
+      0% {
+        opacity: 0.3;
+        transform: scale(1);
+      }
+
+      100% {
+        opacity: 1;
+        transform: scale(1.2);
+      }
+    }
+
+
+    header {
+      text-align: center;
+      padding: 20px;
+      position: relative;
+      z-index: 10;
+    }
+
+    .back-link {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      color: #00BFFF;
+      text-decoration: none;
+      font-size: 1.1rem;
+      transition: color 0.3s ease;
+    }
+
+    .back-link:hover {
+      color: #FFD700;
+    }
+
+    #category-title {
+      font-size: 2.5rem;
+      margin: 0;
+      color: #00BFFF;
+      text-transform: uppercase;
+      text-shadow: 0 0 20px rgba(0, 191, 255, 0.5);
+    }
+
+
+    #gallery-container {
+      display: grid;
+      gap: 12px;
+      padding: 20px;
+      margin: 0 auto;
+      max-width: 1440px;
+      width: 100%;
+      position: relative;
+      z-index: 10;
+    }
+
+
+    @media (min-width: 1200px) {
+      #gallery-container {
+        grid-template-columns: repeat(6, 1fr);
+        gap: 15px;
+        padding: 30px;
+      }
+    }
+
+
+    @media (min-width: 900px) and (max-width: 1199px) {
+      #gallery-container {
+        grid-template-columns: repeat(5, 1fr);
+        gap: 14px;
+        padding: 25px;
+      }
+    }
+
+
+    @media (min-width: 700px) and (max-width: 899px) {
+      #gallery-container {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 13px;
+        padding: 20px;
+      }
+    }
+
+
+    @media (min-width: 500px) and (max-width: 699px) {
+      #gallery-container {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+        padding: 15px;
+      }
+    }
+
+
+    @media (max-width: 499px) {
+      #gallery-container {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+        padding: 10px;
+      }
+
+      #category-title {
+        font-size: 1.8rem;
+      }
+    }
+
+
+    .gallery-item {
+      aspect-ratio: 1;
+      border-radius: 8px;
+      border: 2px solid #00BFFF;
+      background: #222;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+      transition: all 0.3s ease;
+      cursor: pointer;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .gallery-item:hover {
+      transform: scale(1.05);
+      box-shadow: 0 8px 25px rgba(0, 191, 255, 0.3);
+      border-color: #FFD700;
+    }
+
+    .gallery-item img,
+    .gallery-item video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+
+    @media (max-width: 768px) {
+      #media-modal .modal-container {
+        width: 98vw !important;
+        height: 98vh !important;
+      }
+
+      #modal-close {
+        top: 10px !important;
+        right: 10px !important;
+        position: fixed !important;
+      }
+
+      #modal-prev,
+      #modal-next {
+        display: none !important;
+      }
+
+      #modal-info {
+        bottom: 10px !important;
+        left: 10px !important;
+        right: 10px !important;
+        position: fixed !important;
+        font-size: 12px !important;
+      }
+    }
+
+
+    @media (prefers-reduced-motion: reduce) {
+      .gallery-item {
+        transition: none;
+      }
+
+      .gallery-item:hover {
+        transform: none;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="/assets/css/terminal.css">
+</head>
+
+<body>
+
+  
+
+  
+    
+
+  <script>
+    // Asegurar que las estrellas se inicialicen
+    document.addEventListener('DOMContentLoaded', () => {
+      console.log('⭐ DOM cargado en category.html');
+      setTimeout(() => {
+        if (typeof initStars === 'function') {
+          console.log('⭐ Inicializando estrellas manualmente...');
+          initStars();
+        } else {
+          console.warn('⚠️ Función initStars no encontrada');
+        }
+      }, 500);
+    });
+  </script>
+
+  <header>
+    <a href="./" class="back-link">← Volver a categorías</a>
+    <h1 id="category-title"></h1>
+  </header>
+
+  <main>
+    <div id="gallery-container"></div>
+  </main>
+
+  <script src="category.js" defer></script>
+  <script src="/assets/js/terminal.js"></script>
+  <script type="module" src="/assets/js/secrets.js"></script>
+
+</body>
+
+</html>

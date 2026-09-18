@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Política de Privacidad - Dabot</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/assets/fontawesome/css/all.min.css?v=6.5.1">
+
+    <style>
+        :root {
+            --font-primary: 'Inter', sans-serif;
+            --font-secondary: 'Courier New', Courier, monospace;
+            --color-primary: #00BFFF;
+            --color-accent: #FFD700;
+            --color-secondary-accent: #FF0050;
+            --color-discord: #5865F2;
+            --color-text-light: #fff;
+            --color-text-dark: #000;
+            --color-success: #00FF00;
+            --bg-dark: #0d0d0d;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-secondary);
+            color: var(--color-text-light);
+            background-color: var(--bg-dark);
+            line-height: 1.8;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        #star-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(ellipse at bottom, #1B2735 0%, #090A0F 100%);
+            overflow: hidden;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .star {
+            position: absolute;
+            background-color: white;
+            border-radius: 50%;
+            animation: starTwinkle 2s infinite alternate;
+        }
+
+        @keyframes starTwinkle {
+            0% {
+                opacity: 0.3;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: 1;
+                transform: scale(1.05);
+            }
+
+            100% {
+                opacity: 0.3;
+                transform: scale(1);
+            }
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 50px auto;
+            padding: 40px;
+            position: relative;
+            z-index: 1;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 3px solid rgba(0, 191, 255, 0.3);
+            border-radius: 20px;
+            box-shadow: 0 0 30px rgba(0, 191, 255, 0.2), inset 0 0 20px rgba(255, 255, 255, 0.05);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 30px;
+            border-bottom: 2px solid rgba(255, 215, 0, 0.3);
+        }
+
+        .bot-icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        h1 {
+            font-family: var(--font-primary);
+            font-size: 2em;
+            color: #fde68a;
+            text-shadow: 0 0 14px rgba(251, 191, 36, 0.45);
+            margin-bottom: 15px;
+            letter-spacing: 3px;
+        }
+
+        .subtitle {
+            font-size: 1em;
+            color: var(--color-accent);
+            margin-bottom: 10px;
+        }
+
+        .last-updated {
+            font-size: 0.9em;
+            color: rgba(255, 255, 255, 0.6);
+            font-style: italic;
+        }
+
+        h2 {
+            font-family: var(--font-primary);
+            font-size: 1.2em;
+            color: #fbbf24;
+            margin-top: 35px;
+            margin-bottom: 20px;
+            padding-left: 15px;
+            border-left: 4px solid #fbbf24;
+            text-shadow: 0 0 8px rgba(251, 191, 36, 0.35);
+        }
+
+        h3 {
+            font-size: 1.1em;
+            color: #fde68a;
+            margin-top: 25px;
+            margin-bottom: 15px;
+        }
+
+        p {
+            margin-bottom: 15px;
+            text-align: justify;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        ul,
+        ol {
+            margin-left: 30px;
+            margin-bottom: 20px;
+        }
+
+        li {
+            margin-bottom: 10px;
+            color: rgba(255, 255, 255, 0.85);
+        }
+
+        .important-box {
+            background: rgba(255, 0, 80, 0.1);
+            border: 2px solid var(--color-secondary-accent);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 25px 0;
+            box-shadow: 0 0 15px rgba(255, 0, 80, 0.2);
+        }
+
+        .important-box h3 {
+            color: var(--color-secondary-accent);
+            margin-top: 0;
+        }
+
+        .info-box {
+            background: rgba(0, 191, 255, 0.1);
+            border: 2px solid var(--color-primary);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 25px 0;
+            box-shadow: 0 0 15px rgba(0, 191, 255, 0.2);
+        }
+
+        .success-box {
+            background: rgba(0, 255, 0, 0.1);
+            border: 2px solid var(--color-success);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 25px 0;
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.2);
+        }
+
+        .success-box h3 {
+            color: var(--color-success);
+            margin-top: 0;
+        }
+
+        .back-button {
+            display: inline-block;
+            margin-top: 30px;
+            padding: 15px 30px;
+            background-color: var(--color-discord);
+            color: var(--color-text-light);
+            text-decoration: none;
+            border-radius: 25px;
+            font-family: var(--font-primary);
+            font-size: 0.8em;
+            letter-spacing: 2px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .back-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 16px rgba(88, 101, 242, 0.4), 0 0 20px rgba(88, 101, 242, 0.3);
+            filter: brightness(1.2);
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 50px;
+            padding-top: 30px;
+            border-top: 2px solid rgba(255, 215, 0, 0.3);
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9em;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        th,
+        td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        th {
+            background: rgba(251, 191, 36, 0.15);
+            color: #fde68a;
+            font-weight: bold;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 20px;
+                padding: 25px;
+            }
+
+            h1 {
+                font-size: 1.3em;
+            }
+
+            h2 {
+                font-size: 1em;
+            }
+
+            .bot-icon {
+                font-size: 3em;
+            }
+
+            table {
+                font-size: 0.9em;
+            }
+
+            th,
+            td {
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+
+<body data-i18n-title="pp_doc_title">
+    <div class="container">
+        <div class="header">
+            <div class="bot-icon">🔒</div>
+            <h1 data-i18n="pp_title">Política de Privacidad</h1>
+            <p class="subtitle" data-i18n="pp_subtitle">Dabot - Bot de Discord</p>
+            <p class="last-updated" data-i18n="pp_updated">Última actualización: 23 de agosto de 2026</p>
+        </div>
+
+        <section>
+            <h2 data-i18n="pp_h1">1. Introducción</h2>
+            <p data-i18n="pp_p1">En Dabot, nos tomamos muy en serio la privacidad de nuestros usuarios. Esta Política de Privacidad describe qué información recopilamos, cómo la utilizamos, y tus derechos respecto a tus datos personales cuando utilizas nuestro bot de Discord.</p>
+            <p data-i18n="pp_p2">Al utilizar Dabot, aceptas la recopilación y uso de información de acuerdo con esta política. Si no estás de acuerdo con alguna parte de esta política, por favor no utilices el Bot.</p>
+        </section>
+
+        <div class="success-box">
+            <h3><i class="fas fa-shield-alt"></i> <span data-i18n="pp_commit_h">Nuestro Compromiso</span></h3>
+            <p data-i18n="pp_commit_p">Nos comprometemos a proteger tu privacidad y a ser transparentes sobre qué datos recopilamos y cómo los utilizamos. Nunca venderemos tus datos personales a terceros.</p>
+        </div>
+
+        <section>
+            <h2 data-i18n="pp_h2">2. Información que Recopilamos</h2>
+            <p data-i18n="pp_p3">Dabot recopila diferentes tipos de información para proporcionar y mejorar nuestro servicio:</p>
+            <h3 data-i18n="pp_h21">2.1 Datos de Usuario</h3>
+            <ul>
+                <li data-i18n="pp_u1">ID de Usuario de Discord: Identificador único proporcionado por Discord</li>
+                <li data-i18n="pp_u2">Nombre de usuario y discriminador: Para identificación y visualización</li>
+                <li data-i18n="pp_u3">Avatar: Imagen de perfil para funcionalidades visuales</li>
+                <li data-i18n="pp_u4">Mensajes y comandos: Contenido de los comandos que ejecutas para procesar solicitudes</li>
+                <li data-i18n="pp_u5">Verificación web: IP, huella del navegador, dispositivo, User-Agent y datos técnicos necesarios para seguridad y detección de multicuentas</li>
+            </ul>
+            <h3 data-i18n="pp_h22">2.2 Datos del Servidor</h3>
+            <ul>
+                <li data-i18n="pp_s1">ID del Servidor (Guild ID): Identificador único del servidor</li>
+                <li data-i18n="pp_s2">Nombre del servidor: Para configuraciones específicas</li>
+                <li data-i18n="pp_s3">Configuraciones del bot: Preferencias y ajustes personalizados por servidor</li>
+                <li data-i18n="pp_s4">Registros de moderación: Advertencias, bans, kicks y otras acciones de moderación</li>
+                <li data-i18n="pp_s5">Datos de canales y roles: Para funcionalidades de gestión y permisos</li>
+            </ul>
+            <h3 data-i18n="pp_h23">2.3 Datos de Uso</h3>
+            <ul>
+                <li data-i18n="pp_us1">Comandos ejecutados: Historial de comandos para estadísticas y mejoras</li>
+                <li data-i18n="pp_us2">Frecuencia de uso: Para optimizar el rendimiento</li>
+                <li data-i18n="pp_us3">Registros de errores: Para depuración y mejora del servicio</li>
+                <li data-i18n="pp_us4">Tiempos de respuesta: Para monitoreo de rendimiento</li>
+            </ul>
+            <h3 data-i18n="pp_h24">2.4 Datos Específicos de Funcionalidades</h3>
+            <ul>
+                <li data-i18n="pp_f1">Sistema de Economía: Saldo virtual, transacciones, inventario</li>
+                <li data-i18n="pp_f2">Sistema de Tickets: Contenido de tickets, transcripciones, historial</li>
+                <li data-i18n="pp_f4">Datos de Juegos: Puntuaciones, estadísticas, logros</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2 data-i18n="pp_h3">3. Cómo Utilizamos tu Información</h2>
+            <p data-i18n="pp_p4">Utilizamos la información recopilada para los siguientes propósitos:</p>
+            <ul>
+                <li data-i18n="pp_w1">Proporcionar el servicio: Ejecutar comandos y funcionalidades del bot</li>
+                <li data-i18n="pp_w2">Personalización: Recordar configuraciones y preferencias por servidor</li>
+                <li data-i18n="pp_w3">Moderación: Mantener registros de acciones de moderación y aplicar reglas</li>
+                <li data-i18n="pp_w4">Mejora del servicio: Analizar uso y rendimiento para optimizaciones</li>
+                <li data-i18n="pp_w5">Soporte técnico: Diagnosticar y resolver problemas técnicos</li>
+                <li data-i18n="pp_w6">Seguridad: Detectar y prevenir abusos, fraudes o actividades maliciosas</li>
+                <li data-i18n="pp_w7">Comunicación: Enviar notificaciones importantes sobre el servicio</li>
+            </ul>
+        </section>
+
+        <div class="info-box">
+            <h3><i class="fas fa-database"></i> <span data-i18n="pp_store_h">Almacenamiento de Datos</span></h3>
+            <p data-i18n="pp_store_p">Todos los datos se almacenan de forma segura en bases de datos protegidas. Implementamos medidas de seguridad técnicas y organizativas para proteger tus datos contra acceso no autorizado, alteración, divulgación o destrucción.</p>
+        </div>
+
+        <section>
+            <h2 data-i18n="pp_h4">4. Retención de Datos</h2>
+            <p data-i18n="pp_p5">Conservamos diferentes tipos de datos durante períodos variables según su propósito:</p>
+            <table>
+                <thead>
+                    <tr>
+                        <th data-i18n="pp_th1">Tipo de Dato</th>
+                        <th data-i18n="pp_th2">Período de Retención</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td data-i18n="pp_td1">Configuraciones del servidor</td><td data-i18n="pp_td2">Mientras el bot esté en el servidor</td></tr>
+                    <tr><td data-i18n="pp_td3">Registros de moderación</td><td data-i18n="pp_td4">Hasta 2 años o hasta que se solicite eliminación</td></tr>
+                    <tr><td data-i18n="pp_td5">Datos de economía y juegos</td><td data-i18n="pp_td6">Mientras el usuario esté activo</td></tr>
+                    <tr><td data-i18n="pp_td7">Transcripciones de tickets</td><td data-i18n="pp_td8">Hasta 1 año o hasta que se solicite eliminación</td></tr>
+                    <tr><td data-i18n="pp_td9">Registros de errores</td><td data-i18n="pp_td10">Hasta 90 días</td></tr>
+                    <tr><td data-i18n="pp_td11">Estadísticas de uso</td><td data-i18n="pp_td12">Datos agregados y anonimizados indefinidamente</td></tr>
+                </tbody>
+            </table>
+            <p data-i18n="pp_p6">Cuando el bot es removido de un servidor, las configuraciones específicas del servidor se eliminan automáticamente después de 30 días, a menos que se solicite lo contrario.</p>
+        </section>
+
+        <section>
+            <h2 data-i18n="pp_h5">5. Compartir Información con Terceros</h2>
+            <p data-i18n="pp_p7">Dabot no vende, alquila ni comparte tu información personal con terceros para fines comerciales. Sin embargo, podemos compartir datos en las siguientes circunstancias:</p>
+            <ul>
+                <li data-i18n="pp_sh1">Discord: Como plataforma host, Discord tiene acceso a los datos según su propia política de privacidad</li>
+                <li data-i18n="pp_sh2">Proveedores de servicios: Servicios de hosting y bases de datos necesarios para operar el bot</li>
+                <li data-i18n="pp_sh3">Requisitos legales: Si es requerido por ley o para proteger nuestros derechos legales</li>
+                <li data-i18n="pp_sh5">Proveedores de IA y APIs externas: Cuando una función de Dabot los utiliza, puede enviarse el texto o los datos estrictamente necesarios para responder</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2 data-i18n="pp_h6">6. Tus Derechos</h2>
+            <p data-i18n="pp_p8">Como usuario de Dabot, tienes los siguientes derechos respecto a tus datos personales:</p>
+            <ul>
+                <li data-i18n="pp_r1">Derecho de acceso: Solicitar una copia de los datos que tenemos sobre ti</li>
+                <li data-i18n="pp_r2">Derecho de rectificación: Solicitar la corrección de datos inexactos</li>
+                <li data-i18n="pp_r3">Derecho de eliminación: Solicitar la eliminación de tus datos personales</li>
+                <li data-i18n="pp_r4">Derecho de portabilidad: Recibir tus datos en un formato estructurado y legible</li>
+                <li data-i18n="pp_r5">Derecho de oposición: Oponerte al procesamiento de tus datos en ciertas circunstancias</li>
+                <li data-i18n="pp_r6">Derecho de restricción: Solicitar la limitación del procesamiento de tus datos</li>
+            </ul>
+            <p data-i18n="pp_p9">Para ejercer cualquiera de estos derechos, contacta con nosotros a través de nuestro servidor de Discord o mediante los canales de contacto proporcionados al final de este documento.</p>
+        </section>
+
+        <div class="important-box">
+            <h3><i class="fas fa-exclamation-circle"></i> <span data-i18n="pp_lim_h">Importante: Limitaciones</span></h3>
+            <p data-i18n="pp_lim_p">Algunos datos pueden ser necesarios para el funcionamiento del bot. La eliminación de ciertos datos puede resultar en la pérdida de funcionalidades o la imposibilidad de usar el bot. Los registros de moderación pueden conservarse por razones de seguridad del servidor incluso después de una solicitud de eliminación.</p>
+        </div>
+
+        <section>
+            <h2 data-i18n="pp_h7">7. Seguridad de los Datos</h2>
+            <p data-i18n="pp_p10">Implementamos medidas técnicas y organizativas para proteger tus datos. El acceso a la IP completa y al dossier de red queda reservado al responsable/superusuario autorizado; el resto del staff ve códigos y datos limitados:</p>
+            <ul>
+                <li data-i18n="pp_sec1">Cifrado de las comunicaciones y controles de acceso a los datos almacenados</li>
+                <li data-i18n="pp_sec2">Acceso restringido a datos personales solo a personal autorizado</li>
+                <li data-i18n="pp_sec3">Monitoreo regular de sistemas para detectar vulnerabilidades</li>
+                <li data-i18n="pp_sec4">Copias de seguridad regulares para prevenir pérdida de datos</li>
+                <li data-i18n="pp_sec5">Auditorías de seguridad periódicas</li>
+            </ul>
+            <p data-i18n="pp_p11">Sin embargo, ningún método de transmisión por Internet o almacenamiento electrónico es 100% seguro. Aunque nos esforzamos por proteger tus datos, no podemos garantizar su seguridad absoluta.</p>
+        </section>
+
+        <section>
+            <h2 data-i18n="pp_h8">8. Privacidad de Menores</h2>
+            <p data-i18n="pp_p12">Dabot está diseñado para ser utilizado en Discord, que requiere que los usuarios tengan al menos 13 años (o la edad mínima requerida en su jurisdicción). No recopilamos intencionalmente información de menores de 13 años.</p>
+            <p data-i18n="pp_p13">Si descubrimos que hemos recopilado datos de un menor de 13 años sin verificación del consentimiento parental, tomaremos medidas para eliminar esa información de nuestros servidores lo antes posible.</p>
+        </section>
+
+        <section>
+            <h2 data-i18n="pp_h9">9. Cookies y Tecnologías de Seguimiento</h2>
+            <p data-i18n="pp_p14">El bot de Discord no utiliza cookies, pero el dashboard dabot.davito.es utiliza cookies técnicas de sesión y una cookie de dispositivo para mantener el acceso, detectar abusos y vincular verificaciones. La verificación web también puede recibir IP y datos del navegador, que se gestionan según esta política.</p>
+        </section>
+
+        <section>
+            <h2 data-i18n="pp_h10">10. Transferencias Internacionales de Datos</h2>
+            <p data-i18n="pp_p15">Tus datos pueden ser transferidos y almacenados en servidores ubicados fuera de tu país de residencia. Al utilizar Dabot, consientes estas transferencias. Nos aseguramos de que cualquier transferencia de datos cumpla con las leyes de protección de datos aplicables.</p>
+        </section>
+
+        <section>
+            <h2 data-i18n="pp_h11">11. Cambios a esta Política de Privacidad</h2>
+            <p data-i18n="pp_p16">Podemos actualizar nuestra Política de Privacidad periódicamente. Te notificaremos de cualquier cambio publicando la nueva Política de Privacidad en esta página y actualizando la fecha de "Última actualización".</p>
+            <p data-i18n="pp_p17">Se te aconseja revisar esta Política de Privacidad periódicamente para cualquier cambio. Los cambios a esta Política de Privacidad son efectivos cuando se publican en esta página.</p>
+        </section>
+
+        <section>
+            <h2 data-i18n="pp_h12">12. Contacto</h2>
+            <p data-i18n="pp_p18">Si tienes preguntas sobre esta Política de Privacidad, o deseas ejercer tus derechos de protección de datos, puedes contactarnos a través de:</p>
+            <ul>
+                <li><strong data-i18n="pp_c1">Servidor de Discord:</strong> <a href="https://discord.gg/S22tUgJztd" style="color: var(--color-primary);">langosta's gang</a></li>
+                <li><strong data-i18n="pp_c2">Perfil de Discord:</strong> davito_03</li>
+                <li><strong data-i18n="pp_c3">Sitio web:</strong> <a href="https://davito.es" style="color: var(--color-primary);">davito.es</a></li>
+            </ul>
+            <p data-i18n="pp_p19">Responderemos a tu solicitud dentro de un plazo razonable (generalmente 30 días).</p>
+        </section>
+
+        <div class="info-box">
+            <h3><i class="fas fa-question-circle"></i> <span data-i18n="pp_faq_h">¿Preguntas Frecuentes?</span></h3>
+            <p><strong data-i18n="pp_faq1">¿Puedo usar el bot sin que se recopilen datos?</strong><br>
+            <span data-i18n="pp_faq1a">No, ciertos datos son necesarios para el funcionamiento básico del bot. Sin embargo, puedes optar por no usar funcionalidades específicas que requieran más datos.</span></p>
+            <p><strong data-i18n="pp_faq2">¿Cuánto tiempo tarda la eliminación de datos?</strong><br>
+            <span data-i18n="pp_faq2a">Las solicitudes de eliminación se procesan generalmente dentro de 30 días. Algunos datos pueden conservarse en copias de seguridad por un período adicional.</span></p>
+        </div>
+
+        <div class="footer">
+            <p><i class="fas fa-robot"></i> <span data-i18n="pp_foot">Dabot © 2025 - Desarrollado por @davito_03</span></p>
+            <p>
+                <a href="/pages/terms-of-service" style="color: var(--color-primary); text-decoration: none;" data-i18n="terms_service">Términos de Servicio</a> |
+                <a href="https://davito.es" style="color: var(--color-primary); text-decoration: none;" data-i18n="pp_web">Sitio Web</a>
+            </p>
+            <a href="https://davito.es" class="back-button">
+                <i class="fas fa-arrow-left"></i> <span data-i18n="pp_back">Volver al Sitio</span>
+            </a>
+        </div>
+    </div>
+  <script src="/assets/js/site-shell.js?v=3.2" defer></script>
+</body>
+</html>

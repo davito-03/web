@@ -1,0 +1,2067 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gasolineras Baratas — Encontrar y Comparar Precios en España</title>
+
+    <meta name="description" content="Localizador y planificador de rutas para encontrar las gasolineras más baratas de España en tiempo real con datos del MITECO.">
+    <meta property="og:title" content="Gasolineras Baratas — Encontrar y Comparar Precios">
+    <meta property="og:description" content="Ahorra en tu repostaje encontrando las gasolineras más baratas en tu zona o a lo largo de tu viaje.">
+    <meta property="og:type" content="website">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Leaflet CSS & JS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <!-- Leaflet MarkerCluster CSS & JS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
+    <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        'brand-dark': '#00f2fe',
+                        'brand-light': '#4facfe',
+                        'dark-bg': '#0f172a',
+                        'dark-surface': '#1e293b',
+                        'dark-border': '#334155',
+                    },
+                    fontFamily: {
+                        sans: ['Outfit', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #0b0f19;
+            color: #f8fafc;
+            font-family: 'Outfit', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .text-gradient {
+            background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .ambient-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .ambient-sphere {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(120px);
+            opacity: 0.15;
+        }
+
+        .ambient-1 {
+            top: -10%;
+            left: -10%;
+            width: 50vw;
+            height: 50vw;
+            background: #00f2fe;
+        }
+
+        .ambient-2 {
+            bottom: -10%;
+            right: -10%;
+            width: 60vw;
+            height: 60vw;
+            background: #4facfe;
+        }
+
+        .leaflet-popup-content-wrapper, .leaflet-popup-tip {
+            background: #1e293b !important;
+            color: #f8fafc !important;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px !important;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5) !important;
+        }
+        .leaflet-container {
+            font-family: 'Outfit', sans-serif !important;
+        }
+
+        .price-marker {
+            background: rgba(15, 23, 42, 0.9);
+            border: 2px solid #00f2fe;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 11px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        .marker-green { border-color: #10b981; color: #34d399; }
+        .marker-yellow { border-color: #f59e0b; color: #fbbf24; }
+        .marker-red { border-color: #ef4444; color: #f87171; }
+        .marker-gray { border-color: #64748b; color: #94a3b8; opacity: 0.6; }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); }
+        ::-webkit-scrollbar-thumb { background: rgba(79,172,254,0.3); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(79,172,254,0.6); }
+    </style>
+</head>
+<body class="antialiased" data-i18n-title="gas_doc_title">
+    <div class="ambient-background">
+        <div class="ambient-sphere ambient-1"></div>
+        <div class="ambient-sphere ambient-2"></div>
+    </div>
+
+    <!-- Modal de Importación Google Maps -->
+    <div id="importGmapsModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm transition-opacity duration-300 hidden">
+        <div class="glass-panel rounded-2xl shadow-2xl p-6 w-full max-w-md border border-brand-dark/30 relative">
+            <button id="closeImportGmapsBtn" type="button" class="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+            <div class="text-center mb-4">
+                <div class="w-12 h-12 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-3 text-green-400">
+                    <i data-lucide="map" class="w-6 h-6"></i>
+                </div>
+                <h3 class="text-xl font-bold text-white mb-1" data-i18n="gas_import_t">Importar enlace de Google Maps</h3>
+                <p class="text-gray-400 text-xs" data-i18n="gas_import_p">Pega el enlace de una ruta de Google Maps para cargar automáticamente los puntos de origen y destino.</p>
+            </div>
+            <form id="gmapsImportForm" class="space-y-4">
+                <div>
+                    <input type="text" id="gmapsUrlInput" placeholder="https://www.google.com/maps/dir/Madrid/Barcelona..." required class="w-full bg-dark-bg/50 border border-dark-border rounded-xl px-4 py-2.5 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-brand-dark focus:ring-1 focus:ring-brand-dark">
+                </div>
+                <button type="submit" class="w-full py-2.5 bg-gradient-to-r from-emerald-600 to-green-500 hover:from-emerald-500 hover:to-green-400 text-white font-semibold rounded-xl shadow-lg transition-all flex items-center justify-center gap-2 text-sm">
+                    <i data-lucide="import" class="w-4 h-4"></i> <span data-i18n="gas_import_go">Cargar Ruta</span>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Navegación & Cabecera -->
+    <nav class="p-4 sm:p-6 pb-0 flex items-center gap-4 z-20">
+        <a href="/" class="flex items-center gap-2 px-4 py-2 rounded-full glass-panel hover:bg-white/10 transition-colors text-white w-max mt-2">
+            <i data-lucide="arrow-left" class="w-4 h-4"></i> <span data-i18n="gas_back">Volver</span>
+        </a>
+    </nav>
+
+    <header class="pt-6 pb-4 px-4 sm:px-6 text-center z-20">
+        <h1 class="text-4xl sm:text-5xl font-bold mb-2 text-gradient" data-i18n="gas_title">Gasolineras Baratas</h1>
+        
+        <div id="locationStatusBadge" class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full glass-panel mt-2 text-sm text-gray-300 hidden cursor-pointer hover:bg-white/10 transition-colors group" title="Cambiar ubicación">
+            <i data-lucide="map-pin" class="w-4 h-4 text-brand-dark"></i>
+            <span><span data-i18n="gas_loc">Ubicación actual:</span> <strong id="locationText" class="text-white border-b border-dashed border-gray-500 group-hover:border-white transition-colors pb-0.5">...</strong></span>
+            <i data-lucide="pencil" class="w-3 h-3 opacity-50 group-hover:opacity-100 transition-opacity"></i>
+        </div>
+    </header>
+
+    <!-- Contenido Principal -->
+    <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 grid grid-cols-1 lg:grid-cols-3 gap-6 z-20">
+        
+        <!-- Columna Izquierda: Mapa y Filtros -->
+        <div class="lg:col-span-2 flex flex-col gap-6">
+            
+            <!-- Selector de Combustible (Multicombustible) -->
+            <div class="glass-panel p-4 rounded-2xl">
+                <div class="flex justify-between items-center mb-3">
+                    <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wider flex items-center gap-2">
+                        <i data-lucide="fuel" class="w-4 h-4"></i> <span data-i18n="gas_fuel">Tipo de Combustible (Multiselección)</span>
+                    </h3>
+                    <span class="text-[10px] text-brand-light bg-brand-dark/10 px-2 py-0.5 rounded border border-brand-dark/20">Multi-selección activa</span>
+                </div>
+                <div class="flex flex-wrap gap-2" id="fuelSelector">
+                    <!-- Botones generados por JS -->
+                    <button data-fuel="Precio Gasolina 95 E5" class="fuel-btn bg-brand-dark/20 border-brand-dark text-white px-4 py-2 rounded-xl border transition-all shadow-[0_0_15px_rgba(79,172,254,0.3)]">Gasolina 95</button>
+                    <button data-fuel="Precio Gasolina 98 E5" class="fuel-btn bg-dark-bg border-dark-border text-gray-400 hover:text-white px-4 py-2 rounded-xl border transition-all">Gasolina 98</button>
+                    <button data-fuel="Precio Gasoleo A" class="fuel-btn bg-dark-bg border-dark-border text-gray-400 hover:text-white px-4 py-2 rounded-xl border transition-all">Diésel A</button>
+                    <button data-fuel="Precio Gasoleo Premium" class="fuel-btn bg-dark-bg border-dark-border text-gray-400 hover:text-white px-4 py-2 rounded-xl border transition-all">Diésel Premium</button>
+                    <button data-fuel="Precio Gases licuados del petróleo" class="fuel-btn bg-dark-bg border-dark-border text-gray-400 hover:text-white px-4 py-2 rounded-xl border transition-all">GLP</button>
+                </div>
+
+                <!-- Filtros secundarios: Marcas y Compartir -->
+                <div class="flex flex-wrap items-center justify-between gap-3 border-t border-white/5 pt-3 mt-3">
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs text-gray-400 font-semibold uppercase tracking-wider flex items-center gap-1">
+                            <i data-lucide="filter" class="w-3.5 h-3.5 text-brand-dark"></i> Marca:
+                        </span>
+                        <select id="brandFilterSelector" class="bg-dark-bg border border-dark-border rounded-xl px-3 py-1.5 text-xs text-white outline-none focus:border-brand-dark">
+                            <option value="all" selected>Todas las marcas</option>
+                            <option value="lowcost">⚡ Solo Low-Cost (Plenoil, Ballenoil...)</option>
+                            <option value="repsol">Repsol</option>
+                            <option value="cepsa">Cepsa</option>
+                            <option value="shell">Shell</option>
+                            <option value="bp">BP</option>
+                            <option value="galp">Galp</option>
+                            <option value="plenoil">Plenoil</option>
+                            <option value="ballenoil">Ballenoil</option>
+                            <option value="petroprix">Petroprix</option>
+                        </select>
+                    </div>
+
+                    <button id="btnShareRoute" type="button" class="bg-white/5 hover:bg-brand-dark/20 border border-brand-dark/30 text-brand-light hover:text-white text-xs font-semibold px-3 py-1.5 rounded-xl transition-all flex items-center gap-1.5 shadow-sm">
+                        <i data-lucide="share-2" class="w-3.5 h-3.5"></i> Compartir Trayecto
+                    </button>
+                </div>
+            </div>
+
+            <!-- Selector de Modo de Búsqueda -->
+            <div class="glass-panel p-4 rounded-2xl">
+                <div class="flex border-b border-white/10 mb-4 pb-2">
+                    <button id="tabProximity" class="flex-1 pb-2 text-center border-b-2 border-brand-dark text-white font-semibold transition-all flex items-center justify-center gap-2 text-sm sm:text-base">
+                        <i data-lucide="navigation" class="w-4 h-4 text-brand-light"></i> Por Proximidad
+                    </button>
+                    <button id="tabRoute" class="flex-1 pb-2 text-center border-b-2 border-transparent text-gray-400 hover:text-white font-semibold transition-all flex items-center justify-center gap-2 text-sm sm:text-base">
+                        <i data-lucide="route" class="w-4 h-4"></i> Planificador de Ruta
+                    </button>
+                </div>
+
+                <!-- Panel Proximidad -->
+                <div id="panelProximity" class="space-y-3">
+                    <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider">BÚSQUEDA DE UBICACIÓN</label>
+                    <form id="manualLocationForm" class="flex gap-2 relative">
+                        <div class="relative flex-1">
+                            <input type="text" id="manualLocationInput" placeholder="Busca tu ciudad, municipio, calle o CP..." autocomplete="off" class="w-full bg-dark-bg/50 border border-dark-border rounded-xl pl-9 pr-3 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-brand-dark focus:ring-1 focus:ring-brand-dark">
+                            <i data-lucide="map-pin" class="w-4 h-4 text-gray-400 absolute left-3 top-2.5"></i>
+                            <div id="manualLocationSuggestions" class="absolute left-0 right-0 top-full mt-1 z-50 glass-panel rounded-xl shadow-xl overflow-hidden hidden max-h-48 overflow-y-auto border border-brand-dark/30"></div>
+                        </div>
+                        <button id="btnUseLocation" type="button" title="Usar mi ubicación GPS" class="bg-gradient-to-r from-[#00f2fe] to-[#4facfe] hover:from-[#00c6ff] hover:to-[#0072ff] text-white font-semibold px-4 py-2 rounded-xl transition-all shadow-md flex items-center justify-center gap-1.5 text-xs flex-shrink-0">
+                            <i data-lucide="navigation" class="w-3.5 h-3.5"></i> Mi Ubicación
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Panel Ruta (Oculto por defecto) -->
+                <div id="panelRoute" class="hidden space-y-4">
+                    <div class="flex justify-between items-center">
+                        <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Configurar Trayecto</span>
+                        <button id="btnOpenImportGmapsModal" type="button" class="text-xs text-brand-light hover:text-white flex items-center gap-1.5 bg-white/5 border border-brand-dark/30 px-3 py-1 rounded-xl transition-all hover:bg-brand-dark/20 shadow-sm">
+                            <i data-lucide="link" class="w-3.5 h-3.5"></i> Importar enlace Google Maps
+                        </button>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-400 mb-1">PUNTO DE PARTIDA</label>
+                            <div class="flex gap-1">
+                                <div class="relative flex-1">
+                                    <input type="text" id="routeStartInput" placeholder="Mi ubicación o dirección de calle" autocomplete="off" class="w-full bg-dark-bg/50 border border-dark-border rounded-xl pl-9 pr-3 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-brand-dark focus:ring-1 focus:ring-brand-dark">
+                                    <i data-lucide="map-pin" class="w-4 h-4 text-gray-400 absolute left-3 top-3"></i>
+                                    <div id="routeStartSuggestions" class="absolute left-0 right-0 top-full mt-1 z-50 glass-panel rounded-xl shadow-xl overflow-hidden hidden max-h-48 overflow-y-auto border border-brand-dark/30"></div>
+                                </div>
+                                <button id="btnRouteUseCurrent" type="button" title="Usar ubicación actual" class="bg-dark-surface hover:bg-gray-700 border border-dark-border text-white p-2 rounded-xl transition-colors flex items-center justify-center">
+                                    <i data-lucide="locate" class="w-4 h-4"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-400 mb-1">PUNTO DE LLEGADA</label>
+                            <div class="relative">
+                                <input type="text" id="routeEndInput" placeholder="Ciudad o dirección de destino" autocomplete="off" class="w-full bg-dark-bg/50 border border-dark-border rounded-xl pl-9 pr-3 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-brand-dark focus:ring-1 focus:ring-brand-dark">
+                                <i data-lucide="flag" class="w-4 h-4 text-gray-400 absolute left-3 top-3"></i>
+                                <div id="routeEndSuggestions" class="absolute left-0 right-0 top-full mt-1 z-50 glass-panel rounded-xl shadow-xl overflow-hidden hidden max-h-48 overflow-y-auto border border-brand-dark/30"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Hora de Salida y Filtro de Horarios -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 border-t border-white/5 pt-3">
+                        <div>
+                            <label class="block text-[10px] font-semibold text-gray-400 mb-1 flex items-center gap-1 uppercase tracking-wider">
+                                <i data-lucide="clock" class="w-3.5 h-3.5 text-brand-light"></i> HORA DE SALIDA DEL VIAJE
+                            </label>
+                            <input type="time" id="departureTimeInput" class="w-full bg-dark-bg/50 border border-dark-border rounded-xl px-3 py-1.5 text-xs text-white outline-none focus:border-brand-dark">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-semibold text-gray-400 mb-1 flex items-center gap-1 uppercase tracking-wider">
+                                <i data-lucide="calendar-check" class="w-3.5 h-3.5 text-brand-light"></i> FILTRO DE HORARIO
+                            </label>
+                            <select id="scheduleFilterSelector" class="w-full bg-dark-bg border border-dark-border rounded-xl px-3 py-1.5 text-xs text-white outline-none focus:border-brand-dark">
+                                <option value="all">Todas las estaciones</option>
+                                <option value="open_on_arrival" selected>Solo abiertas a la hora de paso / ahora</option>
+                                <option value="only_24h">Solo abiertas 24 horas</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Opciones de Consumo y Depósito (Autonomía) -->
+                    <div class="border-t border-white/5 pt-3">
+                        <details class="group">
+                            <summary class="list-none flex items-center justify-between cursor-pointer text-xs font-semibold text-gray-400 hover:text-white transition-colors">
+                                <span class="flex items-center gap-1.5 uppercase tracking-wider">
+                                    <i data-lucide="settings" class="w-3.5 h-3.5 text-brand-dark group-open:rotate-45 transition-transform duration-300"></i>
+                                    Autonomía y Consumo del Vehículo (Opcional)
+                                </span>
+                                <i data-lucide="chevron-down" class="w-4 h-4 group-open:rotate-180 transition-transform duration-300"></i>
+                            </summary>
+                            
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3 pt-1">
+                                <div>
+                                    <label class="block text-[10px] font-semibold text-gray-500 mb-1">CONSUMO MEDIO (L/100KM)</label>
+                                    <div class="relative">
+                                        <input type="number" id="vehicleConsumptionInput" step="0.1" min="1" max="30" value="6.5" class="w-full bg-dark-bg/50 border border-dark-border rounded-xl pl-9 pr-3 py-1.5 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-brand-dark focus:ring-1 focus:ring-brand-dark">
+                                        <i data-lucide="gauge" class="w-3.5 h-3.5 text-gray-400 absolute left-3 top-2.5"></i>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-semibold text-gray-500 mb-1">CAPACIDAD DEPÓSITO (LITROS)</label>
+                                    <div class="relative">
+                                        <input type="number" id="vehicleTankInput" step="1" min="5" max="150" value="50" class="w-full bg-dark-bg/50 border border-dark-border rounded-xl pl-9 pr-3 py-1.5 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-brand-dark focus:ring-1 focus:ring-brand-dark">
+                                        <i data-lucide="fuel" class="w-3.5 h-3.5 text-gray-400 absolute left-3 top-2.5"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="text-[11px] text-brand-light mt-2 flex items-center gap-1">
+                                <i data-lucide="info" class="w-3.5 h-3.5"></i>
+                                <span>Autonomía estimada: <strong id="vehicleAutonomyText">769</strong> km.</span>
+                            </div>
+                        </details>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs text-gray-400 font-semibold">DESVIACIÓN MÁXIMA:</span>
+                            <select id="routeDeviationSelector" class="bg-dark-bg border border-dark-border rounded-xl px-3 py-1.5 text-xs text-white outline-none focus:border-brand-dark">
+                                <option value="0.5">500 m</option>
+                                <option value="1" selected>1 km</option>
+                                <option value="2">2 km</option>
+                                <option value="5">5 km</option>
+                                <option value="10">10 km</option>
+                            </select>
+                        </div>
+                        
+                        <button id="btnCalculateRoute" class="py-2 px-6 bg-gradient-to-r from-[#00f2fe] to-[#4facfe] hover:from-[#00c6ff] hover:to-[#0072ff] text-white font-semibold rounded-xl shadow-lg transition-all focus:ring-4 focus:ring-brand-light/30 flex items-center justify-center gap-2 text-sm">
+                            <i data-lucide="play" class="w-4 h-4"></i> Calcular Ruta
+                        </button>
+                    </div>
+
+                    <!-- Exportación de Ruta (Oculto hasta calcular) -->
+                    <div id="routeExportContainer" class="hidden border-t border-white/5 pt-3 space-y-2">
+                        <p class="text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Exportar o Navegar Ruta</p>
+                        <div class="flex flex-wrap gap-2">
+                            <a id="btnExportGoogle" href="#" target="_blank" class="bg-white/5 hover:bg-white/10 border border-white/10 text-white text-xs px-3 py-1.5 rounded-xl transition-all flex items-center gap-1.5">
+                                <i data-lucide="external-link" class="w-3.5 h-3.5 text-green-400"></i> Google Maps
+                            </a>
+                            <a id="btnExportApple" href="#" target="_blank" class="bg-white/5 hover:bg-white/10 border border-white/10 text-white text-xs px-3 py-1.5 rounded-xl transition-all flex items-center gap-1.5">
+                                <i data-lucide="compass" class="w-3.5 h-3.5 text-brand-light"></i> Apple Maps
+                            </a>
+                            <button id="btnExportGPX" type="button" class="bg-white/5 hover:bg-white/10 border border-white/10 text-white text-xs px-3 py-1.5 rounded-xl transition-all flex items-center gap-1.5">
+                                <i data-lucide="download" class="w-3.5 h-3.5 text-yellow-400"></i> Descargar GPX
+                            </button>
+                            <button id="btnExportKML" type="button" class="bg-white/5 hover:bg-white/10 border border-white/10 text-white text-xs px-3 py-1.5 rounded-xl transition-all flex items-center gap-1.5">
+                                <i data-lucide="file-code" class="w-3.5 h-3.5 text-purple-400"></i> Descargar KML
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contenedor del Mapa -->
+            <div class="glass-panel p-2 rounded-2xl relative overflow-hidden h-[450px] sm:h-[550px]">
+                <div id="map" class="w-full h-full rounded-xl z-10"></div>
+                
+                <!-- Loading Overlay -->
+                <div id="mapLoading" class="absolute inset-0 bg-dark-bg/80 backdrop-blur-sm z-20 flex flex-col items-center justify-center gap-3 hidden">
+                    <i data-lucide="loader-2" class="w-10 h-10 text-brand-dark animate-spin"></i>
+                    <p id="loadingText" class="text-sm font-medium text-gray-300" data-i18n="gas_loading">Cargando estaciones de servicio...</p>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Columna Derecha: Lista de Resultados -->
+        <div class="glass-panel rounded-2xl flex flex-col h-[600px] lg:h-auto overflow-hidden">
+            
+            <!-- Cabecera Lista -->
+            <div class="p-4 border-b border-white/10 flex justify-between items-center bg-white/5">
+                <div>
+                    <h2 class="font-bold text-white text-lg" data-i18n="gas_near">Gasolineras Cercanas</h2>
+                    <p class="text-xs text-gray-400"><span id="resultsCount">0</span> <span data-i18n="gas_found">estaciones encontradas</span></p>
+                </div>
+                <div class="flex items-center gap-2" id="radiusSelectorContainer">
+                    <span class="text-xs text-gray-400" data-i18n="gas_radius">Radio max:</span>
+                    <select id="radiusSelector" class="bg-dark-bg border border-dark-border rounded px-2 py-1 text-xs text-white outline-none">
+                        <option value="10">10 km</option>
+                        <option value="30">30 km</option>
+                        <option value="50" selected>50 km</option>
+                        <option value="100">100 km</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="p-4 bg-brand-dark/10 border-b border-brand-dark/20 text-sm text-center" id="sortingInfoPanel">
+                <p class="text-gray-300" id="sortingTitle" data-i18n="gas_sort">Ordenado por "Score Inteligente"</p>
+                <p class="text-xs text-gray-500 mt-1" id="sortingSub" data-i18n="gas_sort_sub">Precio + penalización por distancia</p>
+            </div>
+
+            <!-- Contenedor del Plan de Repostaje (Se muestra en modo ruta) -->
+            <div id="refuelPlanContainer" class="hidden p-4 bg-brand-dark/5 border-b border-brand-dark/10 space-y-3 overflow-y-auto max-h-[250px]">
+                <h3 class="text-xs font-bold text-gradient flex items-center gap-1.5 uppercase tracking-wider">
+                    <i data-lucide="calculator" class="w-4 h-4 text-brand-light"></i>
+                    <span data-i18n="gas_plan">Plan de Repostaje Recomendado</span>
+                </h3>
+                <div id="refuelPlanStops" class="space-y-3">
+                    <!-- Paradas recomendadas generadas por JS -->
+                </div>
+            </div>
+
+            <div id="resultsList" class="flex-1 overflow-y-auto p-4 space-y-4">
+                <!-- Estado Inicial -->
+                <div class="h-full flex flex-col items-center justify-center text-center text-gray-500 space-y-4">
+                    <i data-lucide="search" class="w-12 h-12 opacity-50"></i>
+                    <p data-i18n="gas_wait">Esperando ubicación y datos...</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Botón Flotante Actualizar -->
+    <button id="btnRefresh" class="fixed bottom-6 right-6 z-40 bg-dark-bg/90 backdrop-blur border border-brand-dark text-white p-4 rounded-full shadow-[0_0_20px_rgba(79,172,254,0.4)] hover:bg-brand-dark/20 hover:scale-110 transition-all focus:outline-none group">
+        <i data-lucide="refresh-cw" class="w-6 h-6 group-hover:rotate-180 transition-transform duration-500"></i>
+    </button>
+
+    <!-- Pie de página -->
+    <footer class="mt-auto py-4 px-6 border-t border-white/5 text-center text-xs text-gray-500 z-20">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-2">
+            <span>© davito.es — Herramientas de Movilidad y Ahorro</span>
+            <span class="flex items-center gap-1"><i data-lucide="database" class="w-3 h-3"></i> Datos oficiales en tiempo real del MITECO</span>
+            <span class="hidden sm:inline">•</span>
+            <span class="flex items-center gap-1"><i data-lucide="shield-check" class="w-3 h-3"></i> Privacidad total: ubicación procesada localmente</span>
+        </div>
+    </footer>
+
+    <!-- Template for list items (no se renderiza directamente) -->
+    <template id="stationCardTemplate">
+        <div class="station-card bg-dark-bg/60 border border-dark-border rounded-xl p-4 hover:border-brand-dark/50 transition-colors relative overflow-hidden group">
+            <div class="best-badge hidden absolute top-0 right-0 bg-yellow-500 text-black text-[10px] font-bold px-2 py-1 rounded-bl-lg">
+                ⭐ LA MEJOR PARA TI
+            </div>
+            
+            <div class="flex justify-between items-start mb-2 pr-6">
+                <div>
+                    <h4 class="font-bold text-white text-lg leading-tight brand-name">REPSOL</h4>
+                    <p class="text-xs text-gray-400 mt-1 flex items-center gap-1">
+                        <i data-lucide="map-pin" class="w-3 h-3"></i> <span class="address">Av. Siempre Viva 123</span>
+                    </p>
+                </div>
+                <div class="text-right">
+                    <div class="text-2xl font-bold text-brand-light leading-none price-text">1.659€</div>
+                    <div class="text-[10px] text-gray-500">/ litro (promedio)</div>
+                    <div class="savings-badge hidden bg-green-500/20 text-green-400 border border-green-500/30 text-[10px] font-bold px-2 py-0.5 rounded-full inline-flex items-center gap-1 mt-1"></div>
+                </div>
+            </div>
+
+            <!-- Desglose de precios multicombustible -->
+            <div class="fuel-badges-container flex flex-wrap gap-1.5 mt-2"></div>
+            
+            <div class="flex justify-between items-end mt-4">
+                <div class="text-sm font-medium text-gray-300 flex items-center gap-1">
+                    <i data-lucide="route" class="w-4 h-4 text-gray-400"></i> 
+                    <span class="distance">A 5.2 km</span>
+                </div>
+                
+                <a href="#" target="_blank" class="maps-link bg-dark-surface hover:bg-white/10 border border-white/10 text-white text-xs px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1">
+                    <i data-lucide="external-link" class="w-3 h-3"></i> Cómo llegar
+                </a>
+            </div>
+        </div>
+    </template>
+
+    <script>
+        // Inicializar Iconos
+        lucide.createIcons();
+
+        // Constantes de Caché
+        const CACHE_KEY = "miteco_stations_v3";
+        const CACHE_TIME_KEY = "miteco_stations_time_v3";
+        const CACHE_TTL_MS = 2 * 60 * 60 * 1000; // 2 horas
+
+        // Variables Globales
+        let map;
+        let markers = null;
+        let userMarker = null;
+        let allStationsData = [];
+        let userLocation = null; // {lat, lng, city}
+        
+        let selectedFuels = ["Precio Gasolina 95 E5"]; // Selección múltiple de combustibles
+        let maxRadius = 50; // km
+
+        const FUEL_NAMES = {
+            "Precio Gasolina 95 E5": "G95",
+            "Precio Gasolina 98 E5": "G98",
+            "Precio Gasoleo A": "Diésel A",
+            "Precio Gasoleo Premium": "Diésel+",
+            "Precio Gases licuados del petróleo": "GLP"
+        };
+
+        const LOW_COST_BRANDS = [
+            "PLENOIL", "BALLENOIL", "PETROPRIX", "AUTOMATIC", "NATURGY", 
+            "SBC", "GM OIL", "EASYGAS", "BEROIL", "FAMILY ENERGY", "GASEXPRESS", 
+            "RENOIL", "SETRAM", "ESCLAT", "MOOVE", "E.LECLERC", "CARREFOUR", "ALCAMPO"
+        ];
+
+        // Variables de Ruta
+        let searchMode = 'proximity'; // 'proximity' o 'route'
+        let activeRouteCoords = null; // Array de L.LatLng
+        let cumulativeRouteDistances = []; // Distancias acumuladas de la ruta en km
+        let totalRouteDistance = 0; // Distancia total de la ruta en km
+        let totalRouteDurationSec = 0; // Duración total estimada en segundos por OSRM
+        let routeStartLoc = null; // {lat, lng, label}
+        let routeEndLoc = null; // {lat, lng, label}
+        let maxDeviation = 1.0; // km
+        let routeLine = null;
+        let routeBgLine = null;
+        let routeMarkers = []; // marcadores de inicio/fin
+
+        // Endpoint de MITECO via CORS proxy seguro
+        const API_URL = "https://sedeaplicaciones.minetur.gob.es/ServiciosRESTCarburantes/PreciosCarburantes/EstacionesTerrestres/";
+        const CORS_PROXY = "https://api.allorigins.win/raw?url=";
+
+        // Elementos del DOM
+        const ui = {
+            manualForm: document.getElementById('manualLocationForm'),
+            manualLocationInput: document.getElementById('manualLocationInput'),
+            manualLocationSuggestions: document.getElementById('manualLocationSuggestions'),
+            btnUseLocation: document.getElementById('btnUseLocation'),
+            locationBadge: document.getElementById('locationStatusBadge'),
+            locationText: document.getElementById('locationText'),
+            fuelBtns: document.querySelectorAll('.fuel-btn'),
+            mapLoading: document.getElementById('mapLoading'),
+            loadingText: document.getElementById('loadingText'),
+            resultsList: document.getElementById('resultsList'),
+            resultsCount: document.getElementById('resultsCount'),
+            template: document.getElementById('stationCardTemplate'),
+            radiusSelector: document.getElementById('radiusSelector'),
+            btnRefresh: document.getElementById('btnRefresh'),
+            
+            // Modal Importar Google Maps
+            importGmapsModal: document.getElementById('importGmapsModal'),
+            btnOpenImportGmapsModal: document.getElementById('btnOpenImportGmapsModal'),
+            closeImportGmapsBtn: document.getElementById('closeImportGmapsBtn'),
+            gmapsImportForm: document.getElementById('gmapsImportForm'),
+            gmapsUrlInput: document.getElementById('gmapsUrlInput'),
+
+            // Elementos de Filtros Avanzados
+            brandFilterSelector: document.getElementById('brandFilterSelector'),
+            btnShareRoute: document.getElementById('btnShareRoute'),
+            departureTimeInput: document.getElementById('departureTimeInput'),
+            scheduleFilterSelector: document.getElementById('scheduleFilterSelector'),
+
+            // Elementos de Ruta
+            tabProximity: document.getElementById('tabProximity'),
+            tabRoute: document.getElementById('tabRoute'),
+            panelProximity: document.getElementById('panelProximity'),
+            panelRoute: document.getElementById('panelRoute'),
+            routeStartInput: document.getElementById('routeStartInput'),
+            routeStartSuggestions: document.getElementById('routeStartSuggestions'),
+            btnRouteUseCurrent: document.getElementById('btnRouteUseCurrent'),
+            routeEndInput: document.getElementById('routeEndInput'),
+            routeEndSuggestions: document.getElementById('routeEndSuggestions'),
+            routeDeviationSelector: document.getElementById('routeDeviationSelector'),
+            btnCalculateRoute: document.getElementById('btnCalculateRoute'),
+            routeExportContainer: document.getElementById('routeExportContainer'),
+            btnExportGoogle: document.getElementById('btnExportGoogle'),
+            btnExportApple: document.getElementById('btnExportApple'),
+            btnExportGPX: document.getElementById('btnExportGPX'),
+            btnExportKML: document.getElementById('btnExportKML'),
+            radiusSelectorContainer: document.getElementById('radiusSelectorContainer'),
+            sortingTitle: document.getElementById('sortingTitle'),
+            sortingSub: document.getElementById('sortingSub'),
+
+            // Elementos de Autonomía y Paradas
+            vehicleConsumptionInput: document.getElementById('vehicleConsumptionInput'),
+            vehicleTankInput: document.getElementById('vehicleTankInput'),
+            vehicleAutonomyText: document.getElementById('vehicleAutonomyText'),
+            refuelPlanContainer: document.getElementById('refuelPlanContainer'),
+            refuelPlanStops: document.getElementById('refuelPlanStops')
+        };
+
+        // --- INICIALIZACIÓN --- //
+        document.addEventListener('DOMContentLoaded', () => {
+            initMap();
+            setDefaultDepartureTime();
+            setupEventListeners();
+            setupAllAutocompletes();
+            checkUrlQueryParams();
+            
+            // Cargar ubicación previa de la sesión o inicializar silenciosamente
+            if(sessionStorage.getItem('userLoc_lat')) {
+                userLocation = {
+                    lat: parseFloat(sessionStorage.getItem('userLoc_lat')),
+                    lng: parseFloat(sessionStorage.getItem('userLoc_lng')),
+                    city: sessionStorage.getItem('userLoc_city') || 'Tu Ubicación'
+                };
+                if (ui.manualLocationInput) ui.manualLocationInput.value = userLocation.city;
+                updateLocationBadge();
+                fetchGasStations();
+            } else {
+                // Intentar geolocalización silenciosa o iniciar con Madrid por defecto
+                if ("geolocation" in navigator) {
+                    navigator.geolocation.getCurrentPosition(
+                        position => {
+                            handleNewLocation(position.coords.latitude, position.coords.longitude, "Tu Ubicación Actual");
+                        },
+                        error => {
+                            handleNewLocation(40.4168, -3.7038, "Madrid");
+                        },
+                        { enableHighAccuracy: true, timeout: 5000 }
+                    );
+                } else {
+                    handleNewLocation(40.4168, -3.7038, "Madrid");
+                }
+            }
+        });
+
+        function setDefaultDepartureTime() {
+            if (ui.departureTimeInput) {
+                const now = new Date();
+                const hours = String(now.getHours()).padStart(2, '0');
+                const minutes = String(now.getMinutes()).padStart(2, '0');
+                ui.departureTimeInput.value = `${hours}:${minutes}`;
+            }
+        }
+
+        function setupEventListeners() {
+            if (ui.btnUseLocation) ui.btnUseLocation.addEventListener('click', requestGeolocation);
+            
+            if (ui.manualForm) {
+                ui.manualForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    const query = ui.manualLocationInput.value;
+                    geocodeLocation(query);
+                });
+            }
+
+            // Selector Multicombustible
+            ui.fuelBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const fuelType = btn.dataset.fuel;
+                    if (selectedFuels.includes(fuelType)) {
+                        if (selectedFuels.length > 1) {
+                            selectedFuels = selectedFuels.filter(f => f !== fuelType);
+                            btn.className = "fuel-btn bg-dark-bg border-dark-border text-gray-400 hover:text-white px-4 py-2 rounded-xl border transition-all";
+                        }
+                    } else {
+                        selectedFuels.push(fuelType);
+                        btn.className = "fuel-btn bg-brand-dark/20 border-brand-dark text-white px-4 py-2 rounded-xl border transition-all shadow-[0_0_15px_rgba(79,172,254,0.3)]";
+                    }
+                    
+                    if(allStationsData.length > 0) {
+                        processDataAndRender();
+                    }
+                });
+            });
+
+            // Listeners de Filtros Secundarios
+            if (ui.brandFilterSelector) {
+                ui.brandFilterSelector.addEventListener('change', () => {
+                    if(allStationsData.length > 0) processDataAndRender();
+                });
+            }
+
+            if (ui.scheduleFilterSelector) {
+                ui.scheduleFilterSelector.addEventListener('change', () => {
+                    if(allStationsData.length > 0) processDataAndRender();
+                });
+            }
+
+            if (ui.departureTimeInput) {
+                ui.departureTimeInput.addEventListener('change', () => {
+                    if(allStationsData.length > 0) processDataAndRender();
+                });
+            }
+
+            if (ui.btnShareRoute) {
+                ui.btnShareRoute.addEventListener('click', shareRouteLink);
+            }
+
+            ui.radiusSelector.addEventListener('change', (e) => {
+                maxRadius = parseInt(e.target.value);
+                if(allStationsData.length > 0) {
+                    processDataAndRender();
+                }
+            });
+
+            ui.btnRefresh.addEventListener('click', () => {
+                localStorage.removeItem(CACHE_KEY);
+                localStorage.removeItem(CACHE_TIME_KEY);
+                if(userLocation) fetchGasStations();
+            });
+
+            ui.locationBadge.addEventListener('click', () => {
+                if (searchMode !== 'proximity') ui.tabProximity.click();
+                if (ui.manualLocationInput) ui.manualLocationInput.focus();
+            });
+
+            // Modal Importar Google Maps
+            if (ui.btnOpenImportGmapsModal) {
+                ui.btnOpenImportGmapsModal.addEventListener('click', () => {
+                    ui.importGmapsModal.classList.remove('hidden');
+                });
+            }
+            if (ui.closeImportGmapsBtn) {
+                ui.closeImportGmapsBtn.addEventListener('click', () => {
+                    ui.importGmapsModal.classList.add('hidden');
+                });
+            }
+            if (ui.gmapsImportForm) {
+                ui.gmapsImportForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    const urlVal = ui.gmapsUrlInput.value.trim();
+                    handleGmapsUrlImport(urlVal);
+                });
+            }
+
+            // --- LISTENERS DE MODO RUTA --- //
+            ui.tabProximity.addEventListener('click', () => {
+                if (searchMode === 'proximity') return;
+                searchMode = 'proximity';
+                
+                ui.tabProximity.className = "flex-1 pb-2 text-center border-b-2 border-brand-dark text-white font-semibold transition-all flex items-center justify-center gap-2 text-sm sm:text-base";
+                ui.tabRoute.className = "flex-1 pb-2 text-center border-b-2 border-transparent text-gray-400 hover:text-white font-semibold transition-all flex items-center justify-center gap-2 text-sm sm:text-base";
+                
+                ui.panelProximity.classList.remove('hidden');
+                ui.panelRoute.classList.add('hidden');
+                ui.radiusSelectorContainer.classList.remove('hidden');
+                
+                ui.sortingTitle.textContent = 'Ordenado por "Score Inteligente"';
+                ui.sortingSub.textContent = 'Precio + penalización por distancia';
+                
+                clearRouteFromMap();
+                
+                if (allStationsData.length > 0) {
+                    processDataAndRender();
+                }
+            });
+
+            ui.tabRoute.addEventListener('click', () => {
+                if (searchMode === 'route') return;
+                searchMode = 'route';
+                
+                ui.tabRoute.className = "flex-1 pb-2 text-center border-b-2 border-brand-dark text-white font-semibold transition-all flex items-center justify-center gap-2 text-sm sm:text-base";
+                ui.tabProximity.className = "flex-1 pb-2 text-center border-b-2 border-transparent text-gray-400 hover:text-white font-semibold transition-all flex items-center justify-center gap-2 text-sm sm:text-base";
+                
+                ui.panelProximity.classList.add('hidden');
+                ui.panelRoute.classList.remove('hidden');
+                ui.radiusSelectorContainer.classList.add('hidden');
+                
+                ui.sortingTitle.textContent = 'Ordenado por Precio';
+                ui.sortingSub.textContent = 'Precio + penalización por desvío de la ruta';
+                
+                if (activeRouteCoords && allStationsData.length > 0) {
+                    processDataAndRender();
+                } else {
+                    renderList([]);
+                }
+            });
+
+            ui.btnRouteUseCurrent.addEventListener('click', () => {
+                if (userLocation) {
+                    ui.routeStartInput.value = "Mi Ubicación Actual";
+                } else {
+                    requestGeolocation();
+                }
+            });
+
+            ui.routeDeviationSelector.addEventListener('change', (e) => {
+                maxDeviation = parseFloat(e.target.value);
+                if (activeRouteCoords && allStationsData.length > 0) {
+                    processDataAndRender();
+                }
+            });
+
+            ui.btnCalculateRoute.addEventListener('click', calculateRouteFlow);
+
+            // Exportar GPX y KML
+            if (ui.btnExportGPX) ui.btnExportGPX.addEventListener('click', exportRouteGPX);
+            if (ui.btnExportKML) ui.btnExportKML.addEventListener('click', exportRouteKML);
+
+            // Listeners de Autonomía y Consumo
+            const updateAutonomyText = () => {
+                const consumption = parseFloat(ui.vehicleConsumptionInput.value) || 6.5;
+                const tank = parseFloat(ui.vehicleTankInput.value) || 50;
+                const autonomy = Math.round((tank / consumption) * 100);
+                ui.vehicleAutonomyText.textContent = autonomy;
+                
+                if (searchMode === 'route' && activeRouteCoords && allStationsData.length > 0) {
+                    processDataAndRender();
+                }
+            };
+            ui.vehicleConsumptionInput.addEventListener('input', updateAutonomyText);
+            ui.vehicleTankInput.addEventListener('input', updateAutonomyText);
+        }
+
+        // --- AUTOCOMPLETADO DE DIRECCIONES / CALLES --- //
+        function setupAllAutocompletes() {
+            setupSingleAutocomplete(ui.manualLocationInput, ui.manualLocationSuggestions, (item) => {
+                handleNewLocation(parseFloat(item.lat), parseFloat(item.lon), item.display_name.split(',')[0]);
+            });
+            setupSingleAutocomplete(ui.routeStartInput, ui.routeStartSuggestions, null);
+            setupSingleAutocomplete(ui.routeEndInput, ui.routeEndSuggestions, null);
+        }
+
+        function setupSingleAutocomplete(inputEl, suggestionsEl, onSelect) {
+            if (!inputEl || !suggestionsEl) return;
+            let timer;
+
+            inputEl.addEventListener('input', () => {
+                clearTimeout(timer);
+                const query = inputEl.value.trim();
+                if (query.length < 2) {
+                    suggestionsEl.classList.add('hidden');
+                    return;
+                }
+
+                timer = setTimeout(async () => {
+                    try {
+                        const url = `https://nominatim.openstreetmap.org/search?format=json&countrycodes=es&q=${encodeURIComponent(query)}&limit=5`;
+                        const res = await fetch(url);
+                        const data = await res.json();
+
+                        if (!data || data.length === 0) {
+                            suggestionsEl.classList.add('hidden');
+                            return;
+                        }
+
+                        suggestionsEl.innerHTML = '';
+                        data.forEach(item => {
+                            const div = document.createElement('div');
+                            div.className = 'px-3 py-2 text-xs text-gray-200 hover:bg-brand-dark/30 hover:text-white cursor-pointer border-b border-white/5 last:border-0 truncate flex items-center gap-2 transition-colors';
+                            div.innerHTML = `<i data-lucide="map-pin" class="w-3.5 h-3.5 text-brand-dark flex-shrink-0"></i><span class="truncate">${item.display_name}</span>`;
+                            div.addEventListener('click', () => {
+                                inputEl.value = item.display_name;
+                                suggestionsEl.classList.add('hidden');
+                                if (onSelect) onSelect(item);
+                            });
+                            suggestionsEl.appendChild(div);
+                        });
+                        lucide.createIcons();
+                        suggestionsEl.classList.remove('hidden');
+                    } catch(err) {
+                        console.error("Autocomplete error:", err);
+                    }
+                }, 300);
+            });
+
+            document.addEventListener('click', (e) => {
+                if (!inputEl.contains(e.target) && !suggestionsEl.contains(e.target)) {
+                    suggestionsEl.classList.add('hidden');
+                }
+            });
+        }
+
+        // --- COMPARTIR Y LEER PARÁMETROS URL --- //
+        function shareRouteLink() {
+            let shareUrl = window.location.origin + window.location.pathname + '?mode=' + searchMode;
+            if (searchMode === 'route') {
+                const s = ui.routeStartInput.value.trim();
+                const e = ui.routeEndInput.value.trim();
+                if (!s || !e) {
+                    alert("Calcula primero una ruta para poder compartirla.");
+                    return;
+                }
+                shareUrl += `&start=${encodeURIComponent(s)}&end=${encodeURIComponent(e)}`;
+            } else if (userLocation) {
+                shareUrl += `&city=${encodeURIComponent(userLocation.city)}&lat=${userLocation.lat}&lng=${userLocation.lng}`;
+            }
+
+            shareUrl += `&fuels=${encodeURIComponent(selectedFuels.join(','))}`;
+
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(shareUrl).then(() => {
+                    alert("¡Enlace del trayecto copiado al portapapeles! Puedes compartirlo por WhatsApp o guardarlo.");
+                }).catch(() => {
+                    prompt("Copia este enlace para compartir:", shareUrl);
+                });
+            } else {
+                prompt("Copia este enlace para compartir:", shareUrl);
+            }
+        }
+
+        function checkUrlQueryParams() {
+            const params = new URLSearchParams(window.location.search);
+            if (!params.has('mode')) return;
+
+            const mode = params.get('mode');
+            const fuels = params.get('fuels');
+            if (fuels) {
+                selectedFuels = fuels.split(',');
+                ui.fuelBtns.forEach(btn => {
+                    if (selectedFuels.includes(btn.dataset.fuel)) {
+                        btn.className = "fuel-btn bg-brand-dark/20 border-brand-dark text-white px-4 py-2 rounded-xl border transition-all shadow-[0_0_15px_rgba(79,172,254,0.3)]";
+                    } else {
+                        btn.className = "fuel-btn bg-dark-bg border-dark-border text-gray-400 hover:text-white px-4 py-2 rounded-xl border transition-all";
+                    }
+                });
+            }
+
+            if (mode === 'route' && params.has('start') && params.has('end')) {
+                ui.tabRoute.click();
+                ui.routeStartInput.value = params.get('start');
+                ui.routeEndInput.value = params.get('end');
+                setTimeout(() => calculateRouteFlow(), 500);
+            }
+        }
+
+        // --- PARSER DE ENLACES DE GOOGLE MAPS --- //
+        function handleGmapsUrlImport(urlStr) {
+            if (!urlStr) return;
+            ui.importGmapsModal.classList.add('hidden');
+
+            const parsed = parseGoogleMapsUrl(urlStr);
+            if (parsed && (parsed.start || parsed.end)) {
+                if (parsed.start) ui.routeStartInput.value = parsed.start;
+                if (parsed.end) ui.routeEndInput.value = parsed.end;
+
+                if (searchMode !== 'route') {
+                    ui.tabRoute.click();
+                }
+
+                calculateRouteFlow();
+            } else {
+                alert("No se pudieron extraer los puntos del enlace. Asegúrate de copiar un enlace válido de ruta de Google Maps.");
+            }
+        }
+
+        function parseGoogleMapsUrl(urlStr) {
+            try {
+                const decoded = decodeURIComponent(urlStr);
+                let start = null;
+                let end = null;
+
+                if (decoded.includes('/dir/')) {
+                    const rawDir = decoded.split('/dir/')[1];
+                    const parts = rawDir.split('/').map(p => p.trim()).filter(p => p && !p.startsWith('@') && !p.startsWith('data=') && !p.startsWith('am=') && !p.includes('?'));
+                    
+                    if (parts.length >= 2) {
+                        start = parts[0].replace(/\+/g, ' ');
+                        end = parts[parts.length - 1].replace(/\+/g, ' ');
+                    } else if (parts.length === 1) {
+                        end = parts[0].replace(/\+/g, ' ');
+                    }
+                }
+
+                if (!start || !end) {
+                    if (urlStr.includes('origin=') || urlStr.includes('destination=')) {
+                        const urlObj = new URL(urlStr);
+                        const o = urlObj.searchParams.get('origin');
+                        const d = urlObj.searchParams.get('destination');
+                        if (o) start = o.replace(/\+/g, ' ');
+                        if (d) end = d.replace(/\+/g, ' ');
+                    }
+                }
+
+                if (!end && decoded.includes('@')) {
+                    const match = decoded.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/);
+                    if (match) {
+                        end = `${match[1]},${match[2]}`;
+                    }
+                }
+
+                return { start, end };
+            } catch (e) {
+                console.error("Error parsing Google Maps URL:", e);
+                return null;
+            }
+        }
+
+        // --- MAPA --- //
+        function initMap() {
+            map = L.map('map').setView([40.4168, -3.7038], 6);
+            
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+                subdomains: 'abcd',
+                maxZoom: 19
+            }).addTo(map);
+
+            markers = L.markerClusterGroup({
+                chunkedLoading: true,
+                maxClusterRadius: 50,
+                iconCreateFunction: function(cluster) {
+                    return L.divIcon({ 
+                        html: '<div style="background: rgba(79,172,254,0.8); color: white; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border: 2px solid #00f2fe; box-shadow: 0 0 10px rgba(0,242,254,0.5);"><span>' + cluster.getChildCount() + '</span></div>',
+                        className: 'custom-cluster',
+                        iconSize: L.point(40, 40)
+                    });
+                }
+            });
+            map.addLayer(markers);
+        }
+
+        // --- LOCALIZACIÓN --- //
+        function requestGeolocation() {
+            const isRoute = (searchMode === 'route');
+            const targetBtn = isRoute ? ui.btnRouteUseCurrent : ui.btnUseLocation;
+            const originalHtml = targetBtn ? targetBtn.innerHTML : '';
+            
+            if (targetBtn) {
+                targetBtn.innerHTML = '<i data-lucide="loader-2" class="animate-spin w-4 h-4"></i>';
+                lucide.createIcons();
+            }
+            
+            if ("geolocation" in navigator) {
+                navigator.geolocation.getCurrentPosition(
+                    position => {
+                        handleNewLocation(position.coords.latitude, position.coords.longitude, "Tu Ubicación Actual");
+                        if (isRoute) {
+                            ui.routeStartInput.value = "Mi Ubicación Actual";
+                        }
+                        if (targetBtn) {
+                            targetBtn.innerHTML = originalHtml;
+                            lucide.createIcons();
+                        }
+                    },
+                    error => {
+                        alert("No pudimos obtener tu ubicación GPS. Introduce tu ciudad o calle manualmente.");
+                        if (targetBtn) {
+                            targetBtn.innerHTML = originalHtml;
+                            lucide.createIcons();
+                        }
+                    },
+                    { enableHighAccuracy: true, timeout: 10000 }
+                );
+            } else {
+                alert("La geolocalización no está soportada en tu navegador.");
+                if (targetBtn) {
+                    targetBtn.innerHTML = originalHtml;
+                    lucide.createIcons();
+                }
+            }
+        }
+
+        async function geocodeLocation(query) {
+            if (!query) return;
+            const btnObj = ui.manualForm ? ui.manualForm.querySelector('button') : null;
+            const origText = btnObj ? btnObj.innerHTML : '';
+            if (btnObj) {
+                btnObj.innerHTML = '...';
+                btnObj.disabled = true;
+            }
+
+            try {
+                const qUrl = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query + ', España')}&limit=1`;
+                const res = await fetch(qUrl);
+                const data = await res.json();
+
+                if(data && data.length > 0) {
+                    handleNewLocation(parseFloat(data[0].lat), parseFloat(data[0].lon), query.toUpperCase());
+                } else {
+                    alert("No se encontró la ubicación. Prueba con código postal y ciudad.");
+                }
+            } catch(e) {
+                console.error(e);
+                alert("Error al buscar ubicación.");
+            } finally {
+                if (btnObj) {
+                    btnObj.innerHTML = origText;
+                    btnObj.disabled = false;
+                }
+            }
+        }
+
+        function handleNewLocation(lat, lng, city) {
+            userLocation = {lat, lng, city};
+            sessionStorage.setItem('userLoc_lat', lat);
+            sessionStorage.setItem('userLoc_lng', lng);
+            sessionStorage.setItem('userLoc_city', city);
+            
+            if (ui.manualLocationInput && city) {
+                ui.manualLocationInput.value = city;
+            }
+            
+            updateLocationBadge();
+            
+            map.setView([lat, lng], 13);
+            if(userMarker) map.removeLayer(userMarker);
+            
+            const userIcon = L.divIcon({
+                className: 'custom-user-marker',
+                html: '<div style="background: #4facfe; border: 3px solid white; border-radius: 50%; width: 20px; height: 20px; box-shadow: 0 0 15px #00f2fe;"></div>',
+                iconSize: [20, 20]
+            });
+            userMarker = L.marker([lat, lng], {icon: userIcon, zIndexOffset: 1000}).addTo(map);
+            userMarker.bindPopup(`<b>${city}</b>`).openPopup();
+
+            fetchGasStations();
+        }
+
+        function updateLocationBadge() {
+            ui.locationBadge.classList.remove('hidden');
+            ui.locationText.textContent = userLocation.city || "Ubicación detectada";
+        }
+
+        // --- FETCH DATOS (STALE-WHILE-REVALIDATE CACHÉ) --- //
+        async function fetchGasStations() {
+            if(!userLocation) return;
+            
+            // 1. Intentar cargar desde caché de localStorage primero (0.05s)
+            const cachedTime = localStorage.getItem(CACHE_TIME_KEY);
+            const cachedData = localStorage.getItem(CACHE_KEY);
+            let hasValidCache = false;
+            
+            if (cachedData && cachedTime && (Date.now() - parseInt(cachedTime, 10) < CACHE_TTL_MS)) {
+                try {
+                    allStationsData = JSON.parse(cachedData);
+                    hasValidCache = true;
+                    processDataAndRender(); // Renderizado instantáneo
+                } catch(e) {
+                    console.error("Cache parse error", e);
+                }
+            }
+
+            if (!hasValidCache) {
+                ui.mapLoading.classList.remove('hidden');
+                ui.loadingText.textContent = "Obteniendo precios oficiales en tiempo real...";
+            }
+            
+            // 2. Consultar API con estrategia multi-fallback
+            try {
+                const endpoints = [
+                    "/api/miteco/EstacionesTerrestres/", // Nginx Reverse Proxy (100% fiable, 0 CORS)
+                    API_URL, // Direct MITECO
+                    "https://corsproxy.io/?" + encodeURIComponent(API_URL), // Fast CORS Proxy 1
+                    CORS_PROXY + encodeURIComponent(API_URL) // AllOrigins
+                ];
+
+                let data = null;
+                for (let url of endpoints) {
+                    try {
+                        const controller = new AbortController();
+                        const timeoutId = setTimeout(() => controller.abort(), 10000);
+                        const res = await fetch(url, { signal: controller.signal });
+                        clearTimeout(timeoutId);
+                        
+                        if (!res.ok) continue;
+                        const json = await res.json();
+                        if (json && json.ListaEESSPrecio && Array.isArray(json.ListaEESSPrecio) && json.ListaEESSPrecio.length > 0) {
+                            data = json;
+                            console.log("MITECO data successfully loaded from:", url);
+                            break;
+                        }
+                    } catch(e) {
+                        console.log("Endpoint failed:", url, e);
+                    }
+                }
+
+                if(data && data.ListaEESSPrecio) {
+                    allStationsData = data.ListaEESSPrecio;
+                    try {
+                        localStorage.setItem(CACHE_KEY, JSON.stringify(allStationsData));
+                        localStorage.setItem(CACHE_TIME_KEY, Date.now().toString());
+                    } catch(e) {
+                        console.warn("localStorage quota exceeded", e);
+                    }
+                    processDataAndRender();
+                } else if (!hasValidCache) {
+                    throw new Error("No se pudo obtener datos de ninguna fuente");
+                }
+            } catch(error) {
+                console.error("Error fetching data:", error);
+                if (!hasValidCache) {
+                    alert("Error al obtener datos de las gasolineras. Inténtalo más tarde.");
+                }
+            } finally {
+                ui.mapLoading.classList.add('hidden');
+            }
+        }
+
+        // --- PARSER DE HORARIOS Y COMPROBACIÓN --- //
+        function parseScheduleAndCheckOpen(scheduleStr, targetDateObj) {
+            if (!scheduleStr) return true;
+            const sLower = scheduleStr.toLowerCase().trim();
+            if (sLower.includes("24h") || sLower.includes("24 h")) return true;
+
+            const dayMap = { 0: 'D', 1: 'L', 2: 'M', 3: 'X', 4: 'J', 5: 'V', 6: 'S' };
+            const targetDay = dayMap[targetDateObj.getDay()];
+            const targetMinutes = targetDateObj.getHours() * 60 + targetDateObj.getMinutes();
+
+            const parts = sLower.split(';');
+            for (let part of parts) {
+                const dayTimeSplit = part.split(':');
+                if (dayTimeSplit.length < 2) continue;
+
+                const dayRangeStr = dayTimeSplit[0].trim().toUpperCase();
+                const timeRangeStr = dayTimeSplit.slice(1).join(':').trim();
+
+                if (isDayMatching(targetDay, dayRangeStr)) {
+                    if (timeRangeStr.includes("24h")) return true;
+
+                    const times = timeRangeStr.match(/(\d{1,2}):(\d{2})\s*-\s*(\d{1,2}):(\d{2})/);
+                    if (times) {
+                        const startMin = parseInt(times[1], 10) * 60 + parseInt(times[2], 10);
+                        const endMin = parseInt(times[3], 10) * 60 + parseInt(times[4], 10);
+
+                        if (startMin <= endMin) {
+                            if (targetMinutes >= startMin && targetMinutes <= endMin) return true;
+                        } else {
+                            if (targetMinutes >= startMin || targetMinutes <= endMin) return true;
+                        }
+                    }
+                }
+            }
+
+            const times = sLower.match(/(\d{1,2}):(\d{2})\s*-\s*(\d{1,2}):(\d{2})/);
+            if (times) {
+                const startMin = parseInt(times[1], 10) * 60 + parseInt(times[2], 10);
+                const endMin = parseInt(times[3], 10) * 60 + parseInt(times[4], 10);
+                if (startMin <= endMin) {
+                    return targetMinutes >= startMin && targetMinutes <= endMin;
+                } else {
+                    return targetMinutes >= startMin || targetMinutes <= endMin;
+                }
+            }
+
+            return true;
+        }
+
+        function isDayMatching(dayCode, dayRangeStr) {
+            const days = ['L', 'M', 'X', 'J', 'V', 'S', 'D'];
+            if (dayRangeStr.includes('L-D') || dayRangeStr.includes('L-S') || dayRangeStr.includes(dayCode)) return true;
+            
+            if (dayRangeStr.includes('-')) {
+                const parts = dayRangeStr.split('-').map(d => d.trim());
+                if (parts.length === 2) {
+                    const startIdx = days.indexOf(parts[0]);
+                    const endIdx = days.indexOf(parts[1]);
+                    const currentIdx = days.indexOf(dayCode);
+                    if (startIdx !== -1 && endIdx !== -1 && currentIdx !== -1) {
+                        if (startIdx <= endIdx) {
+                            return currentIdx >= startIdx && currentIdx <= endIdx;
+                        } else {
+                            return currentIdx >= startIdx || currentIdx <= endIdx;
+                        }
+                    }
+                }
+            }
+            return false;
+        }
+
+        // --- PROCESAMIENTO Y RENDERIZADO (AVANZADO) --- //
+        function processDataAndRender() {
+            if(!allStationsData.length) return;
+            if(searchMode === 'proximity' && !userLocation) return;
+            if(searchMode === 'route' && (!activeRouteCoords || !routeStartLoc || !routeEndLoc)) return;
+
+            let decimatedRoute = null;
+            let decimatedCumulativeDistances = [];
+            let minLat = Infinity, maxLat = -Infinity, minLng = Infinity, maxLng = -Infinity;
+            let latMargin = 0, lngMargin = 0;
+            
+            if (searchMode === 'route') {
+                decimatedRoute = decimateCoords(activeRouteCoords, 0.3);
+                
+                let currentTotalDec = 0;
+                decimatedCumulativeDistances = [0];
+                for (let i = 1; i < decimatedRoute.length; i++) {
+                    const d = haversineDistance(
+                        decimatedRoute[i-1].lat, decimatedRoute[i-1].lng,
+                        decimatedRoute[i].lat, decimatedRoute[i].lng
+                    );
+                    currentTotalDec += d;
+                    decimatedCumulativeDistances.push(currentTotalDec);
+                }
+
+                activeRouteCoords.forEach(c => {
+                    if (c.lat < minLat) minLat = c.lat;
+                    if (c.lat > maxLat) maxLat = c.lat;
+                    if (c.lng < minLng) minLng = c.lng;
+                    if (c.lng > maxLng) maxLng = c.lng;
+                });
+                
+                latMargin = maxDeviation / 110.574;
+                const avgLat = (minLat + maxLat) / 2;
+                lngMargin = maxDeviation / (111.320 * Math.cos(avgLat * Math.PI / 180));
+            }
+
+            // Hora de salida y velocidad media de ruta
+            const departureVal = ui.departureTimeInput ? ui.departureTimeInput.value : "12:00";
+            const depHoursMinutes = departureVal.split(':').map(n => parseInt(n, 10));
+            const nowObj = new Date();
+            if (depHoursMinutes.length === 2 && !isNaN(depHoursMinutes[0]) && !isNaN(depHoursMinutes[1])) {
+                nowObj.setHours(depHoursMinutes[0], depHoursMinutes[1], 0, 0);
+            }
+
+            // Velocidad media en ruta (OSRM duration o por defecto 90 km/h)
+            const routeAvgSpeedKmH = (totalRouteDurationSec > 0 && totalRouteDistance > 0)
+                ? (totalRouteDistance / (totalRouteDurationSec / 3600))
+                : 90;
+
+            const brandFilter = ui.brandFilterSelector ? ui.brandFilterSelector.value : 'all';
+            const scheduleFilter = ui.scheduleFilterSelector ? ui.scheduleFilterSelector.value : 'all';
+
+            let processedStations = [];
+            let sumPricesAll = 0;
+            let countPricesAll = 0;
+            
+            for(let i=0; i < allStationsData.length; i++) {
+                const station = allStationsData[i];
+                const rawBrand = (station["Rótulo"] || "INDEPENDIENTE").toUpperCase();
+
+                // Filtro de Marcas
+                if (brandFilter !== 'all') {
+                    if (brandFilter === 'lowcost') {
+                        if (!LOW_COST_BRANDS.some(b => rawBrand.includes(b))) continue;
+                    } else {
+                        if (!rawBrand.includes(brandFilter.toUpperCase())) continue;
+                    }
+                }
+                
+                // Extraer precios para TODOS los combustibles seleccionados
+                let availableFuelPrices = {};
+                let validPricesSum = 0;
+                let validPricesCount = 0;
+
+                selectedFuels.forEach(fuelKey => {
+                    const priceStr = station[fuelKey];
+                    if (priceStr) {
+                        const parsedP = parseFloat(priceStr.replace(',', '.'));
+                        if (!isNaN(parsedP) && parsedP > 0) {
+                            availableFuelPrices[fuelKey] = parsedP;
+                            validPricesSum += parsedP;
+                            validPricesCount++;
+                        }
+                    }
+                });
+
+                if (validPricesCount === 0) continue;
+
+                const avgPrice = validPricesSum / validPricesCount;
+                sumPricesAll += avgPrice;
+                countPricesAll++;
+
+                // Coordenadas
+                const latStr = station["Latitud"];
+                const lonKey = Object.keys(station).find(k => k.toLowerCase().includes("longitud"));
+                
+                if(!latStr || !station[lonKey]) continue;
+
+                const lat = parseFloat(latStr.replace(',', '.'));
+                const lng = parseFloat(station[lonKey].replace(',', '.'));
+
+                let distance = 0;
+                let score = 0;
+                let distanceFromStart = 0;
+
+                if (searchMode === 'proximity') {
+                    distance = haversineDistance(userLocation.lat, userLocation.lng, lat, lng);
+                    if(distance > maxRadius) continue;
+                    score = avgPrice + (distance * 0.008);
+                } else {
+                    if (lat < minLat - latMargin || lat > maxLat + latMargin || lng < minLng - lngMargin || lng > maxLng + lngMargin) {
+                        continue;
+                    }
+
+                    const proj = getRouteProjection({lat, lng}, decimatedRoute);
+                    if (proj.deviation > maxDeviation) continue;
+
+                    distance = proj.deviation;
+                    
+                    const segmentA = decimatedRoute[proj.segmentIndex];
+                    const segmentB = decimatedRoute[proj.segmentIndex + 1];
+                    const segLength = haversineDistance(segmentA.lat, segmentA.lng, segmentB.lat, segmentB.lng);
+                    distanceFromStart = decimatedCumulativeDistances[proj.segmentIndex] + proj.t * segLength;
+                    
+                    score = avgPrice + (proj.deviation * 2 * 0.008);
+                }
+
+                // Cálculo de hora estimada de llegada
+                const travelTimeHours = (distanceFromStart / routeAvgSpeedKmH);
+                const stationArrivalTime = new Date(nowObj.getTime() + travelTimeHours * 3600 * 1000);
+                const isOpenOnArrival = parseScheduleAndCheckOpen(station["Horario"], stationArrivalTime);
+                const arrivalTimeFormatted = stationArrivalTime.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+
+                // Filtro de Horario
+                if (scheduleFilter === 'only_24h') {
+                    const hStr = (station["Horario"] || "").toLowerCase();
+                    if (!hStr.includes("24h") && !hStr.includes("24 h")) continue;
+                } else if (scheduleFilter === 'open_on_arrival') {
+                    if (!isOpenOnArrival) continue;
+                }
+
+                processedStations.push({
+                    raw: station,
+                    brand: station["Rótulo"] || "INDEPENDIENTE",
+                    address: station["Dirección"],
+                    city: station["Localidad"],
+                    lat: lat,
+                    lng: lng,
+                    price: avgPrice,
+                    fuelPrices: availableFuelPrices,
+                    distance: distance,
+                    distanceFromStart: distanceFromStart,
+                    score: score,
+                    schedule: station["Horario"],
+                    isOpenOnArrival: isOpenOnArrival,
+                    arrivalTimeFormatted: arrivalTimeFormatted
+                });
+            }
+
+            // Ordenar por Score de mejor a peor
+            processedStations.sort((a, b) => a.score - b.score);
+
+            // Calcular ahorro estimado
+            const overallAvgPrice = countPricesAll > 0 ? (sumPricesAll / countPricesAll) : 0;
+            const tankVolume = parseFloat(ui.vehicleTankInput.value) || 50;
+
+            processedStations.forEach(s => {
+                if (overallAvgPrice > s.price) {
+                    s.estimatedSavings = (overallAvgPrice - s.price) * tankVolume;
+                } else {
+                    s.estimatedSavings = 0;
+                }
+            });
+
+            // Paradas recomendadas en ruta
+            const consumption = parseFloat(ui.vehicleConsumptionInput.value) || 6.5;
+            const tank = parseFloat(ui.vehicleTankInput.value) || 50;
+            const range = (tank / consumption) * 100;
+
+            let refuelStops = [];
+            if (searchMode === 'route' && totalRouteDistance > range) {
+                let currentKm = 0;
+                while (totalRouteDistance - currentKm > range) {
+                    const minKm = currentKm + range * 0.70;
+                    const maxKm = currentKm + range * 0.92;
+                    
+                    refuelStops.push({
+                        stopNumber: refuelStops.length + 1,
+                        minKm: minKm,
+                        maxKm: maxKm
+                    });
+                    
+                    currentKm += range * 0.82;
+                }
+            }
+
+            if (refuelStops.length > 0) {
+                ui.refuelPlanContainer.classList.remove('hidden');
+                ui.refuelPlanStops.innerHTML = '';
+                
+                refuelStops.forEach(stop => {
+                    const candidates = processedStations.filter(s => s.distanceFromStart >= stop.minKm && s.distanceFromStart <= stop.maxKm);
+                    candidates.sort((a, b) => a.price - b.price);
+                    
+                    const best3 = candidates.slice(0, 3);
+                    
+                    let optionsHtml = '';
+                    if (best3.length === 0) {
+                        optionsHtml = `<p class="text-xs text-gray-500 italic">No se encontraron gasolineras abiertas cercanas a la ruta en este tramo.</p>`;
+                    } else {
+                        best3.forEach((s, idx) => {
+                            const badge = idx === 0 ? '<span class="bg-green-500/20 text-green-400 border border-green-500/30 text-[9px] px-1.5 py-0.5 rounded font-bold">MÁS BARATA</span>' : '';
+                            const statusColor = s.isOpenOnArrival ? 'text-green-400' : 'text-red-400 font-bold';
+                            const statusText = s.isOpenOnArrival ? `Abierta (~${s.arrivalTimeFormatted})` : `⚠️ CERRADA (~${s.arrivalTimeFormatted})`;
+                            
+                            optionsHtml += `
+                                <div class="refuel-option flex justify-between items-center bg-white/5 border border-white/5 hover:border-brand-dark/30 rounded-xl p-2.5 transition-all cursor-pointer hover:bg-white/10 group" data-lat="${s.lat}" data-lng="${s.lng}" onclick="focusOnStation(${s.lat}, ${s.lng})">
+                                    <div class="flex-1 min-w-0 pr-2">
+                                        <div class="flex items-center gap-1.5">
+                                            <p class="text-xs font-bold text-white truncate">${s.brand}</p>
+                                            ${badge}
+                                        </div>
+                                        <p class="text-[10px] text-gray-400 mt-0.5 truncate">Km ${s.distanceFromStart.toFixed(0)} • ${s.address}</p>
+                                        <p class="text-[9px] ${statusColor} mt-0.5">${statusText}</p>
+                                    </div>
+                                    <div class="text-right flex-shrink-0">
+                                        <p class="text-xs font-bold text-brand-light">${s.price.toFixed(3)}€</p>
+                                        ${s.estimatedSavings > 0.5 ? `<p class="text-[9px] text-green-400 font-medium">Ahorro: ~${s.estimatedSavings.toFixed(2)}€</p>` : ''}
+                                    </div>
+                                </div>
+                            `;
+                        });
+                    }
+
+                    const stopCard = document.createElement('div');
+                    stopCard.className = 'border-l-2 border-brand-dark pl-3 space-y-1.5';
+                    stopCard.innerHTML = `
+                        <p class="text-[11px] font-bold text-gray-400 tracking-wider">PARADA ${stop.stopNumber} (Recomendada Km ${stop.minKm.toFixed(0)} - ${stop.maxKm.toFixed(0)})</p>
+                        <div class="space-y-1.5">${optionsHtml}</div>
+                    `;
+                    ui.refuelPlanStops.appendChild(stopCard);
+                });
+                lucide.createIcons();
+            } else {
+                ui.refuelPlanContainer.classList.add('hidden');
+                ui.refuelPlanStops.innerHTML = '';
+            }
+
+            const prices = processedStations.map(s => s.price);
+            let p33 = 0, p66 = 0;
+            
+            if(prices.length > 0) {
+                const sortedPrices = [...prices].sort((a,b)=>a-b);
+                p33 = sortedPrices[Math.floor(sortedPrices.length * 0.33)];
+                p66 = sortedPrices[Math.floor(sortedPrices.length * 0.66)];
+            }
+
+            renderMapMarkers(processedStations, p33, p66);
+            renderList(processedStations);
+        }
+
+        function renderMapMarkers(stations, p33, p66) {
+            markers.clearLayers();
+            const fragment = [];
+
+            stations.forEach((s) => {
+                let colorClass = 'marker-green';
+                if (!s.isOpenOnArrival) colorClass = 'marker-gray';
+                else if(s.price > p66) colorClass = 'marker-red';
+                else if(s.price > p33) colorClass = 'marker-yellow';
+
+                const iconHtml = `<div class="price-marker ${colorClass}">${s.price.toFixed(3)}</div>`;
+                const customIcon = L.divIcon({
+                    html: iconHtml,
+                    className: '',
+                    iconSize: [50, 30],
+                    iconAnchor: [25, 15],
+                    popupAnchor: [0, -15]
+                });
+
+                let mapsLink = `https://www.google.com/maps/dir/?api=1&destination=${s.lat},${s.lng}`;
+                let distText = `A ${s.distance.toFixed(1)} km`;
+
+                if (searchMode === 'route' && routeStartLoc && routeEndLoc) {
+                    mapsLink = `https://www.google.com/maps/dir/?api=1&origin=${routeStartLoc.lat},${routeStartLoc.lng}&destination=${routeEndLoc.lat},${routeEndLoc.lng}&waypoints=${s.lat},${s.lng}`;
+                    distText = `Desvío: ${s.distance.toFixed(1)} km (Llegada ~${s.arrivalTimeFormatted})`;
+                }
+
+                let pricesBreakdownHtml = '';
+                Object.keys(s.fuelPrices).forEach(fKey => {
+                    const name = FUEL_NAMES[fKey] || fKey;
+                    pricesBreakdownHtml += `<div style="display:flex;justify-content:space-between;font-size:12px;color:#e2e8f0;margin-top:2px;"><span>${name}:</span><strong>${s.fuelPrices[fKey].toFixed(3)} €</strong></div>`;
+                });
+
+                const openStatusHtml = s.isOpenOnArrival
+                    ? `<span style="color:#10b981;font-weight:600;">🟢 Abierta</span>`
+                    : `<span style="color:#ef4444;font-weight:bold;">🔴 CERRADA a tu llegada (~${s.arrivalTimeFormatted})</span>`;
+
+                const popupContent = `
+                    <div style="min-width:210px;">
+                        <h4 style="font-weight:bold;font-size:16px;margin:0 0 5px 0;">${s.brand}</h4>
+                        <p style="margin:0 0 5px 0;font-size:12px;color:#aaa;">${s.address}, ${s.city}</p>
+                        <div style="background:rgba(255,255,255,0.05);padding:6px;border-radius:6px;margin:8px 0;">
+                            ${pricesBreakdownHtml}
+                        </div>
+                        <div style="margin-bottom:6px;font-size:11px;">${openStatusHtml}</div>
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+                            <span style="font-size:11px;color:#cbd5e1;">${distText}</span>
+                            ${s.estimatedSavings > 0.5 ? `<span style="font-size:11px;color:#10b981;font-weight:bold;">Ahorras ~${s.estimatedSavings.toFixed(2)}€</span>` : ''}
+                        </div>
+                        <p style="font-size:11px;color:#aaa;margin-bottom:10px;">⏰ ${s.schedule}</p>
+                        <a href="${mapsLink}" target="_blank" style="display:block;background: linear-gradient(90deg, #00f2fe, #4facfe);color:white;text-align:center;padding:8px;border-radius:6px;text-decoration:none;font-weight:600;font-size:13px;">Abrir en Maps</a>
+                    </div>
+                `;
+
+                const marker = L.marker([s.lat, s.lng], { icon: customIcon });
+                marker.bindPopup(popupContent);
+                fragment.push(marker);
+            });
+
+            markers.addLayers(fragment);
+            
+            if(stations.length > 0) {
+                const bounds = L.latLngBounds(stations.map(s => [s.lat, s.lng]));
+                if (searchMode === 'proximity' && userLocation) {
+                    bounds.extend([userLocation.lat, userLocation.lng]);
+                } else if (searchMode === 'route' && activeRouteCoords) {
+                    bounds.extend(activeRouteCoords);
+                }
+                map.fitBounds(bounds, { padding: [30, 30] });
+            }
+        }
+
+        function renderList(stations) {
+            ui.resultsList.innerHTML = '';
+            ui.resultsCount.textContent = stations.length;
+
+            if(stations.length === 0) {
+                const emptyMsg = searchMode === 'route' 
+                    ? 'No se encontraron gasolineras con los filtros y horarios seleccionados a lo largo de la ruta.'
+                    : `No se encontraron gasolineras con los filtros seleccionados en el radio de ${maxRadius}km.`;
+                ui.resultsList.innerHTML = `
+                    <div class="h-full flex flex-col items-center justify-center text-center text-gray-500 space-y-4 pt-10">
+                        <i data-lucide="info" class="w-12 h-12 opacity-50"></i>
+                        <p>${emptyMsg}</p>
+                    </div>
+                `;
+                lucide.createIcons();
+                return;
+            }
+
+            const isDesktop = window.innerWidth >= 1024;
+            const topLimit = isDesktop ? stations.length : 50;
+
+            for(let i=0; i < Math.min(stations.length, topLimit); i++) {
+                const s = stations[i];
+                const node = ui.template.content.cloneNode(true);
+                
+                const card = node.querySelector('.station-card');
+                node.querySelector('.brand-name').textContent = s.brand;
+                node.querySelector('.address').textContent = `${s.address}, ${s.city}`;
+                node.querySelector('.price-text').textContent = `${s.price.toFixed(3)}€`;
+                
+                // Badges de precios multicombustible
+                const badgesContainer = node.querySelector('.fuel-badges-container');
+                badgesContainer.innerHTML = '';
+                Object.keys(s.fuelPrices).forEach(fKey => {
+                    const badgeName = FUEL_NAMES[fKey] || fKey;
+                    const badgeEl = document.createElement('span');
+                    badgeEl.className = 'bg-brand-dark/10 text-brand-light border border-brand-dark/20 text-[10px] px-2 py-0.5 rounded font-medium';
+                    badgeEl.textContent = `${badgeName}: ${s.fuelPrices[fKey].toFixed(3)}€`;
+                    badgesContainer.appendChild(badgeEl);
+                });
+
+                // Badge de Apertura / Hora de paso
+                if (!s.isOpenOnArrival) {
+                    const closedBadge = document.createElement('span');
+                    closedBadge.className = 'bg-red-500/20 text-red-400 border border-red-500/30 text-[10px] font-bold px-2 py-0.5 rounded';
+                    closedBadge.textContent = `⚠️ Cerrada a tu llegada (~${s.arrivalTimeFormatted})`;
+                    badgesContainer.appendChild(closedBadge);
+                } else if (searchMode === 'route') {
+                    const openBadge = document.createElement('span');
+                    openBadge.className = 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[10px] font-medium px-2 py-0.5 rounded';
+                    openBadge.textContent = `🟢 Abierta (Llegada ~${s.arrivalTimeFormatted})`;
+                    badgesContainer.appendChild(openBadge);
+                }
+
+                // Ahorro estimado
+                const savingsBadge = node.querySelector('.savings-badge');
+                if (s.estimatedSavings > 0.5) {
+                    savingsBadge.textContent = `Ahorro est. ~${s.estimatedSavings.toFixed(2)}€`;
+                    savingsBadge.classList.remove('hidden');
+                }
+
+                let mapsLink = `https://www.google.com/maps/dir/?api=1&destination=${s.lat},${s.lng}`;
+                if (searchMode === 'route') {
+                    node.querySelector('.distance').textContent = `Desvío: ${s.distance.toFixed(1)} km (a ${s.distanceFromStart.toFixed(0)} km de salida)`;
+                    if (routeStartLoc && routeEndLoc) {
+                        mapsLink = `https://www.google.com/maps/dir/?api=1&origin=${routeStartLoc.lat},${routeStartLoc.lng}&destination=${routeEndLoc.lat},${routeEndLoc.lng}&waypoints=${s.lat},${s.lng}`;
+                    }
+                } else {
+                    node.querySelector('.distance').textContent = `A ${s.distance.toFixed(1)} km`;
+                }
+                
+                node.querySelector('.maps-link').href = mapsLink;
+
+                if(i === 0) {
+                    node.querySelector('.best-badge').classList.remove('hidden');
+                    card.classList.add('border-yellow-500', 'shadow-[0_0_15px_rgba(234,179,8,0.2)]');
+                    card.classList.remove('border-dark-border');
+                }
+
+                card.addEventListener('click', (e) => {
+                    if(e.target.closest('a')) return;
+                    
+                    map.setView([s.lat, s.lng], 15);
+                    const marker = markers.getLayers().find(m => m.getLatLng().lat === s.lat && m.getLatLng().lng === s.lng);
+                    if(marker) {
+                        markers.zoomToShowLayer(marker, () => {
+                            marker.openPopup();
+                        });
+                    }
+                });
+
+                ui.resultsList.appendChild(node);
+            }
+            lucide.createIcons();
+        }
+
+        // --- EXPORTACIÓN DE RUTAS (GPX Y KML) --- //
+        function exportRouteGPX() {
+            if (!activeRouteCoords || !routeStartLoc || !routeEndLoc) {
+                alert("Primero debes calcular una ruta para poder exportarla.");
+                return;
+            }
+
+            let gpxContent = `<?xml version="1.0" encoding="UTF-8"?>
+<gpx version="1.1" creator="davito.es Gasolineras Baratas" xmlns="http://www.topografix.com/GPX/1/1">
+  <metadata>
+    <name>Ruta: ${routeStartLoc.label} a ${routeEndLoc.label}</name>
+    <desc>Ruta con estaciones de servicio recomendadas exportada desde davito.es</desc>
+  </metadata>
+  <wpt lat="${routeStartLoc.lat}" lon="${routeStartLoc.lng}">
+    <name>Origen: ${routeStartLoc.label}</name>
+  </wpt>
+  <wpt lat="${routeEndLoc.lat}" lon="${routeEndLoc.lng}">
+    <name>Destino: ${routeEndLoc.label}</name>
+  </wpt>
+`;
+
+            const stopCards = ui.refuelPlanStops.querySelectorAll('.refuel-option');
+            stopCards.forEach((card, idx) => {
+                const brand = card.querySelector('.truncate')?.textContent || 'Gasolinera';
+                const price = card.querySelector('.text-brand-light')?.textContent || '';
+                gpxContent += `  <wpt lat="${card.getAttribute('data-lat') || ''}" lon="${card.getAttribute('data-lng') || ''}">
+    <name>Parada ${idx+1}: ${brand} (${price})</name>
+  </wpt>\n`;
+            });
+
+            gpxContent += `  <trk>\n    <name>Trazado de Ruta</name>\n    <trkseg>\n`;
+            activeRouteCoords.forEach(c => {
+                gpxContent += `      <trkpt lat="${c.lat}" lon="${c.lng}" />\n`;
+            });
+            gpxContent += `    </trkseg>\n  </trk>\n</gpx>`;
+
+            downloadFile(gpxContent, "ruta_gasolineras.gpx", "application/gpx+xml");
+        }
+
+        function exportRouteKML() {
+            if (!activeRouteCoords || !routeStartLoc || !routeEndLoc) {
+                alert("Primero debes calcular una ruta para poder exportarla.");
+                return;
+            }
+
+            let coordsStr = activeRouteCoords.map(c => `${c.lng},${c.lat},0`).join('\n');
+            let kmlContent = `<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+  <Document>
+    <name>Ruta: ${routeStartLoc.label} a ${routeEndLoc.label}</name>
+    <Placemark>
+      <name>Origen</name>
+      <Point><coordinates>${routeStartLoc.lng},${routeStartLoc.lat},0</coordinates></Point>
+    </Placemark>
+    <Placemark>
+      <name>Destino</name>
+      <Point><coordinates>${routeEndLoc.lng},${routeEndLoc.lat},0</coordinates></Point>
+    </Placemark>
+    <Placemark>
+      <name>Trazado de Ruta</name>
+      <LineString>
+        <coordinates>
+${coordsStr}
+        </coordinates>
+      </LineString>
+    </Placemark>
+  </Document>
+</kml>`;
+
+            downloadFile(kmlContent, "ruta_gasolineras.kml", "application/vnd.google-earth.kml+xml");
+        }
+
+        function downloadFile(content, fileName, contentType) {
+            const blob = new Blob([content], { type: contentType });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = fileName;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(a.href);
+        }
+
+        // --- UTILIDADES --- //
+        function haversineDistance(lat1, lon1, lat2, lon2) {
+            const R = 6371;
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const a = 
+                Math.sin(dLat/2) * Math.sin(dLat/2) +
+                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+                Math.sin(dLon/2) * Math.sin(dLon/2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            return R * c;
+        }
+
+        // --- FUNCIONES DEL PLANIFICADOR DE RUTA --- //
+        async function geocodeAddress(query) {
+            if (!query) return null;
+            
+            const cleanQuery = query.trim();
+            if (cleanQuery.toLowerCase() === "mi ubicación actual" && userLocation) {
+                return {
+                    lat: userLocation.lat,
+                    lng: userLocation.lng,
+                    label: "Mi Ubicación Actual"
+                };
+            }
+            
+            try {
+                const url = `https://nominatim.openstreetmap.org/search?format=json&countrycodes=es&q=${encodeURIComponent(cleanQuery)}&limit=1`;
+                const res = await fetch(url);
+                const data = await res.json();
+                if (data && data.length > 0) {
+                    return {
+                        lat: parseFloat(data[0].lat),
+                        lng: parseFloat(data[0].lon),
+                        label: cleanQuery.toUpperCase()
+                    };
+                }
+            } catch (e) {
+                console.error("Error geocodificando: " + cleanQuery, e);
+            }
+            return null;
+        }
+
+        function clearRouteFromMap() {
+            if (routeLine) {
+                map.removeLayer(routeLine);
+                routeLine = null;
+            }
+            if (routeBgLine) {
+                map.removeLayer(routeBgLine);
+                routeBgLine = null;
+            }
+            routeMarkers.forEach(m => map.removeLayer(m));
+            routeMarkers = [];
+            activeRouteCoords = null;
+            cumulativeRouteDistances = [];
+            totalRouteDistance = 0;
+            totalRouteDurationSec = 0;
+            ui.routeExportContainer.classList.add('hidden');
+            ui.refuelPlanContainer.classList.add('hidden');
+            ui.refuelPlanStops.innerHTML = '';
+        }
+
+        async function calculateRouteFlow() {
+            const startVal = ui.routeStartInput.value.trim();
+            const endVal = ui.routeEndInput.value.trim();
+            
+            if (!startVal && !userLocation) {
+                alert("Por favor introduce un punto de partida o permite el acceso a tu ubicación.");
+                return;
+            }
+            if (!endVal) {
+                alert("Por favor introduce un punto de llegada.");
+                return;
+            }
+            
+            const actualStartQuery = startVal || "Mi Ubicación Actual";
+            
+            ui.mapLoading.classList.remove('hidden');
+            ui.loadingText.textContent = "Buscando direcciones...";
+            
+            try {
+                const [startResult, endResult] = await Promise.all([
+                    geocodeAddress(actualStartQuery),
+                    geocodeAddress(endVal)
+                ]);
+                
+                if (!startResult) {
+                    alert("No se pudo encontrar la dirección de partida: " + actualStartQuery);
+                    ui.mapLoading.classList.add('hidden');
+                    return;
+                }
+                if (!endResult) {
+                    alert("No se pudo encontrar la dirección de llegada: " + endVal);
+                    ui.mapLoading.classList.add('hidden');
+                    return;
+                }
+                
+                routeStartLoc = startResult;
+                routeEndLoc = endResult;
+                
+                ui.loadingText.textContent = "Trazando ruta óptima...";
+                const osrmUrl = `https://router.project-osrm.org/route/v1/driving/${routeStartLoc.lng},${routeStartLoc.lat};${routeEndLoc.lng},${routeEndLoc.lat}?overview=full&geometries=geojson`;
+                
+                const routeRes = await fetch(osrmUrl);
+                const routeData = await routeRes.json();
+                
+                if (!routeData || !routeData.routes || routeData.routes.length === 0) {
+                    alert("No se pudo trazar una ruta entre los dos puntos.");
+                    ui.mapLoading.classList.add('hidden');
+                    return;
+                }
+                
+                clearRouteFromMap();
+
+                const routeObj = routeData.routes[0];
+                totalRouteDurationSec = routeObj.duration || 0;
+
+                const geometry = routeObj.geometry;
+                activeRouteCoords = geometry.coordinates.map(c => L.latLng(c[1], c[0]));
+                
+                cumulativeRouteDistances = [0];
+                let currentTotal = 0;
+                for (let i = 1; i < activeRouteCoords.length; i++) {
+                    const d = haversineDistance(
+                        activeRouteCoords[i-1].lat, activeRouteCoords[i-1].lng,
+                        activeRouteCoords[i].lat, activeRouteCoords[i].lng
+                    );
+                    currentTotal += d;
+                    cumulativeRouteDistances.push(currentTotal);
+                }
+                totalRouteDistance = currentTotal;
+                
+                routeBgLine = L.polyline(activeRouteCoords, {
+                    color: '#4facfe',
+                    weight: 10,
+                    opacity: 0.3,
+                    lineCap: 'round',
+                    lineJoin: 'round'
+                }).addTo(map);
+                
+                routeLine = L.polyline(activeRouteCoords, {
+                    color: '#00f2fe',
+                    weight: 6,
+                    opacity: 0.9,
+                    lineCap: 'round',
+                    lineJoin: 'round'
+                }).addTo(map);
+                
+                const startIcon = L.divIcon({
+                    className: 'custom-start-marker',
+                    html: '<div style="width: 14px; height: 14px; background: #10b981; border: 2px solid white; border-radius: 50%;"></div>',
+                    iconSize: [14, 14],
+                    iconAnchor: [7, 7]
+                });
+                
+                const endIcon = L.divIcon({
+                    className: 'custom-end-marker',
+                    html: '<div style="width: 14px; height: 14px; background: #ef4444; border: 2px solid white; border-radius: 50%;"></div>',
+                    iconSize: [14, 14],
+                    iconAnchor: [7, 7]
+                });
+                
+                const startM = L.marker([routeStartLoc.lat, routeStartLoc.lng], {icon: startIcon, zIndexOffset: 900})
+                    .bindPopup(`<b>Origen:</b> ${routeStartLoc.label}`)
+                    .addTo(map);
+                    
+                const endM = L.marker([routeEndLoc.lat, routeEndLoc.lng], {icon: endIcon, zIndexOffset: 900})
+                    .bindPopup(`<b>Destino:</b> ${routeEndLoc.label}`)
+                    .addTo(map);
+                    
+                routeMarkers.push(startM, endM);
+                
+                const gUrl = `https://www.google.com/maps/dir/?api=1&origin=${routeStartLoc.lat},${routeStartLoc.lng}&destination=${routeEndLoc.lat},${routeEndLoc.lng}`;
+                const aUrl = `https://maps.apple.com/?saddr=${routeStartLoc.lat},${routeStartLoc.lng}&daddr=${routeEndLoc.lat},${routeEndLoc.lng}`;
+                
+                ui.btnExportGoogle.href = gUrl;
+                ui.btnExportApple.href = aUrl;
+                ui.routeExportContainer.classList.remove('hidden');
+                
+                const bounds = L.latLngBounds(activeRouteCoords);
+                map.fitBounds(bounds, { padding: [40, 40] });
+                
+                if (allStationsData.length === 0) {
+                    if (!userLocation) {
+                        userLocation = { lat: routeStartLoc.lat, lng: routeStartLoc.lng, city: routeStartLoc.label };
+                    }
+                    await fetchGasStations();
+                } else {
+                    processDataAndRender();
+                }
+                
+            } catch (err) {
+                console.error(err);
+                alert("Ocurrió un error al calcular la ruta.");
+            } finally {
+                ui.mapLoading.classList.add('hidden');
+            }
+        }
+
+        function decimateCoords(coords, minDistanceKm) {
+            if (coords.length <= 2) return coords;
+            const result = [coords[0]];
+            let lastPoint = coords[0];
+            for (let i = 1; i < coords.length - 1; i++) {
+                const dist = haversineDistance(lastPoint.lat, lastPoint.lng, coords[i].lat, coords[i].lng);
+                if (dist >= minDistanceKm) {
+                    result.push(coords[i]);
+                    lastPoint = coords[i];
+                }
+            }
+            result.push(coords[coords.length - 1]);
+            return result;
+        }
+
+        function getRouteProjection(p, routeCoords) {
+            let minD = Infinity;
+            let minIdx = 0;
+            let minT = 0;
+            
+            for (let i = 0; i < routeCoords.length - 1; i++) {
+                const a = routeCoords[i];
+                const b = routeCoords[i+1];
+                
+                const lat1 = a.lat, lon1 = a.lng;
+                const lat2 = b.lat, lon2 = b.lng;
+                const lat3 = p.lat, lon3 = p.lng;
+
+                const radLat = ((lat1 + lat2) / 2) * Math.PI / 180;
+                const cosLat = Math.cos(radLat);
+
+                const dLat = lat2 - lat1;
+                const dLon = (lon2 - lon1) * cosLat;
+
+                if (dLat === 0 && dLon === 0) {
+                    const dist = haversineDistance(lat3, lon3, lat1, lon1);
+                    if (dist < minD) {
+                        minD = dist;
+                        minIdx = i;
+                        minT = 0;
+                    }
+                    continue;
+                }
+
+                const wLat = lat3 - lat1;
+                const wLon = (lon3 - lon1) * cosLat;
+
+                let t = (wLat * dLat + wLon * dLon) / (dLat * dLat + dLon * dLon);
+                t = Math.max(0, Math.min(1, t));
+
+                const closestLat = lat1 + t * dLat;
+                const closestLng = lon1 + t * (lon2 - lon1);
+
+                const dist = haversineDistance(lat3, lon3, closestLat, closestLng);
+                if (dist < minD) {
+                    minD = dist;
+                    minIdx = i;
+                    minT = t;
+                }
+            }
+            
+            return {
+                deviation: minD,
+                segmentIndex: minIdx,
+                t: minT
+            };
+        }
+
+        window.focusOnStation = function(lat, lng) {
+            map.setView([lat, lng], 15);
+            const marker = markers.getLayers().find(m => m.getLatLng().lat === lat && m.getLatLng().lng === lng);
+            if(marker) {
+                markers.zoomToShowLayer(marker, () => {
+                    marker.openPopup();
+                });
+            }
+        };
+    </script>
+  <script src="/assets/js/site-shell.js?v=3.2" defer></script>
+</body>
+</html>

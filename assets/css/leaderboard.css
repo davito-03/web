@@ -1,0 +1,309 @@
+/* Leaderboard Styles - Glassmorphism Update */
+
+.leaderboard-page {
+    min-height: 100vh;
+    background: transparent; /* Let star background show through */
+    color: #fff;
+    font-family: 'Inter', sans-serif;
+    padding: 20px;
+    position: relative;
+    z-index: 1;
+}
+
+.leaderboard-container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.leaderboard-header {
+    text-align: center;
+    margin-bottom: 40px;
+    animation: fadeInDown 0.6s ease;
+}
+
+.leaderboard-title {
+    font-size: 2.5em;
+    color: #fde68a;
+    text-shadow: 0 0 18px rgba(251, 191, 36, 0.45);
+    margin-bottom: 10px;
+}
+
+.leaderboard-subtitle {
+    font-size: 0.8em;
+    color: #ccc;
+    font-family: 'Roboto', sans-serif;
+}
+
+/* Tabs de Juegos */
+.game-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    margin-bottom: 30px;
+    animation: fadeIn 0.8s ease;
+}
+
+.game-tab {
+    padding: 12px 20px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    color: var(--color-primary, #00BFFF);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.7em;
+    backdrop-filter: blur(5px);
+}
+
+.game-tab:hover {
+    background: rgba(0, 191, 255, 0.1);
+    border-color: var(--color-primary, #00BFFF);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 191, 255, 0.3);
+}
+
+.game-tab.active {
+    background: linear-gradient(45deg, #00BFFF, #1E90FF);
+    color: #fff;
+    border-color: #00BFFF;
+    box-shadow: 0 0 20px rgba(0, 191, 255, 0.5);
+}
+
+/* Tabla de Puntuaciones */
+.scores-table-container {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    padding: 30px;
+    backdrop-filter: blur(10px);
+    animation: fadeInUp 0.6s ease;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
+
+.game-title {
+    font-size: 1.5em;
+    color: var(--color-accent, #FFD700);
+    text-align: center;
+    margin-bottom: 20px;
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+}
+
+.scores-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.scores-table thead {
+    background: rgba(0, 0, 0, 0.3);
+}
+
+.scores-table th {
+    padding: 15px;
+    text-align: left;
+    color: var(--color-primary, #00BFFF);
+    font-size: 0.7em;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.scores-table td {
+    padding: 15px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    font-size: 0.8em;
+}
+
+.scores-table tbody tr {
+    transition: all 0.3s ease;
+    animation: slideIn 0.4s ease;
+}
+
+.scores-table tbody tr:hover {
+    background: rgba(255, 255, 255, 0.05);
+    transform: translateX(5px);
+}
+
+/* Posiciones */
+.rank-cell {
+    font-weight: bold;
+    color: #fff;
+    font-size: 1.2em;
+}
+
+.rank-1 {
+    color: #FFD700;
+    text-shadow: 0 0 10px #FFD700;
+}
+
+.rank-2 {
+    color: #C0C0C0;
+    text-shadow: 0 0 10px #C0C0C0;
+}
+
+.rank-3 {
+    color: #CD7F32;
+    text-shadow: 0 0 10px #CD7F32;
+}
+
+/* Medallas */
+.medal {
+    display: inline-block;
+    margin-right: 10px;
+    font-size: 1.5em;
+}
+
+/* Fecha */
+.date-cell {
+    color: #aaa;
+    font-size: 0.7em;
+    font-family: 'Roboto', sans-serif;
+}
+
+/* Estado Vacío */
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: #bbb;
+}
+
+.empty-state-icon {
+    font-size: 4em;
+    margin-bottom: 20px;
+    opacity: 0.5;
+}
+
+.empty-state-text {
+    font-size: 0.9em;
+    margin-bottom: 10px;
+}
+
+.empty-state-subtext {
+    font-size: 0.7em;
+    color: #888;
+    font-family: 'Roboto', sans-serif;
+}
+
+/* Estadísticas del Juego */
+.game-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+.stat-card {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    padding: 15px;
+    text-align: center;
+    backdrop-filter: blur(5px);
+}
+
+.stat-label {
+    font-size: 0.6em;
+    color: #aaa;
+    margin-bottom: 8px;
+}
+
+.stat-value {
+    font-size: 1.2em;
+    color: var(--color-primary, #00BFFF);
+    text-shadow: 0 0 10px rgba(0, 191, 255, 0.3);
+}
+
+/* Botones */
+.action-buttons {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    margin-top: 30px;
+}
+
+.btn {
+    padding: 12px 24px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.05);
+    color: #fff;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.7em;
+    font-family: 'Inter', sans-serif;
+}
+
+.btn:hover {
+    background: rgba(0, 191, 255, 0.2);
+    border-color: #00BFFF;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 191, 255, 0.3);
+}
+
+/* Animaciones */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes fadeInDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideIn {
+    from { opacity: 0; transform: translateX(-20px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .leaderboard-title {
+        font-size: 1.5em;
+    }
+
+    .game-tabs {
+        gap: 5px;
+    }
+
+    .game-tab {
+        padding: 8px 12px;
+        font-size: 0.6em;
+    }
+
+    .scores-table th,
+    .scores-table td {
+        padding: 10px 5px;
+        font-size: 0.6em;
+    }
+
+    .scores-table-container {
+        padding: 15px;
+    }
+
+    .game-stats {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .action-buttons {
+        flex-direction: column;
+    }
+}
+
+/* Link de vuelta */
+.back-link {
+    display: inline-block;
+    margin: 20px 0;
+    color: var(--color-primary, #00BFFF);
+    text-decoration: none;
+    font-size: 0.8em;
+    transition: all 0.3s ease;
+}
+
+.back-link:hover {
+    text-shadow: 0 0 10px rgba(0, 191, 255, 0.8);
+    transform: translateX(-5px);
+}

@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Convertidor de Imágenes — @davito_03</title>
+  <meta name="description" content="Herramienta gratuita y privada para convertir imágenes a WebP, PNG y JPEG en el navegador.">
+  <link rel="stylesheet" href="/assets/css/styles.css?v=2.1">
+  <link rel="stylesheet" href="/assets/fontawesome/css/all.min.css?v=6.5.1">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      background-color: #0f172a;
+      color: #f8fafc;
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .converter-container {
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 0 20px;
+      width: 100%;
+      flex: 1;
+    }
+
+    .back-home {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: #38bdf8;
+      text-decoration: none;
+      font-weight: 500;
+      margin-bottom: 20px;
+    }
+
+    .header-section {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .header-section h1 {
+      font-size: 2.2rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #fde68a, #f9a8d4, #c4b5fd);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 8px;
+    }
+
+    .drop-zone {
+      background: rgba(30, 41, 59, 0.6);
+      backdrop-filter: blur(12px);
+      border: 2px dashed rgba(56, 189, 248, 0.4);
+      border-radius: 20px;
+      padding: 50px 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .drop-zone:hover, .drop-zone.dragover {
+      border-color: #38bdf8;
+      background: rgba(56, 189, 248, 0.1);
+      transform: scale(1.01);
+    }
+
+    .drop-icon {
+      font-size: 3.5rem;
+      color: #38bdf8;
+      margin-bottom: 15px;
+    }
+
+    .controls-panel {
+      background: rgba(30, 41, 59, 0.8);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 16px;
+      padding: 24px;
+      margin-top: 25px;
+      display: none;
+    }
+
+    .controls-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+
+    .control-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .control-group label {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #94a3b8;
+    }
+
+    select, input[type="range"] {
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #fff;
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-size: 0.95rem;
+    }
+
+    .preview-box {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      align-items: center;
+      justify-content: center;
+      margin-top: 25px;
+      padding-top: 20px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .img-preview {
+      max-width: 250px;
+      max-height: 250px;
+      border-radius: 12px;
+      object-fit: contain;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .stats-badge {
+      background: rgba(34, 197, 94, 0.15);
+      border: 1px solid rgba(34, 197, 94, 0.3);
+      color: #4ade80;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    .download-btn {
+      background: linear-gradient(135deg, #38bdf8, #2563eb);
+      color: white;
+      border: none;
+      padding: 14px 28px;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .download-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(56, 189, 248, 0.4);
+    }
+  </style>
+</head>
+
+<body data-i18n-title="cv_doc_title">
+  <div class="converter-container" id="main-content">
+    <a href="/" class="back-home"><i class="fas fa-arrow-left"></i> <span data-i18n="back_home">Volver a Inicio</span></a>
+
+    <div class="header-section">
+      <h1 data-i18n="cv_title">Convertidor de Imágenes Web</h1>
+      <p style="color: #94a3b8;" data-i18n="cv_sub">Convierte tus imágenes a WebP, PNG o JPG rápido y 100% privado en tu navegador.</p>
+    </div>
+
+    <!-- Zona de arrastre -->
+    <div class="drop-zone" id="drop-zone">
+      <i class="fas fa-cloud-arrow-up drop-icon"></i>
+      <h3 data-i18n="cv_drop">Arrastra tu imagen aquí o haz clic para buscar</h3>
+      <p style="color: #94a3b8; font-size: 0.85rem; margin-top: 6px;" data-i18n="cv_formats">Soporta PNG, JPG, WebP, GIF, BMP</p>
+      <input type="file" id="file-input" accept="image/*" style="display: none;">
+    </div>
+
+    <!-- Panel de Control -->
+    <div class="controls-panel" id="controls-panel">
+      <div class="controls-grid">
+        <div class="control-group">
+          <label for="target-format" data-i18n="cv_out">Formato de Salida</label>
+          <select id="target-format">
+            <option value="image/webp" selected>WebP (Recomendado)</option>
+            <option value="image/jpeg">JPEG / JPG</option>
+            <option value="image/png">PNG</option>
+          </select>
+        </div>
+
+        <div class="control-group">
+          <label for="quality-range">Calidad: <span id="quality-val">85%</span></label>
+          <input type="range" id="quality-range" min="10" max="100" value="85">
+        </div>
+      </div>
+
+      <div class="preview-box">
+        <img id="result-img" class="img-preview" alt="Vista previa">
+        <div>
+          <p id="original-info" style="color: #94a3b8; margin-bottom: 6px;"></p>
+          <p id="converted-info" style="font-weight: 600; margin-bottom: 12px;"></p>
+          <div id="savings-badge" class="stats-badge" data-i18n="cv_save">Ahorro: --%</div>
+          <br><br>
+          <button id="download-btn" class="download-btn">
+            <i class="fas fa-download"></i> <span data-i18n="cv_dl">Descargar Imagen</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/assets/js/logger.js" defer></script>
+  <script src="/assets/js/mascot.js" defer></script>
+
+  <script>
+    const dropZone = document.getElementById('drop-zone');
+    const fileInput = document.getElementById('file-input');
+    const controlsPanel = document.getElementById('controls-panel');
+    const targetFormat = document.getElementById('target-format');
+    const qualityRange = document.getElementById('quality-range');
+    const qualityVal = document.getElementById('quality-val');
+    const resultImg = document.getElementById('result-img');
+    const downloadBtn = document.getElementById('download-btn');
+
+    let currentFile = null;
+    let convertedBlob = null;
+
+    dropZone.addEventListener('click', () => fileInput.click());
+    dropZone.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      dropZone.classList.add('dragover');
+    });
+    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+    dropZone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dropZone.classList.remove('dragover');
+      if (e.dataTransfer.files.length) {
+        handleFile(e.dataTransfer.files[0]);
+      }
+    });
+
+    fileInput.addEventListener('change', (e) => {
+      if (e.target.files.length) handleFile(e.target.files[0]);
+    });
+
+    qualityRange.addEventListener('input', () => {
+      qualityVal.textContent = `${qualityRange.value}%`;
+      processImage();
+    });
+
+    targetFormat.addEventListener('change', processImage);
+
+    function handleFile(file) {
+      if (!file.type.startsWith('image/')) return alert('Por favor sube una imagen válida.');
+      currentFile = file;
+      controlsPanel.style.display = 'block';
+      processImage();
+    }
+
+    function formatBytes(bytes) {
+      if (bytes === 0) return '0 Bytes';
+      const k = 1024;
+      const sizes = ['Bytes', 'KB', 'MB'];
+      const i = Math.floor(Math.log(bytes) / Math.log(k));
+      return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    }
+
+    function processImage() {
+      if (!currentFile) return;
+
+      const img = new Image();
+      const reader = new FileReader();
+
+      reader.onload = (e) => {
+        img.src = e.target.result;
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          canvas.width = img.width;
+          canvas.height = img.height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0);
+
+          const mimeType = targetFormat.value;
+          const quality = parseFloat(qualityRange.value) / 100;
+
+          canvas.toBlob((blob) => {
+            convertedBlob = blob;
+            const url = URL.createObjectURL(blob);
+            resultImg.src = url;
+
+            document.getElementById('original-info').textContent = `Original: ${currentFile.name} (${formatBytes(currentFile.size)})`;
+            document.getElementById('converted-info').textContent = `Convertido: ${formatBytes(blob.size)}`;
+
+            const savings = Math.round(((currentFile.size - blob.size) / currentFile.size) * 100);
+            const badge = document.getElementById('savings-badge');
+            if (savings > 0) {
+              badge.textContent = `Ahorro del ${savings}%! 🔥`;
+              badge.style.background = 'rgba(34, 197, 94, 0.15)';
+              badge.style.color = '#4ade80';
+            } else {
+              badge.textContent = `Sin optimización de tamaño`;
+              badge.style.background = 'rgba(234, 179, 8, 0.15)';
+              badge.style.color = '#facc15';
+            }
+          }, mimeType, quality);
+        };
+      };
+      reader.readAsDataURL(currentFile);
+    }
+
+    downloadBtn.addEventListener('click', () => {
+      if (!convertedBlob) return;
+      const ext = targetFormat.value.split('/')[1];
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(convertedBlob);
+      a.download = `optimizada_davito.${ext}`;
+      a.click();
+    });
+  </script>
+  <script src="/assets/js/site-shell.js?v=3.2" defer></script>
+</body>
+
+</html>

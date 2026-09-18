@@ -1,0 +1,213 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0a0a0a">
+    <title>Snake - davito_03</title>
+
+    <!-- CSS -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/assets/fontawesome/css/all.min.css?v=6.5.1">
+    <link rel="stylesheet" href="/assets/css/styles.css">
+    <link rel="stylesheet" href="/assets/css/mobile-optimizations.css">
+    <link rel="stylesheet" href="/assets/css/games.css">
+    <link rel="stylesheet" href="/assets/css/terminal.css">
+
+    <style>
+        /* Snake Specific Overrides */
+        body {
+            touch-action: none;
+            overflow: hidden;
+            background: #000;
+        }
+
+        .game-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            width: 100vw;
+        }
+
+        #game-canvas {
+            background: #111;
+            border: 2px solid #333;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.2);
+            max-width: 95vw;
+            max-height: 60vh;
+        }
+
+        .controls-area {
+            margin-top: 20px;
+            display: grid;
+            grid-template-columns: 60px 60px 60px;
+            grid-template-rows: 60px 60px;
+            gap: 10px;
+        }
+
+        .d-btn {
+            width: 60px;
+            height: 60px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 24px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .d-btn:active {
+            background: rgba(0, 255, 0, 0.3);
+        }
+
+        .d-btn.up {
+            grid-column: 2;
+            grid-row: 1;
+        }
+
+        .d-btn.left {
+            grid-column: 1;
+            grid-row: 2;
+        }
+
+        .d-btn.down {
+            grid-column: 2;
+            grid-row: 2;
+        }
+
+        .d-btn.right {
+            grid-column: 3;
+            grid-row: 2;
+        }
+
+        .score-board {
+            font-family: 'Inter', sans-serif;
+            color: #0f0;
+            margin-bottom: 20px;
+            font-size: 16px;
+        }
+
+        /* Modal Override */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .modal.active {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .modal-content {
+            background: #1a1a1a;
+            padding: 30px;
+            border-radius: 10px;
+            border: 2px solid #0f0;
+            text-align: center;
+            color: #fff;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .modal input {
+            background: #333;
+            border: 1px solid #555;
+            color: #fff;
+            padding: 10px;
+            margin: 15px 0;
+            width: 80%;
+            font-family: inherit;
+        }
+
+        .modal button {
+            background: #0f0;
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-family: inherit;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="game-wrapper">
+        <div style="position: absolute; top: 20px; left: 20px;">
+            <a href="/pages/laboratorio" style="color: #fff; text-decoration: none; font-family: monospace;"><span data-i18n="game_back">Back</span></a>
+        </div>
+
+        <div class="score-board"><span data-i18n="game_score">SCORE</span>: <span id="score">0</span></div>
+
+        <canvas id="game-canvas" width="400" height="400"></canvas>
+
+        <div class="desktop-instructions"
+            style="margin-top: 20px; color: #666; font-size: 10px; font-family: 'Inter', sans-serif;">
+            <span data-i18n="game_arrows">USE ARROW KEYS TO MOVE</span>
+        </div>
+
+        <div class="controls-area mobile-controls grid-layout">
+            <div class="d-btn up" id="btn-up"><i class="fas fa-arrow-up"></i></div>
+            <div class="d-btn left" id="btn-left"><i class="fas fa-arrow-left"></i></div>
+            <div class="d-btn down" id="btn-down"><i class="fas fa-arrow-down"></i></div>
+            <div class="d-btn right" id="btn-right"><i class="fas fa-arrow-right"></i></div>
+        </div>
+    </div>
+
+    <!-- Start Screen Modal -->
+    <div id="start-screen" class="modal active">
+        <div class="modal-content">
+            <h1 style="color: #0f0; margin-bottom: 10px;">SNAKE</h1>
+            <p style="margin-bottom: 20px;">Collect the apples to grow.</p>
+
+            <div style="text-align: left; margin-bottom: 20px; font-size: 12px; line-height: 1.6;">
+                <p><i class="fas fa-desktop"></i> Arrows to move</p>
+                <p><i class="fas fa-mobile-alt"></i> Buttons to move</p>
+            </div>
+
+            <button id="start-btn" style="font-size: 18px; padding: 15px 30px;" data-i18n="game_start">START GAME</button>
+            <br><br>
+            <a href="/pages/laboratorio" style="color: #666; font-size: 10px; text-decoration: none;" data-i18n="game_exit">EXIT</a>
+        </div>
+    </div>
+
+    <!-- Game Over Modal -->
+    <div id="game-over-modal" class="modal">
+        <div class="modal-content">
+            <h2 style="color: #f00;" data-i18n="game_over">GAME OVER</h2>
+            <p>Score: <span id="final-score">0</span></p>
+            <form id="submit-score-form">
+                <input type="text" id="player-name" placeholder="YOUR NAME" data-i18n-placeholder="game_name_ph" maxlength="10" required autocomplete="off">
+                <br>
+                <button type="submit" data-i18n="game_save">SAVE SCORE</button>
+            </form>
+            <br>
+            <button id="restart-btn" style="background: #333; color: #fff; border: 1px solid #fff;" data-i18n="game_restart">RESTART</button>
+        </div>
+    </div>
+
+    <script src="/assets/js/leaderboard.js"></script>
+    <script type="module" src="/assets/js/games/snake.js"></script>
+
+  <script src="/assets/js/site-shell.js?v=3.2" defer></script>
+</body>
+
+</html>
+

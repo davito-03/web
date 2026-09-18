@@ -1,0 +1,263 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0a0a0a">
+    <meta name="description" content="Juego Platformer estilo retro � Salta entre plataformas, recoge monedas y esquiva pinchos.">
+    <title>Platformer - davito_03</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/assets/fontawesome/css/all.min.css?v=6.5.1">
+    <link rel="stylesheet" href="/assets/css/styles.css">
+    <link rel="stylesheet" href="/assets/css/mobile-optimizations.css">
+    <link rel="stylesheet" href="/assets/css/games.css">
+    <link rel="stylesheet" href="/assets/css/terminal.css">
+
+    <style>
+        body {
+            touch-action: none;
+            overflow: hidden;
+            background: #000;
+        }
+
+        .game-wrapper {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+        }
+
+        #game-canvas {
+            display: block;
+            width: 100vw;
+            height: 100vh;
+        }
+
+        .hud {
+            position: fixed;
+            top: 15px;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            font-family: 'Inter', sans-serif;
+            color: #fff;
+            font-size: 14px;
+            z-index: 50;
+            pointer-events: none;
+        }
+
+        .hud-item {
+            background: rgba(0, 0, 0, 0.6);
+            padding: 8px 16px;
+            border-radius: 20px;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .hud-item span {
+            color: #FFD700;
+            font-weight: 700;
+        }
+
+        /* Mobile touch controls */
+        .touch-controls {
+            position: fixed;
+            bottom: 30px;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 20px;
+            z-index: 50;
+        }
+
+        .d-pad {
+            display: grid;
+            grid-template-columns: 60px 60px;
+            grid-template-rows: 60px;
+            gap: 8px;
+        }
+
+        .touch-btn {
+            width: 60px;
+            height: 60px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 22px;
+            cursor: pointer;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        .touch-btn:active {
+            background: rgba(0, 200, 100, 0.3);
+        }
+
+        .jump-btn {
+            width: 80px;
+            height: 80px;
+            background: rgba(255, 100, 100, 0.15);
+            border: 2px solid rgba(255, 100, 100, 0.3);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 24px;
+            cursor: pointer;
+            user-select: none;
+            -webkit-user-select: none;
+            align-self: center;
+        }
+
+        .jump-btn:active {
+            background: rgba(255, 100, 100, 0.4);
+        }
+
+        .desktop-instructions {
+            position: fixed;
+            bottom: 15px;
+            width: 100%;
+            text-align: center;
+            color: #555;
+            font-size: 10px;
+            font-family: 'Inter', sans-serif;
+            pointer-events: none;
+        }
+
+        /* Modal */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .modal.active {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .modal-content {
+            background: #1a1a1a;
+            padding: 30px;
+            border-radius: 10px;
+            border: 2px solid #e74c3c;
+            text-align: center;
+            color: #fff;
+            font-family: 'Inter', sans-serif;
+            max-width: 350px;
+        }
+
+        .modal-content h1, .modal-content h2 {
+            margin-bottom: 15px;
+        }
+
+        .modal button {
+            background: #e74c3c;
+            color: #fff;
+            border: none;
+            padding: 12px 24px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 16px;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+
+        .modal button:hover {
+            background: #c0392b;
+        }
+
+        @media (min-width: 769px) {
+            .touch-controls {
+                display: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .desktop-instructions {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="game-wrapper">
+        <div style="position: absolute; top: 15px; left: 15px; z-index: 60;">
+            <a href="/pages/laboratorio" style="color: #fff; text-decoration: none; font-family: monospace;"><span data-i18n="game_back">Back</span></a>
+        </div>
+
+        <div class="hud">
+            <div class="hud-item"><span data-i18n="game_score">SCORE</span>: <span id="score">0</span></div>
+            <div class="hud-item">LIVES: <span id="lives">??????</span></div>
+        </div>
+
+        <canvas id="game-canvas"></canvas>
+
+        <div class="desktop-instructions">
+            ARROWS / WASD: MOVE & JUMP | SPACE: JUMP
+        </div>
+
+        <div class="touch-controls mobile-controls">
+            <div class="d-pad">
+                <div class="touch-btn" id="btn-left"><i class="fas fa-arrow-left"></i></div>
+                <div class="touch-btn" id="btn-right"><i class="fas fa-arrow-right"></i></div>
+            </div>
+            <div class="jump-btn" id="btn-jump"><i class="fas fa-arrow-up"></i></div>
+        </div>
+    </div>
+
+    <!-- Start Screen -->
+    <div id="start-screen" class="modal active">
+        <div class="modal-content">
+            <h1 style="color: #e74c3c; margin-bottom: 10px;">PLATFORMER</h1>
+            <p style="margin-bottom: 20px; color: #aaa; font-size: 13px;">Salta entre plataformas, recoge monedas y esquiva los pinchos.</p>
+
+            <div style="text-align: left; margin-bottom: 20px; font-size: 12px; line-height: 1.6;">
+                <p><i class="fas fa-desktop"></i> Flechas / WASD para mover y saltar</p>
+                <p><i class="fas fa-mobile-alt"></i> Botones t�ctiles en pantalla</p>
+            </div>
+
+            <button id="start-btn" style="font-size: 18px; padding: 15px 30px;" data-i18n="game_start">START GAME</button>
+            <br><br>
+            <a href="/pages/laboratorio" style="color: #666; font-size: 10px; text-decoration: none;" data-i18n="game_exit">EXIT</a>
+        </div>
+    </div>
+
+    <!-- Game Over Modal -->
+    <div id="game-over-modal" class="modal">
+        <div class="modal-content">
+            <h2 style="color: #f00;" data-i18n="game_over">GAME OVER</h2>
+            <p>Score: <span id="final-score">0</span></p>
+            <button id="restart-btn" style="background: #333; color: #fff; border: 1px solid #fff;" data-i18n="game_restart">RESTART</button>
+        </div>
+    </div>
+
+    <script src="/assets/js/leaderboard.js"></script>
+    <script type="module" src="/assets/js/games/platformer.js"></script>
+
+  <script src="/assets/js/site-shell.js?v=3.2" defer></script>
+</body>
+
+</html>
+
+

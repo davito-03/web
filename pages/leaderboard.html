@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#1a1a2e">
+    <title>🏆 Leaderboard - davito_03</title>
+    <link rel="icon" href="/media/favicon.ico" type="image/x-icon">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Roboto:wght@300;400;500;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="/assets/css/styles.css">
+    <link rel="stylesheet" href="/assets/css/mobile-optimizations.css">
+    <link rel="stylesheet" href="/assets/css/leaderboard.css">
+    <link rel="stylesheet" href="/assets/css/terminal.css">
+    <script src="/assets/js/themes.js" defer></script>
+</head>
+
+<body class="leaderboard-page" data-i18n-title="lb_doc_title">
+    
+    <div class="leaderboard-container" id="main-content">
+        <a href="/pages/laboratorio" class="back-link">← <span data-i18n="back_lab">Volver al Laboratorio</span></a>
+
+        <header class="leaderboard-header">
+            <h1 class="leaderboard-title">🏆 <span data-i18n="lb_title">LEADERBOARD</span> 🏆</h1>
+            <p class="leaderboard-subtitle" data-i18n="lb_sub">Rankings Globales de Todos los Juegos</p>
+        </header>
+
+        <!-- Tabs de Juegos -->
+        <div class="game-tabs" id="gameTabs"></div>
+
+        <!-- Estadísticas del Juego -->
+        <div class="game-stats" id="gameStats" style="display: none;">
+            <div class="stat-card">
+                <div class="stat-label" data-i18n="lb_high">Récord Máximo</div>
+                <div class="stat-value" id="statHighest">-</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label" data-i18n="lb_avg">Promedio</div>
+                <div class="stat-value" id="statAverage">-</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label" data-i18n="lb_players">Total Jugadores</div>
+                <div class="stat-value" id="statPlayers">-</div>
+            </div>
+        </div>
+
+        <!-- Tabla de Puntuaciones -->
+        <div class="scores-table-container" id="scoresContainer">
+            <h2 class="game-title" id="currentGameTitle" data-i18n="lb_select">Selecciona un Juego</h2>
+            <div id="scoresContent"></div>
+        </div>
+
+        <!-- Botones de Acción -->
+        <div class="action-buttons">
+            <button class="btn" onclick="refreshLeaderboard()">🔄 <span data-i18n="lb_refresh">Actualizar</span></button>
+            <button class="btn" onclick="shareLeaderboard()">📤 <span data-i18n="lb_share">Compartir</span></button>
+        </div>
+    </div>
+
+    <script src="/assets/js/leaderboard.js"></script>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+        import { getFirestore, collection, query, where, orderBy, limit, getDocs } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+
+        import { firebaseConfig } from "/assets/js/firebase-config.js";
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        let currentGame = null;
+
+        // Inicializar
+        document.addEventListener('DOMContentLoaded', () => {
+            loadGameTabs();
+
+            // Seleccionar primer juego si existe
+            const games = window.LeaderboardSystem.getAllGames();
+            if (games.length > 0) {
+                selectGame(games[0]);
+            } else {
+                // Fallback a un juego por defecto
+                selectGame('Snake');
+            }
+        });
+
+        // Cargar tabs de juegos
+        function loadGameTabs() {
+            const tabsContainer = document.getElementById('gameTabs');
+            const allGames = [
+                'Snake', 'Tetris', '2048', 'Flappy', 'Pong',
+                'Buscaminas', 'Memory', 'Platformer', 'Connect4',
+                'Breakout', 'Simon', 'RPG-Text'
+            ];
+
+            tabsContainer.innerHTML = allGames.map(game => {
+                return `
+                    <button class="game-tab" 
+                            onclick="selectGame('${game}')">
+                        ${game}
+                    </button>
+                `;
+            }).join('');
+        }
+
+        // Obtener puntuaciones globales de Firestore
+        async function getTopScoresGlobal(game) {
+            try {
+                const q = query(
+                    collection(db, "game_leaderboard"),
+                    where("game", "==", game),
+                    orderBy("score", "desc"),
+                    limit(10)
+                );
+                const querySnapshot = await getDocs(q);
+                if (querySnapshot.empty) {
+                    return window.LeaderboardSystem.getTopScores(game, 10);
+                }
+                const scores = [];
+                querySnapshot.forEach((doc) => {
+                    const data = doc.data();
+                    scores.push({
+                        player: data.player || 'Anónimo',
+                        score: data.score,
+                        date: data.date ? new Date(data.date).getTime() : Date.now()
+                    });
+                });
+                return scores;
+            } catch (err) {
+                console.warn("Firestore query failed, using localStorage cache:", err);
+                return window.LeaderboardSystem.getTopScores(game, 10);
+            }
+        }
+
+        // Seleccionar juego
+        window.selectGame = async function(game) {
+            currentGame = game;
+
+            // Actualizar tabs activos
+            document.querySelectorAll('.game-tab').forEach(tab => {
+                tab.classList.remove('active');
+                if (tab.textContent.trim() === game) {
+                    tab.classList.add('active');
+                }
+            });
+
+            // Actualizar título
+            document.getElementById('currentGameTitle').textContent = `Top 10 Global - ${game}`;
+
+            // Cargar puntuaciones y estadísticas
+            await loadScores(game);
+        }
+
+        // Cargar puntuaciones
+        async function loadScores(game) {
+            const container = document.getElementById('scoresContent');
+            container.innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-state-icon"><i class="fas fa-spinner fa-spin"></i></div>
+                    <div class="empty-state-text">Cargando puntuaciones...</div>
+                </div>
+            `;
+
+            const scores = await getTopScoresGlobal(game);
+
+            if (scores.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">🎮</div>
+                        <div class="empty-state-text">No hay puntuaciones aún</div>
+                        <div class="empty-state-subtext">¡Sé el primero en jugar ${game}!</div>
+                    </div>
+                `;
+                document.getElementById('gameStats').style.display = 'none';
+                return;
+            }
+
+            document.getElementById('gameStats').style.display = 'grid';
+
+            const tableHTML = `
+                <table class="scores-table">
+                    <thead>
+                        <tr>
+                            <th>Posición</th>
+                            <th>Jugador</th>
+                            <th>Puntuación</th>
+                            <th>Fecha</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${scores.map((score, index) => {
+                            const rank = index + 1;
+                            const medal = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : '';
+                            const rankClass = `rank-${rank}`;
+                            const date = new Date(score.date).toLocaleDateString('es-ES');
+
+                            return `
+                                <tr style="animation-delay: ${index * 0.05}s">
+                                    <td class="rank-cell ${rankClass}">
+                                        ${medal} #${rank}
+                                    </td>
+                                    <td>${escapeHtml(score.player)}</td>
+                                    <td><strong>${score.score.toLocaleString()}</strong></td>
+                                    <td class="date-cell">${date}</td>
+                                </tr>
+                            `;
+                        }).join('')}
+                    </tbody>
+                </table>
+            `;
+
+            container.innerHTML = tableHTML;
+
+            // Cargar estadísticas basadas en las puntuaciones obtenidas
+            loadStats(scores);
+        }
+
+        // Cargar estadísticas
+        function loadStats(scores) {
+            if (scores.length === 0) {
+                document.getElementById('statHighest').textContent = '-';
+                document.getElementById('statAverage').textContent = '-';
+                document.getElementById('statPlayers').textContent = '0';
+                return;
+            }
+            const highest = scores[0].score;
+            const total = scores.reduce((sum, s) => sum + s.score, 0);
+            const average = Math.round(total / scores.length);
+
+            document.getElementById('statHighest').textContent = highest.toLocaleString();
+            document.getElementById('statAverage').textContent = average.toLocaleString();
+            document.getElementById('statPlayers').textContent = scores.length;
+        }
+
+        // Actualizar leaderboard
+        window.refreshLeaderboard = function() {
+            if (currentGame) {
+                selectGame(currentGame);
+            }
+        }
+
+        // Compartir leaderboard
+        window.shareLeaderboard = async function() {
+            if (!currentGame) return;
+
+            const scores = await getTopScoresGlobal(currentGame);
+            if (scores.length === 0) return;
+
+            const topScoresToShare = scores.slice(0, 3);
+            const text = `🏆 Top 3 Global en ${currentGame}:\n` +
+                topScoresToShare.map((s, i) => `${i + 1}. ${s.player}: ${s.score.toLocaleString()}`).join('\n') +
+                `\n\n¡Juega en davito.es!`;
+
+            if (navigator.share) {
+                navigator.share({
+                    title: `Leaderboard - ${currentGame}`,
+                    text: text
+                }).catch(() => { });
+            } else {
+                navigator.clipboard.writeText(text).then(() => {
+                    alert('¡Leaderboard global copiado al portapapeles!');
+                });
+            }
+        }
+
+        // Escape HTML
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+    </script>
+    
+    <script src="/assets/js/terminal.js"></script>
+    <script type="module" src="/assets/js/secrets.js"></script>
+  <script src="/assets/js/site-shell.js?v=3.2" defer></script>
+</body>
+
+</html>
+

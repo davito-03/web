@@ -1,0 +1,165 @@
+/* Mascota Interactiva: Langostina */
+#lobster-mascot-container {
+  position: fixed;
+  bottom: 25px;
+  right: 25px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  pointer-events: none;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.lobster-avatar-wrapper {
+  position: relative;
+  cursor: pointer;
+  pointer-events: auto;
+  user-select: none;
+  animation: floatMascot 4s ease-in-out infinite;
+  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.lobster-avatar-wrapper:hover {
+  transform: scale(1.1) rotate(5deg);
+}
+
+.lobster-avatar-wrapper:active {
+  transform: scale(0.95) rotate(-5deg);
+}
+
+.lobster-img {
+  width: 90px;
+  height: 90px;
+  object-fit: contain;
+  background: transparent !important;
+  mix-blend-mode: normal;
+  filter: drop-shadow(0 8px 16px rgba(239, 68, 68, 0.35));
+  transition: filter 0.3s ease;
+}
+
+.lobster-avatar-wrapper:hover .lobster-img {
+  filter: drop-shadow(0 12px 24px rgba(239, 68, 68, 0.5));
+}
+
+/* Bocadillo de Diálogo */
+.lobster-dialogue-bubble {
+  position: relative;
+  margin-bottom: 12px;
+  max-width: 260px;
+  padding: 14px 18px;
+  background: rgba(18, 18, 30, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 107, 107, 0.3);
+  border-radius: 18px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), 0 0 15px rgba(255, 107, 107, 0.2);
+  color: #f3f4f6;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 0.9em;
+  line-height: 1.4;
+  pointer-events: auto;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(10px) scale(0.9);
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.lobster-dialogue-bubble.visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0) scale(1);
+}
+
+.lobster-dialogue-bubble::after {
+  content: '';
+  position: absolute;
+  bottom: -9px;
+  right: 35px;
+  width: 0;
+  height: 0;
+  border-left: 9px solid transparent;
+  border-right: 9px solid transparent;
+  border-top: 10px solid rgba(18, 18, 30, 0.85);
+}
+
+.lobster-close-btn {
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  font-size: 0.8em;
+  padding: 2px 6px;
+  border-radius: 50%;
+  transition: color 0.2s;
+}
+
+.lobster-close-btn:hover {
+  color: #ff6b6b;
+}
+
+.lobster-text-content {
+  margin-right: 12px;
+}
+
+.lobster-badge {
+  display: inline-block;
+  font-size: 0.7em;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #ff6b6b;
+  background: rgba(255, 107, 107, 0.15);
+  padding: 2px 8px;
+  border-radius: 10px;
+  margin-bottom: 6px;
+}
+
+/* Animaciones */
+@keyframes floatMascot {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes heartPop {
+  0% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-40px) scale(1.5);
+  }
+}
+
+.lobster-heart {
+  position: absolute;
+  pointer-events: none;
+  font-size: 1.2rem;
+  color: #ff4757;
+  animation: heartPop 0.8s ease-out forwards;
+  z-index: 10000;
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+  #lobster-mascot-container {
+    bottom: 16px;
+    right: 14px;
+  }
+  .lobster-img {
+    width: 70px;
+    height: 70px;
+  }
+  .lobster-dialogue-bubble {
+    max-width: 220px;
+    font-size: 0.85em;
+  }
+}

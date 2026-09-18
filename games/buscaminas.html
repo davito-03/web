@@ -1,0 +1,315 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Buscaminas - davito_03</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/assets/fontawesome/css/all.min.css?v=6.5.1">
+    <link rel="stylesheet" href="/assets/css/styles.css">
+    <link rel="stylesheet" href="/assets/css/mobile-optimizations.css">
+    <link rel="stylesheet" href="/assets/css/games.css">
+    <link rel="stylesheet" href="/assets/css/terminal.css">
+
+    <style>
+        body {
+            background: #111;
+            touch-action: none;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .game-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .header-panel {
+            background: #c0c0c0;
+            border: 3px solid #fff;
+            border-right-color: #808080;
+            border-bottom-color: #808080;
+            padding: 10px;
+            width: 100%;
+            max-width: 400px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-sizing: border-box;
+        }
+
+        .counter-box {
+            background: #000;
+            color: #f00;
+            font-family: 'Inter', sans-serif;
+            font-size: 20px;
+            padding: 5px 10px;
+            border: 2px solid #808080;
+            border-right-color: #fff;
+            border-bottom-color: #fff;
+        }
+
+        .face-btn {
+            width: 40px;
+            height: 40px;
+            border: 3px solid #fff;
+            border-right-color: #808080;
+            border-bottom-color: #808080;
+            background: #c0c0c0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .face-btn:active {
+            border: 3px solid #808080;
+            border-right-color: #fff;
+            border-bottom-color: #fff;
+            padding-top: 2px;
+            padding-left: 2px;
+        }
+
+        #game-board {
+            display: grid;
+            background: #808080;
+            padding: 5px;
+            border: 3px solid #fff;
+            border-right-color: #808080;
+            border-bottom-color: #808080;
+        }
+
+        .cell {
+            width: 25px;
+            height: 25px;
+            background: #c0c0c0;
+            border: 2px solid #fff;
+            border-right-color: #808080;
+            border-bottom-color: #808080;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Inter', sans-serif;
+            font-size: 12px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .cell:active,
+        .cell.revealed {
+            border: 1px solid #808080;
+            background: #c0c0c0;
+        }
+
+        .cell.bomb {
+            background: #f00;
+        }
+
+        .cell.flag {
+            color: #f00;
+        }
+
+        /* Colors for numbers */
+        .c1 {
+            color: #00f;
+        }
+
+        .c2 {
+            color: #008000;
+        }
+
+        .c3 {
+            color: #f00;
+        }
+
+        .c4 {
+            color: #000080;
+        }
+
+        .c5 {
+            color: #800000;
+        }
+
+        .c6 {
+            color: #008080;
+        }
+
+        .c7 {
+            color: #000;
+        }
+
+        .c8 {
+            color: #808080;
+        }
+
+        /* Controls Tip */
+        .controls-tip {
+            color: #666;
+            font-family: 'Inter', sans-serif;
+            font-size: 10px;
+            text-align: center;
+            margin-top: 10px;
+            max-width: 90vw;
+            line-height: 1.5;
+        }
+
+        /* Mode Switch for Mobile */
+        .mode-switch {
+            display: none;
+            /* Hidden on desktop */
+            background: #333;
+            padding: 10px;
+            border-radius: 20px;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .mode-btn {
+            padding: 10px 20px;
+            border-radius: 15px;
+            border: none;
+            font-family: 'Inter', sans-serif;
+            font-size: 10px;
+            cursor: pointer;
+            background: #555;
+            color: #aaa;
+        }
+
+        .mode-btn.active {
+            background: #00BFFF;
+            color: #000;
+            box-shadow: 0 0 10px #00BFFF;
+        }
+
+        @media (pointer: coarse) {
+            .mode-switch {
+                display: flex;
+            }
+        }
+
+        /* Modal */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 100;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .modal.active {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .modal-content {
+            background: #c0c0c0;
+            padding: 30px;
+            border: 4px solid #fff;
+            border-right-color: #808080;
+            border-bottom-color: #808080;
+            text-align: center;
+            color: #000;
+            font-family: 'Inter', sans-serif;
+        }
+
+        button.retro-btn {
+            padding: 15px;
+            margin-top: 15px;
+            background: #c0c0c0;
+            color: #000;
+            border: 3px solid #fff;
+            border-right-color: #808080;
+            border-bottom-color: #808080;
+            font-family: inherit;
+            cursor: pointer;
+        }
+
+        button.retro-btn:active {
+            border: 3px solid #808080;
+            border-right-color: #fff;
+            border-bottom-color: #fff;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div style="position: absolute; top: 20px; left: 20px;">
+        <a href="/pages/laboratorio" style="color: #fff; text-decoration: none; font-family: monospace;">&lt; Exit</a>
+    </div>
+
+    <div class="game-wrapper">
+        <div class="header-panel">
+            <div class="counter-box" id="bomb-count">010</div>
+            <div class="face-btn" id="face-btn">??</div>
+            <div class="counter-box" id="timer">000</div>
+        </div>
+
+        <div id="game-board">
+            <!-- Grid Generated by JS -->
+        </div>
+
+        <!-- Mobile Flag Toggle -->
+        <div class="mode-switch">
+            <button class="mode-btn active" id="mode-dig"><i class="fas fa-shovel"></i> DIG</button>
+            <button class="mode-btn" id="mode-flag"><i class="fas fa-flag"></i> FLAG</button>
+        </div>
+
+        <div class="controls-tip desktop-instructions">
+            LEFT CLICK: DIG | RIGHT CLICK: FLAG
+        </div>
+        <div class="controls-tip mobile-controls">
+            USE BUTTONS TO SWITCH BETWEEN DIG & FLAG MODES
+        </div>
+    </div>
+
+    <!-- Start Screen -->
+    <div id="start-screen" class="modal active">
+        <div class="modal-content">
+            <h1 style="color: #000; text-shadow: 2px 2px #fff;">MINESWEEPER</h1>
+            <p style="margin: 20px 0; font-size: 10px; line-height: 1.5; color: #333;">
+                Find all the mines.<br>
+                Numbers show neighbors.
+            </p>
+
+            <div style="margin-bottom: 20px;">
+                <button class="retro-btn diff-select" data-diff="easy">EASY</button>
+                <button class="retro-btn diff-select" data-diff="medium">MEDIUM</button>
+                <button class="retro-btn diff-select" data-diff="hard">HARD</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Game Over Modal -->
+    <div id="game-over-modal" class="modal">
+        <div class="modal-content">
+            <h2 id="result-text" data-i18n="game_over">GAME OVER</h2>
+            <p>Time: <span id="final-time">0</span>s</p>
+            <button class="retro-btn" id="restart-btn">TRY AGAIN</button>
+        </div>
+    </div>
+
+    <script src="/assets/js/leaderboard.js"></script>
+    <script type="module" src="/assets/js/games/buscaminas.js"></script>
+
+  <script src="/assets/js/site-shell.js?v=3.2" defer></script>
+</body>
+
+</html>
+
