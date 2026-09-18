@@ -7,6 +7,7 @@ class I18nEngine {
     this.dictionary = {
       es: {
         bio_subtitle: "bienvenido a mi web ;)",
+        bio_role: "Bots, webs y un VPS que mantengo yo.",
         visitas_label: "Visitas:",
         theme_dark: "Tema Oscuro",
         theme_cyberpunk: "Neón / Cyberpunk",
@@ -56,6 +57,7 @@ class I18nEngine {
       },
       en: {
         bio_subtitle: "welcome to my web ;)",
+        bio_role: "Bots, sites, and a VPS I run myself.",
         visitas_label: "Visits:",
         theme_dark: "Dark Theme",
         theme_cyberpunk: "Neon / Cyberpunk",
