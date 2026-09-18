@@ -1,9 +1,18 @@
+@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&display=swap");
+
 .projects-page {
-  --pj-glass: rgba(15, 23, 42, 0.58);
-  --pj-line: rgba(255, 255, 255, 0.12);
-  --pj-text: #e2e8f0;
-  --pj-muted: #94a3b8;
-  --pj-accent: #fde68a;
+  --hk-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  --hk-green: #4ade80;
+  --hk-green-dim: #166534;
+  --hk-cyan: #67e8f9;
+  --hk-amber: #fbbf24;
+  --hk-red: #fb7185;
+  --pj-glass: rgba(4, 12, 8, 0.72);
+  --pj-line: rgba(74, 222, 128, 0.22);
+  --pj-text: #d1fae5;
+  --pj-muted: #86efac;
+  --pj-accent: #4ade80;
+  --pj-bg: #020403;
 }
 
 .projects-wrap,
@@ -730,5 +739,401 @@
   .projects-hero-mascot {
     width: 74px;
     height: 74px;
+  }
+}
+
+/* —— recon / write-up skin (scoped to /proyectos) —— */
+.projects-page {
+  background-color: #020403;
+}
+
+.projects-page::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.16) 0,
+    rgba(0, 0, 0, 0.16) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+  opacity: 0.35;
+}
+
+.projects-page::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(74, 222, 128, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(74, 222, 128, 0.045) 1px, transparent 1px);
+  background-size: 28px 28px;
+  mask-image: radial-gradient(ellipse at center, #000 40%, transparent 80%);
+}
+
+.projects-page ::selection {
+  background: #4ade80;
+  color: #052e16;
+}
+
+.hk-banner {
+  font-family: var(--hk-mono);
+  font-size: 0.75rem;
+  color: var(--hk-green);
+  border: 1px solid var(--pj-line);
+  background: rgba(2, 8, 4, 0.85);
+  padding: 8px 12px;
+  margin: 10px 0 16px;
+  border-radius: 2px;
+  letter-spacing: 0.02em;
+  text-align: left;
+  box-shadow: inset 0 0 20px rgba(74, 222, 128, 0.06);
+}
+
+.hk-banner .hk-ok {
+  color: #022c22;
+  background: #4ade80;
+  font-weight: 700;
+  padding: 1px 6px;
+  margin-right: 8px;
+  border-radius: 2px;
+}
+
+.hk-banner .hk-path {
+  color: var(--hk-cyan);
+}
+
+.hk-banner .hk-muted {
+  color: #4d7c5a;
+}
+
+.projects-page .projects-kicker,
+.projects-page .projects-section h2,
+.projects-page .pd-section h2,
+.projects-page .pj-filter,
+.projects-page .pj-badge,
+.projects-page .file-chip,
+.projects-page .arch-node,
+.projects-page .pd-toc a,
+.projects-page .pj-stat b,
+.projects-page .pj-stat span,
+.projects-page .mod-card h3 {
+  font-family: var(--hk-mono);
+}
+
+.projects-page .projects-kicker {
+  color: var(--hk-green);
+  letter-spacing: 0.12em;
+}
+
+.projects-page .projects-kicker::before {
+  content: ">_ ";
+  color: var(--hk-cyan);
+}
+
+.projects-page .projects-hero h1,
+.projects-page .pd-hero h1 {
+  font-family: var(--hk-mono);
+  letter-spacing: -0.04em;
+  background: none;
+  -webkit-text-fill-color: #ecfdf5;
+  color: #ecfdf5;
+  text-shadow: 0 0 18px rgba(74, 222, 128, 0.35);
+  filter: none;
+}
+
+.projects-page .projects-hero h1::after,
+.projects-page .pd-hero h1::after {
+  content: "█";
+  margin-left: 8px;
+  color: var(--hk-green);
+  font-size: 0.52em;
+  vertical-align: 0.12em;
+  animation: hkBlink 1.15s step-end infinite;
+}
+
+@keyframes hkBlink {
+  50% { opacity: 0; }
+}
+
+.projects-page .bio-subtitle {
+  color: #86efac;
+  font-family: Inter, system-ui, sans-serif;
+}
+
+.projects-page .pj-cta.primary {
+  color: #022c22;
+  background: #4ade80;
+  border-radius: 2px;
+  box-shadow: 0 0 18px rgba(74, 222, 128, 0.35);
+  font-family: var(--hk-mono);
+}
+
+.projects-page .pj-cta.ghost {
+  border-radius: 2px;
+  border-color: rgba(74, 222, 128, 0.35);
+  color: #bbf7d0;
+  font-family: var(--hk-mono);
+}
+
+.projects-page .pj-cta.ghost:hover {
+  border-color: #4ade80;
+  color: #4ade80;
+}
+
+.projects-page .pj-stat,
+.projects-page .projects-intro,
+.projects-page .project-card,
+.projects-page .pd-hero,
+.projects-page .pd-section,
+.projects-page .skill-card,
+.projects-page .projects-close {
+  border-radius: 4px;
+  border-color: var(--pj-line);
+  background: rgba(2, 10, 6, 0.78);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.5), 0 18px 40px -24px rgba(74, 222, 128, 0.25);
+}
+
+.projects-page .pj-stat b {
+  background: none;
+  -webkit-text-fill-color: #4ade80;
+  color: #4ade80;
+  text-shadow: 0 0 12px rgba(74, 222, 128, 0.45);
+}
+
+.projects-page .projects-intro::before {
+  content: "MOTD — public recon, no credentials in tree";
+  display: block;
+  font-family: var(--hk-mono);
+  font-size: 0.72rem;
+  color: var(--hk-amber);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+.projects-page .pj-filter {
+  border-radius: 2px;
+  font-size: 0.75rem;
+}
+
+.projects-page .pj-filter.is-active {
+  background: #14532d;
+  color: #bbf7d0;
+  border-color: #4ade80;
+  box-shadow: 0 0 12px rgba(74, 222, 128, 0.25);
+}
+
+.projects-page .project-card:hover {
+  border-color: rgba(74, 222, 128, 0.55);
+  box-shadow: 0 0 24px rgba(74, 222, 128, 0.18);
+}
+
+.projects-page .projects-section h2,
+.projects-page .pd-section h2 {
+  color: var(--hk-green);
+  letter-spacing: 0.14em;
+}
+
+.projects-page .pd-section h2::before,
+.projects-page .projects-section h2::before {
+  content: "[+] ";
+  color: var(--hk-cyan);
+}
+
+.projects-page .pd-toc a {
+  border-radius: 2px;
+  border-color: rgba(74, 222, 128, 0.25);
+  color: #86efac;
+}
+
+.projects-page .pd-toc a::before {
+  content: "./";
+  color: #4d7c5a;
+}
+
+.projects-page .pd-toc a:hover {
+  border-color: #4ade80;
+  color: #4ade80;
+}
+
+.projects-page .arch-flow {
+  position: relative;
+  background: #010302;
+  border: 1px solid rgba(74, 222, 128, 0.35);
+  border-radius: 4px;
+  padding: 36px 14px 14px;
+  margin-top: 8px;
+  box-shadow: inset 0 0 40px rgba(74, 222, 128, 0.05);
+}
+
+.projects-page .arch-flow::before {
+  content: "● ● ●   root@davito — recon.sh";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 26px;
+  padding: 5px 12px;
+  font-family: var(--hk-mono);
+  font-size: 0.7rem;
+  color: #4ade80;
+  background: #07140c;
+  border-bottom: 1px solid rgba(74, 222, 128, 0.25);
+}
+
+.projects-page .arch-node {
+  background: #03150c;
+  border: 1px solid rgba(74, 222, 128, 0.28);
+  border-radius: 2px;
+  color: #bbf7d0;
+  font-size: 0.78rem;
+}
+
+.projects-page .arch-node small {
+  color: #4ade80;
+}
+
+.projects-page .arch-sep {
+  color: #4ade80;
+}
+
+.projects-page .file-chip {
+  background: rgba(74, 222, 128, 0.08);
+  color: #86efac;
+  border-color: rgba(74, 222, 128, 0.28);
+  border-radius: 2px;
+}
+
+.projects-page .file-chip::before {
+  content: "~/";
+  color: #4d7c5a;
+}
+
+.projects-page .mod-card {
+  border-radius: 2px;
+  border-color: rgba(74, 222, 128, 0.16);
+  background: rgba(2, 12, 7, 0.7);
+}
+
+.projects-page .mod-card h3 {
+  color: #bbf7d0;
+  font-size: 0.82rem;
+}
+
+.projects-page .mod-card h3::before {
+  content: "$ ";
+  color: var(--hk-green);
+}
+
+.projects-page .callout {
+  border-left-color: #4ade80;
+}
+
+.projects-page .pj-badge.live {
+  background: rgba(74, 222, 128, 0.12);
+  color: #bbf7d0;
+  border-color: rgba(74, 222, 128, 0.35);
+  border-radius: 2px;
+}
+
+.projects-page .pj-badge.vpn {
+  background: rgba(103, 232, 249, 0.1);
+  color: #a5f3fc;
+  border-color: rgba(103, 232, 249, 0.3);
+  border-radius: 2px;
+}
+
+.projects-page .pj-badge.archive,
+.projects-page .pj-badge.private,
+.projects-page .pj-badge.fork {
+  border-radius: 2px;
+}
+
+.projects-page .pd-logo {
+  border-radius: 4px;
+  border-color: rgba(74, 222, 128, 0.35);
+  box-shadow: 0 0 24px rgba(74, 222, 128, 0.2);
+}
+
+.projects-page .projects-hero-mascot {
+  border-color: rgba(74, 222, 128, 0.5);
+  box-shadow: 0 0 28px rgba(74, 222, 128, 0.3);
+  border-radius: 4px;
+}
+
+.projects-page .project-cover {
+  border-bottom: 1px solid rgba(74, 222, 128, 0.2);
+}
+
+.projects-page .project-links a {
+  border-radius: 2px;
+  font-family: var(--hk-mono);
+  background: #4ade80;
+  color: #022c22;
+}
+
+.projects-page .project-links a.ghost {
+  background: transparent;
+  color: #bbf7d0;
+  border-color: rgba(74, 222, 128, 0.3);
+}
+
+.projects-page .projects-close {
+  background: linear-gradient(135deg, rgba(20, 83, 45, 0.35), rgba(2, 10, 6, 0.85));
+  border-color: rgba(74, 222, 128, 0.3);
+}
+
+.projects-page .projects-close h2 {
+  font-family: var(--hk-mono);
+  color: #bbf7d0;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.projects-page .projects-close h2::before {
+  content: "# ";
+  color: #4ade80;
+}
+
+.projects-page .pd-section p,
+.projects-page .pd-section li,
+.projects-page .project-card .body,
+.projects-page .project-card .lede {
+  color: #bbf7d0;
+}
+
+.projects-page .project-card .lede {
+  color: #ecfdf5;
+}
+
+.projects-page .project-tags span {
+  font-family: var(--hk-mono);
+  border-radius: 2px;
+  border-color: rgba(74, 222, 128, 0.18);
+  background: rgba(2, 16, 8, 0.7);
+  color: #86efac;
+}
+
+.projects-page a.back-home,
+.projects-page .davito-back-home {
+  font-family: var(--hk-mono);
+  border-radius: 2px;
+  color: #4ade80;
+  border-color: rgba(74, 222, 128, 0.3);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .projects-page .projects-hero h1::after,
+  .projects-page .pd-hero h1::after {
+    animation: none;
+  }
+  .projects-page::before {
+    opacity: 0.12;
   }
 }
