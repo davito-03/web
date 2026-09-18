@@ -6,7 +6,8 @@
   --pj-accent: #fde68a;
 }
 
-.projects-wrap {
+.projects-wrap,
+.container.projects-wrap {
   max-width: 1120px;
   margin: 0 auto 80px;
   padding: 0 20px 48px;
