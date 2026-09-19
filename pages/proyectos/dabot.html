@@ -54,11 +54,11 @@
       <h2 data-i18n="pd_idea">Qué es</h2>
       <div data-lang-block="es">
         <p>Dabot no es un bot de “tres comandos de moderación”. Es un producto: el mismo proceso cubre un servidor de Discord (slash commands, eventos, jobs) y un sitio público en <a href="https://dabot.davito.es">dabot.davito.es</a> donde el staff configura el guild con su cuenta de Discord.</p>
-        <p>Hay unos 68 cogs en runtime. <code>main.py</code> no carga <span class="file-chip">tts</span>; <span class="file-chip">music</span> no está en el árbol. La config viva de cada guild es JSON en SQLite (<span class="file-chip">guild_configs</span>), no YAML. El estado (tickets, economía, sesiones web, infracciones) comparte el mismo <code>dabot.db</code> en WAL entre el bot y la API.</p>
+        <p>Hay <strong>68 cogs cargados</strong> (~45k líneas de Python, ~100 tablas). <code>main.py</code> no carga <span class="file-chip">tts</span>; <span class="file-chip">music</span> no está en el árbol. La config viva de cada guild es JSON en SQLite (<span class="file-chip">guild_configs</span>), no YAML. El estado (tickets, economía, sesiones web, infracciones, alts) comparte el mismo <code>dabot.db</code> en WAL entre el bot y la API. Inventario: <a href="https://github.com/davito-03/dabot/blob/main/docs/MODULES.md">docs/MODULES.md</a>.</p>
       </div>
       <div data-lang-block="en" hidden>
         <p>Dabot is a product, not a three-command mod bot: one codebase covers a Discord server and a public dashboard at dabot.davito.es where staff signs in with Discord.</p>
-        <p>About 68 cogs at runtime. <span class="file-chip">tts</span> is skipped; <span class="file-chip">music</span> is not in the tree. Live per-guild config is JSON in SQLite (<span class="file-chip">guild_configs</span>), not YAML. Tickets, economy and web sessions share <code>dabot.db</code> in WAL between the bot and the API.</p>
+        <p><strong>68 cogs loaded</strong> (~45k lines of Python, ~100 tables). <span class="file-chip">tts</span> is skipped; <span class="file-chip">music</span> is not in the tree. Live per-guild config is JSON in SQLite (<span class="file-chip">guild_configs</span>), not YAML. Tickets, economy, web sessions and alts share <code>dabot.db</code> in WAL. Inventory: <a href="https://github.com/davito-03/dabot/blob/main/docs/MODULES.md">docs/MODULES.md</a>.</p>
       </div>
     </section>
 
@@ -141,6 +141,18 @@
         <article class="mod-card">
           <h3>i18n</h3>
           <p><span class="file-chip">langs/*.json</span> (es, en, fr, de, it, pt, ja, ko, zh). El bot traduce embeds y descripciones de slash en caliente.</p>
+        </article>
+        <article class="mod-card">
+          <h3>Logs y alts</h3>
+          <p><span class="file-chip">logging.py</span> canales por tipo. La web ve IP/device (<span class="file-chip">alt_intel.py</span>) que Discord no da al bot.</p>
+        </article>
+        <article class="mod-card">
+          <h3>Last.fm y voz</h3>
+          <p><span class="file-chip">lastfm.py</span> scrobbles en <code>/cuenta</code>. <span class="file-chip">voice.py</span> join-to-create; <span class="file-chip">streams.py</span> alertas.</p>
+        </article>
+        <article class="mod-card">
+          <h3>Servidor</h3>
+          <p>RSS, starboard, giveaways, foros, comandos custom, autorespuestas, anuncios, webhooks, hooks de GitHub. Lista: <a href="https://github.com/davito-03/dabot/blob/main/docs/MODULES.md">MODULES.md</a>.</p>
         </article>
       </div>
     </section>
