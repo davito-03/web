@@ -11,9 +11,9 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="icon" href="/media/favicon.ico" type="image/x-icon">
   <link rel="stylesheet" href="/assets/css/styles.css?v=3.6">
-  <link rel="stylesheet" href="/assets/css/mobile-optimizations.css?v=3.1">
+  <link rel="stylesheet" href="/assets/css/mobile-optimizations.css?v=3.2">
   <link rel="stylesheet" href="/assets/fontawesome/css/all.min.css?v=6.5.1">
-  <link rel="stylesheet" href="/assets/css/proyectos.css?v=6">
+  <link rel="stylesheet" href="/assets/css/proyectos.css?v=7">
   <meta property="og:title" content="Proyectos — @davito_03">
   <meta property="og:description" content="Bots, webs y un VPS que mantengo yo. Código en GitHub.">
   <meta property="og:url" content="https://davito.es/proyectos">
@@ -163,7 +163,7 @@
           <div class="project-body">
             <h3>telegram-drive</h3>
             <p class="lede" data-i18n="pj_davo_lede">Userbot de Telegram → Google Drive, sin comprimir.</p>
-            <p class="body" data-i18n="pj_davo_body">Pyrogram + rclone. Lo que llega a Mensajes Guardados se descarga y se sube a Drive con el nombre que elijas. El repo explica el flujo; la sesión y las credenciales no se publican.</p>
+            <p class="body" data-i18n="pj_davo_body">Pyrogram + rclone. Mensajes Guardados → cola en disco → Drive, sin recodificar. No es un broker de colas; es un pipeline de un proceso. Sesión y credenciales fuera del repo.</p>
             <div class="project-tags"><span>Python</span><span>Pyrogram</span><span>Drive</span><span>rclone</span></div>
             <div class="project-links">
               <a href="/proyectos/telegram-drive"><i class="fas fa-book-open"></i> <span data-i18n="pj_ficha">Ver ficha</span></a>
@@ -252,23 +252,6 @@
         <article class="project-card compact dim" data-cat="archive">
           <div class="project-cover git">
             <div class="project-badges"><span class="pj-badge archive" data-i18n="pj_old">Archivo</span></div>
-            <img src="/media/projects/coin.jpg" alt="">
-          </div>
-          <div class="project-body">
-            <h3>coin_converter</h3>
-            <p class="lede" data-i18n="pj_cc_lede">Conversor de divisas en Python, de las primeras pruebas.</p>
-            <p class="body" data-i18n="pj_cc_body">Script pequeño. Lo dejo porque forma parte del historial; el convertidor de la web es de imágenes.</p>
-            <div class="project-tags"><span>Python</span></div>
-            <div class="project-links">
-              <a href="/proyectos/coin-converter"><i class="fas fa-book-open"></i> <span data-i18n="pj_ficha">Ver ficha</span></a>
-              <a class="ghost" href="https://github.com/davito-03/coin_converter"><i class="fab fa-github"></i> GitHub</a>
-            </div>
-          </div>
-        </article>
-
-        <article class="project-card compact dim" data-cat="archive">
-          <div class="project-cover git">
-            <div class="project-badges"><span class="pj-badge archive" data-i18n="pj_old">Archivo</span></div>
             <img src="/media/projects/economy.jpg" alt="">
           </div>
           <div class="project-body">
@@ -279,22 +262,6 @@
             <div class="project-links">
               <a href="/proyectos/economy-sim"><i class="fas fa-book-open"></i> <span data-i18n="pj_ficha">Ver ficha</span></a>
               <a class="ghost" href="https://github.com/davito-03/economy_sim"><i class="fab fa-github"></i> GitHub</a>
-            </div>
-          </div>
-        </article>
-
-        <article class="project-card compact dim" data-cat="archive">
-          <div class="project-cover git">
-            <div class="project-badges"><span class="pj-badge fork">Fork</span></div>
-            <img src="/media/projects/spotify.jpg" alt="">
-          </div>
-          <div class="project-body">
-            <h3>EeveeSpotifyReborn</h3>
-            <p class="lede" data-i18n="pj_eevee_lede">Fork de un tweak para Spotify. No es código mío de cero.</p>
-            <p class="body" data-i18n="pj_eevee_body">Está en el perfil porque lo biforqué. El desarrollo original es de otros.</p>
-            <div class="project-tags"><span>Fork</span></div>
-            <div class="project-links">
-              <a class="ghost" href="https://github.com/davito-03/EeveeSpotifyReborn"><i class="fab fa-github"></i> GitHub</a>
             </div>
           </div>
         </article>

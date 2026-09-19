@@ -10,9 +10,9 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="icon" href="/media/favicon.ico">
   <link rel="stylesheet" href="/assets/css/styles.css?v=3.6">
-  <link rel="stylesheet" href="/assets/css/mobile-optimizations.css?v=3.1">
+  <link rel="stylesheet" href="/assets/css/mobile-optimizations.css?v=3.2">
   <link rel="stylesheet" href="/assets/fontawesome/css/all.min.css?v=6.5.1">
-  <link rel="stylesheet" href="/assets/css/proyectos.css?v=6">
+  <link rel="stylesheet" href="/assets/css/proyectos.css?v=7">
   <meta property="og:title" content="telegram-drive — ficha técnica">
   <meta property="og:image" content="https://davito.es/media/projects/davogram.jpg">
   <meta property="og:url" content="https://davito.es/proyectos/telegram-drive">
@@ -66,7 +66,7 @@
         <div class="arch-node">Drive API<small>fallback</small></div>
       </div>
       <div data-lang-block="es">
-        <p>Lock de una descarga a la vez, semáforo de hasta 5 subidas. Progreso en el propio chat (<code>/panel</code>). Si rclone se cae, <span class="file-chip">_upload_to_drive_api</span> retoma con upload resumable. No hay ffmpeg de “optimizar”: el punto era no tocar la calidad.</p>
+        <p>Lock de una descarga a la vez, semáforo de hasta 5 subidas. La cola es un JSON en disco (no Redis): sobrevive un corte, no es un broker. Progreso en el propio chat (<code>/panel</code>). rclone primero; si falla, Drive API resumable. No recodifica.</p>
       </div>
       <div data-lang-block="en" hidden>
         <p>One download at a time, up to five uploads. In-chat progress. rclone first; Drive API as resumable fallback. No transcode.</p>
