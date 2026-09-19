@@ -14,7 +14,10 @@ class I18nEngine {
         theme_matrix: "Matrix Hacker",
         theme_light: "Modo Claro",
         bot_desc: "Bot multipropósito para Discord con IA integrada",
-        status_online: "En Línea",
+        status_online: "En línea",
+        status_offline: "Sin conexión",
+        status_checking: "Comprobando…",
+        status_guilds: "servidores",
         bot_cta_title: "¿Listo para mejorar tu servidor?",
         bot_cta_desc: "Añade Dabot a tu servidor de Discord y experimenta todas estas funcionalidades",
         bot_invite: "Abrir dashboard",
@@ -65,6 +68,9 @@ class I18nEngine {
         theme_light: "Light Mode",
         bot_desc: "Multipurpose Discord bot with integrated AI",
         status_online: "Online",
+        status_offline: "Offline",
+        status_checking: "Checking…",
+        status_guilds: "servers",
         bot_cta_title: "Ready to upgrade your server?",
         bot_cta_desc: "Add Dabot to your Discord server and experience all these features",
         bot_invite: "Open dashboard",
@@ -217,7 +223,7 @@ function startI18n() {
   const needLegal = /privacy-policy|terms-of-service/.test(path);
   const extras = [];
   if (needLegal) extras.push('/assets/js/i18n-legal.js?v=1');
-  if (!window.DAVITO_I18N_PAGES) extras.push('/assets/js/i18n-pages.js?v=1');
+  if (!window.DAVITO_I18N_PAGES) extras.push('/assets/js/i18n-pages.js?v=5');
 
   const next = () => {
     if (extras.length) {

@@ -47,11 +47,24 @@
     document.body.prepend(a);
   }
 
+  function isLiteShell() {
+    return document.body && document.body.getAttribute("data-shell") === "lite";
+  }
+
   function boot() {
     document.body.classList.add("davito-shell");
     document.documentElement.style.background = "#0f172a";
 
     injectBackHome();
+
+    if (isLiteShell()) {
+      loadCss("/assets/fontawesome/css/all.min.css?v=6.5.1");
+      loadCss("/assets/css/site-shell.css?v=3.1");
+      loadScript("/assets/js/i18n-pages.js?v=5");
+      loadScript("/assets/js/themes.js?v=2.3");
+      loadScript("/assets/js/i18n.js?v=3.3");
+      return;
+    }
 
     if (!document.getElementById("starfield")) {
       const c = document.createElement("canvas");
@@ -83,7 +96,7 @@
     loadCss("/assets/fontawesome/css/all.min.css?v=6.5.1");
     loadCss("/assets/css/site-shell.css?v=3.1");
     loadCss("/assets/css/styles.css?v=3.6");
-    loadScript("/assets/js/i18n-pages.js?v=4");
+    loadScript("/assets/js/i18n-pages.js?v=5");
     loadScript("/assets/js/atmosphere.js?v=2");
     loadScript("/assets/js/themes.js?v=2.3");
     loadScript("/assets/js/i18n.js?v=3.2");

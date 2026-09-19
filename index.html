@@ -39,7 +39,7 @@
 
 
   <link rel="stylesheet" href="/assets/css/styles.css?v=3.6">
-  <link rel="stylesheet" href="/assets/css/mobile-optimizations.css?v=3.1">
+  <link rel="stylesheet" href="/assets/css/mobile-optimizations.css?v=3.2">
 
   <script>
     (function () {
@@ -114,7 +114,7 @@
   </div>
 
 
-  <link rel="stylesheet" href="/assets/css/dabot.css?v=1.3">
+  <link rel="stylesheet" href="/assets/css/dabot.css?v=1.5">
 
 
 
@@ -222,7 +222,7 @@
           <span class="label">My Discord</span>
           <i class="fas fa-arrow-up-right-from-square action-icon" aria-hidden="true"></i>
         </a>
-        <a href="#dabot-section" class="hub-link bot-dabot" id="dabot-button" aria-label="Dabot">
+        <a href="#dabot-section" class="hub-link bot-dabot" id="dabot-button" aria-label="Dabot" aria-expanded="false" aria-controls="dabot-section">
           <i class="fas fa-robot icon" aria-hidden="true"></i>
           <span class="label">Dabot</span>
           <i class="fas fa-arrow-down action-icon" id="bot-arrow" aria-hidden="true"></i>
@@ -233,28 +233,32 @@
 
 
 
-  <div id="dabot-section" class="dabot-wrapper visible">
+  <div id="dabot-section" class="dabot-wrapper" aria-hidden="true">
     <div class="dabot-container">
 
       <div class="dabot-header">
         <div class="dabot-avatar-container">
           <img src="/media/dabot.png" alt="Dabot Avatar" class="dabot-avatar" loading="lazy">
-          <div class="status-indicator online">
+          <div class="status-indicator checking" id="dabot-status">
             <span class="status-dot"></span>
-            <span class="status-text" data-i18n="status_online">Online</span>
+            <span class="status-text" data-i18n="status_checking">Comprobando…</span>
           </div>
         </div>
         <div class="dabot-info">
           <h1 class="dabot-title">
             <span class="bot-emoji">🤖</span>
             Dabot
-            <span class="version-badge">v1.0</span>
+            <span class="version-badge">v3.1</span>
           </h1>
           <p class="dabot-description" data-i18n="bot_desc">Bot multipropósito para Discord con IA integrada</p>
           <div class="dabot-stats">
             <div class="stat-item">
               <i class="fas fa-clock"></i>
               <span data-i18n="bot_online">24/7 Online</span>
+            </div>
+            <div class="stat-item">
+              <i class="fas fa-server"></i>
+              <span id="dabot-live-stat">—</span>
             </div>
           </div>
         </div>
@@ -420,7 +424,7 @@
   <script type="module" src="/assets/js/main.js?v=2.9"></script>
   <script type="module" src="/assets/js/achievements.js?v=2.3"></script>
 
-  <script src="/assets/js/dabot-functionality.js?v=5" defer></script>
+  <script src="/assets/js/dabot-functionality.js?v=6" defer></script>
   <script src="/assets/js/features.js?v=2.4" defer></script>
   <script src="/assets/js/page-transitions.js?v=2.4" defer></script>
   <script src="/assets/js/lanyard.js?v=2.3" defer></script>
@@ -428,8 +432,8 @@
   <script src="/assets/js/audio-ui.js?v=2.3" defer></script>
   <script src="/assets/js/tilt-effect.js?v=2.7" defer></script>
   <script src="/assets/js/content-sections.js?v=2.3" defer></script>
-  <script src="/assets/js/i18n-pages.js?v=4" defer></script>
-  <script src="/assets/js/i18n.js?v=3.2" defer></script>
+  <script src="/assets/js/i18n-pages.js?v=5" defer></script>
+  <script src="/assets/js/i18n.js?v=3.3" defer></script>
   <script src="/assets/js/fab.js?v=2" defer></script>
   <script src="/assets/js/mascot.js?v=3" defer></script>
 

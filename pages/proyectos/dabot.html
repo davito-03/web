@@ -148,7 +148,7 @@
     <section class="pd-section" id="web">
       <h2 data-i18n="pd_web">El panel (dabot.davito.es)</h2>
       <div data-lang-block="es">
-        <p><span class="file-chip">dashboard_server.py</span> es una API FastAPI, no un adorno. Login con Discord OAuth2 + <strong>PKCE S256</strong>, state en SQLite, cookie de sesión, CSRF en <code>/api/*</code>, CSP y HSTS. El staff ve canales, roles, config YAML, infracciones, tickets, leaderboard, backups y una consola live de mensajes.</p>
+        <p><span class="file-chip">dashboard_server.py</span> es una API FastAPI, no un adorno. Login con Discord OAuth2 + <strong>PKCE S256</strong>, state en SQLite, cookie de sesión, CSRF en <code>/api/*</code>, CSP y HSTS. El staff ve canales, roles, config JSON (SQLite), infracciones, tickets, leaderboard, backups y una consola live de mensajes. <code>/healthz</code> y <code>/api/status</code> viven en routers aparte.</p>
         <p>Rutas públicas de producto: <code>/</code>, <code>/dashboard</code>, <code>/servers</code>, <code>/niveles</code>, <code>/normas</code>, <code>/verify</code>, <code>/premium</code>, <code>/cuenta</code>. Webhooks de Stripe / Sellix / Discord para premium. Health en <code>/healthz</code>.</p>
       </div>
       <div data-lang-block="en" hidden>
@@ -182,10 +182,10 @@
     <section class="pd-section" id="ops">
       <h2 data-i18n="pd_ops">Operación</h2>
       <div data-lang-block="es">
-        <p>Secretos solo en <code>.env</code> (token, OAuth client secret, claves de IA, Stripe). El repo público lleva <span class="file-chip">.env.example</span> vacío. Las YAML por guild y la SQLite no se publican. Healthchecks independientes bot/API. nginx termina TLS en <code>dabot.davito.es</code> y hace proxy a 127.0.0.1:8090.</p>
+        <p>Secretos solo en <code>.env</code> (token, OAuth client secret, claves de IA, Stripe). El repo público lleva <span class="file-chip">.env.example</span> vacío. La SQLite y las plantillas YAML de import no se publican. Healthchecks independientes bot/API. nginx termina TLS en <code>dabot.davito.es</code> y hace proxy a 127.0.0.1:8090.</p>
       </div>
       <div data-lang-block="en" hidden>
-        <p>Secrets live in <code>.env</code> only. Public repo has an empty example file. Per-guild YAML and SQLite stay off git. Bot and API have separate healthchecks. nginx TLS-terminates dabot.davito.es to localhost:8090.</p>
+        <p>Secrets live in <code>.env</code> only. Public repo has an empty example file. SQLite and import YAML stay off git. Bot and API have separate healthchecks. nginx TLS-terminates dabot.davito.es to localhost:8090.</p>
       </div>
     </section>
 
