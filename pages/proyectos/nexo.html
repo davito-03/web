@@ -10,9 +10,9 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="icon" href="/media/favicon.ico">
   <link rel="stylesheet" href="/assets/css/styles.css?v=3.6">
-  <link rel="stylesheet" href="/assets/css/mobile-optimizations.css?v=3.1">
+  <link rel="stylesheet" href="/assets/css/mobile-optimizations.css?v=3.2">
   <link rel="stylesheet" href="/assets/fontawesome/css/all.min.css?v=6.5.1">
-  <link rel="stylesheet" href="/assets/css/proyectos.css?v=6">
+  <link rel="stylesheet" href="/assets/css/proyectos.css?v=7">
   <meta property="og:title" content="Nexo Bot — ficha técnica">
   <meta property="og:image" content="https://davito.es/media/nexo.png">
   <meta property="og:url" content="https://davito.es/proyectos/nexo">
@@ -52,11 +52,11 @@
     <section class="pd-section" id="idea">
       <h2>Qué es</h2>
       <div data-lang-block="es">
-        <p>Nexo es un servidor de Discord (voz activa, social, gaming, anime, gatos). El bot cubre lo que un bot genérico no cubre bien: VoiceMaster, economía <em>nexocoin</em>, misiones semanales, RPG, mascotas, counting, bumps de DISBOARD y tickets con un asistente (Neko) que recuerda el hilo.</p>
+        <p>Nexo es un servidor de Discord (voz activa, social, gaming, anime, gatos). El bot cubre lo que un bot genérico no cubre bien: VoiceMaster, economía <em>nexocoin</em>, asaltos cooperativos, misiones semanales, RPG, mascotas, counting, bumps de DISBOARD y tickets con un asistente (Neko) que recuerda el hilo.</p>
         <p>La restricción a un guild no es un “todo”. Es un producto cerrado: slash commands se despliegan solo ahí (<span class="file-chip">src/index.ts</span>) y <code>GuildCreate</code> en otro ID llama a <code>guild.leave()</code>.</p>
       </div>
       <div data-lang-block="en" hidden>
-        <p>Custom bot for the Nexo Discord: VoiceMaster, nexocoin economy, weekly missions, RPG, pets, counting, DISBOARD bumps, and tickets with a support AI (Neko) that remembers the thread.</p>
+        <p>Custom bot for the Nexo Discord: VoiceMaster, nexocoin economy, co-op heists, weekly missions, RPG, pets, counting, DISBOARD bumps, and tickets with a support AI (Neko) that remembers the thread.</p>
         <p>Single-tenant on purpose: slash commands deploy only to that guild; joining any other server triggers <code>guild.leave()</code>.</p>
       </div>
     </section>
@@ -113,7 +113,11 @@
         </article>
         <article class="mod-card">
           <h3>Economía</h3>
-          <p>nexocoin: work/daily/crime, tienda, P2P, subastas, trading, minería, propiedades, préstamos, impuestos semanales.</p>
+          <p>nexocoin: work/daily/crime, tienda, P2P, subastas, trading, minería, propiedades, préstamos, impuestos semanales. Cada movimiento se registra (<span class="file-chip">transactionLogger.ts</span>).</p>
+        </article>
+        <article class="mod-card">
+          <h3>Asaltos</h3>
+          <p><span class="file-chip">/asalto</span> cooperativo: 7 roles, objetivos con seguridad dinámica, QTE, HUD Canvas, mercado negro y reputación. Código en <span class="file-chip">heistEngine.ts</span> + <span class="file-chip">heistQTE.ts</span>.</p>
         </article>
         <article class="mod-card">
           <h3>Misiones / RPG / pets</h3>
@@ -125,7 +129,7 @@
         </article>
         <article class="mod-card">
           <h3>Logs</h3>
-          <p>Deletes, edits, voz, audit log, canales y roles, enrutados a canales por tipo.</p>
+          <p><code>/logs</code> asigna canales. Deletes, edits, voz, audit log, tickets y boosts van a cada tipo.</p>
         </article>
         <article class="mod-card">
           <h3>Welcome / boosts</h3>
