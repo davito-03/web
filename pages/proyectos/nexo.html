@@ -52,11 +52,11 @@
     <section class="pd-section" id="idea">
       <h2>Qué es</h2>
       <div data-lang-block="es">
-        <p>Nexo es un servidor de Discord (voz activa, social, gaming, anime, gatos). El bot cubre lo que un bot genérico no cubre bien: VoiceMaster, economía <em>nexocoin</em>, asaltos cooperativos, misiones semanales, RPG, mascotas, counting, bumps de DISBOARD y tickets con un asistente (Neko) que recuerda el hilo.</p>
+        <p>Nexo es un servidor de Discord (voz activa, social, gaming, anime, gatos). El bot cubre VoiceMaster, economía <em>nexocoin</em>, bandas y policía, asaltos cooperativos, un juego de Pokémon, perfil con reputación, misiones, RPG, counting y tickets con Neko.</p>
         <p>La restricción a un guild no es un “todo”. Es un producto cerrado: slash commands se despliegan solo ahí (<span class="file-chip">src/index.ts</span>) y <code>GuildCreate</code> en otro ID llama a <code>guild.leave()</code>.</p>
       </div>
       <div data-lang-block="en" hidden>
-        <p>Custom bot for the Nexo Discord: VoiceMaster, nexocoin economy, co-op heists, weekly missions, RPG, pets, counting, DISBOARD bumps, and tickets with a support AI (Neko) that remembers the thread.</p>
+        <p>Custom bot for the Nexo Discord: VoiceMaster, nexocoin economy, gangs and police, co-op heists, a Pokémon game, profile reputation, missions, RPG, counting, and tickets with Neko.</p>
         <p>Single-tenant on purpose: slash commands deploy only to that guild; joining any other server triggers <code>guild.leave()</code>.</p>
       </div>
     </section>
@@ -116,16 +116,16 @@
           <p>nexocoin: work/daily/crime, tienda, P2P, subastas, trading, minería, propiedades, préstamos, impuestos semanales. Cada movimiento se registra (<span class="file-chip">transactionLogger.ts</span>).</p>
         </article>
         <article class="mod-card">
-          <h3>Asaltos</h3>
-          <p><span class="file-chip">/asalto</span> cooperativo: 7 roles, objetivos con seguridad dinámica, QTE, HUD Canvas, mercado negro y reputación. Código en <span class="file-chip">heistEngine.ts</span> + <span class="file-chip">heistQTE.ts</span>.</p>
+          <h3>Asaltos y bandas</h3>
+          <p><span class="file-chip">/asalto</span> cooperativo: roles, objetivos, QTE, HUD Canvas, reliquias y eventos. <span class="file-chip">/banda</span> crea sindicatos, territorios y tributo. <span class="file-chip">/policia</span> es el otro lado.</p>
         </article>
         <article class="mod-card">
-          <h3>Misiones / RPG / pets</h3>
-          <p>Tablón semanal de 7 misiones. RPG con clanes y mazmorras. Mascotas con hambre/felicidad y expediciones.</p>
+          <h3>Pokémon</h3>
+          <p><span class="file-chip">/pokemon</span> captura, equipo, Pokédex, gimnasios, duelos, intercambio y evolución. Sustituye a las mascotas sueltas.</p>
         </article>
         <article class="mod-card">
-          <h3>Comunidad</h3>
-          <p>Cumpleaños (zona Madrid), matrimonios, encuestas, frase del día + gatito, counting, bumps DISBOARD, invites.</p>
+          <h3>Perfil y comunidad</h3>
+          <p><span class="file-chip">/perfil</span> con tarjeta y tema. <span class="file-chip">/rep</span> da reputación. Siguen cumpleaños, matrimonios, counting, bumps e invites.</p>
         </article>
         <article class="mod-card">
           <h3>Logs</h3>
@@ -194,6 +194,6 @@
     </div>
   </div>
   <script src="/assets/js/project-page.js"></script>
-  <script src="/assets/js/site-shell.js?v=3.3" defer></script>
+  <script src="/assets/js/site-shell.js?v=3.5" defer></script>
 </body>
 </html>
